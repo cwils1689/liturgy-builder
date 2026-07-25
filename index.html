@@ -39,11 +39,44 @@
     padding:32px 24px 120px;
   }
   header.masthead{
+    position:relative;
     text-align:center;
     margin-bottom:28px;
     padding-bottom:20px;
     border-bottom:1px solid var(--border);
   }
+  .hamburger-btn{
+    position:absolute;
+    top:0; right:0;
+    width:34px; height:34px;
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--ink-soft);
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+  }
+  .hamburger-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .settings-menu{
+    display:none;
+    position:absolute;
+    top:38px; right:0;
+    width:280px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:14px;
+    text-align:left;
+    z-index:50;
+  }
+  .settings-menu.open{ display:block; }
+  .settings-menu .esv-settings, .settings-menu .minister-settings{
+    justify-content:flex-start;
+    margin-top:0;
+  }
+  .settings-menu .esv-settings{ padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--border); }
+  .settings-menu .esv-settings input, .settings-menu .minister-settings input{ width:auto; flex:1; }
   header.masthead .eyebrow{
     font-size:11px;
     letter-spacing:0.14em;
@@ -88,6 +121,78 @@
   .sync-status.is-offline .dot{ background:#7A2E3B; }
   .sync-status.is-offline{ color:#7A2E3B; }
   .sync-status a{ color:inherit; text-decoration:underline; }
+
+  .esv-settings{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-size:11.5px; color:var(--ink-faint); margin-top:6px; flex-wrap:wrap;
+  }
+  .esv-settings label{ font-weight:600; }
+  .esv-settings input{
+    font-family:'Inter',sans-serif; font-size:11.5px;
+    border:1px solid var(--border); border-radius:4px;
+    padding:5px 8px; width:180px; background:#fff; color:var(--ink);
+  }
+  .esv-settings button{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:5px 10px; cursor:pointer;
+  }
+  .esv-settings button:hover{ border-color:var(--ink-soft); }
+  .esv-settings a{ color:var(--ink-faint); text-decoration:underline; }
+  #esvKeyStatus{ font-weight:600; }
+  #esvKeyStatus.saved{ color:#3F6B4A; }
+
+  .minister-settings{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-size:11.5px; color:var(--ink-faint); margin-top:6px; flex-wrap:wrap;
+  }
+  .minister-settings label{ font-weight:600; }
+  .minister-settings input{
+    font-family:'Inter',sans-serif; font-size:11.5px;
+    border:1px solid var(--border); border-radius:4px;
+    padding:5px 8px; width:120px; background:#fff; color:var(--ink);
+  }
+  .minister-settings button{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:5px 10px; cursor:pointer;
+  }
+  .minister-settings button:hover{ border-color:var(--ink-soft); }
+  .minister-chips{ display:flex; gap:5px; flex-wrap:wrap; }
+  .minister-chip{
+    display:flex; align-items:center; gap:4px;
+    background:var(--bg); border:1px solid var(--border); border-radius:12px;
+    padding:3px 4px 3px 10px; font-size:11px; color:var(--ink);
+  }
+  .minister-chip button{
+    border:none; background:transparent; color:var(--ink-faint);
+    cursor:pointer; font-size:12px; padding:0 4px; border-radius:50%; line-height:1;
+  }
+  .minister-chip button:hover{ color:#8a3a3a; }
+
+  .modal-overlay{
+    display:none;
+    position:fixed; inset:0; background:rgba(27,42,69,0.45);
+    z-index:1000; align-items:center; justify-content:center;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal-box{
+    background:#fff; border-radius:8px; padding:20px 22px;
+    max-width:340px; width:90%; box-shadow:0 8px 30px rgba(0,0,0,0.2);
+  }
+  .modal-box p{ margin:0 0 12px; font-size:14px; color:var(--ink); line-height:1.5; }
+  .modal-box input{
+    width:100%; font-family:'Inter',sans-serif; font-size:14px;
+    border:1px solid var(--border); border-radius:4px; padding:8px 10px;
+    margin-bottom:14px; box-sizing:border-box; color:var(--ink);
+  }
+  .modal-buttons{ display:flex; justify-content:flex-end; gap:8px; }
+  .modal-buttons button{
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    border-radius:4px; padding:7px 14px; cursor:pointer;
+  }
+  .modal-btn-cancel{ border:1px solid var(--border); background:#fff; color:var(--ink-soft); }
+  .modal-btn-ok{ border:1px solid var(--ink); background:var(--ink); color:#fff; }
 
   .toolbar{
     display:flex;
@@ -201,6 +306,19 @@
     border-radius:4px;
     padding:4px 6px;
   }
+  .minister-select{
+    font-size:11.5px;
+    font-weight:500;
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--ink-soft);
+    border-radius:4px;
+    padding:4px 6px;
+    max-width:120px;
+  }
+  .minister-tag{
+    display:none;
+  }
   .remove-btn{
     border:none;
     background:transparent;
@@ -230,7 +348,8 @@
     border:1px solid var(--border);
     border-radius:4px;
     padding:8px;
-    resize:vertical;
+    resize:none;
+    overflow:hidden;
     min-height:44px;
     background:#fff;
     color:var(--ink);
@@ -267,7 +386,8 @@
     padding:6px 8px;
     background:#fff;
     color:var(--ink);
-    resize:vertical;
+    resize:none;
+    overflow:hidden;
     min-height:34px;
     line-height:1.4;
   }
@@ -312,6 +432,16 @@
     font-size:11px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;
     color:var(--m-color); margin-bottom:5px;
   }
+  .ref-row{ display:flex; gap:6px; align-items:center; margin-bottom:6px; }
+  .ref-row .reference-input{ margin-bottom:0; flex:1; }
+  .esv-fetch-btn{
+    flex-shrink:0;
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:6px 9px; cursor:pointer; white-space:nowrap;
+  }
+  .esv-fetch-btn:hover{ border-color:var(--gold); color:var(--gold); }
+  .esv-fetch-btn:disabled{ opacity:0.5; cursor:default; }
   .locked-note{
     font-size:11px; color:var(--ink-faint); font-style:italic; margin-top:4px;
   }
@@ -322,6 +452,7 @@
     margin-top:-2px;
   }
   .skip-toggle input{ cursor:pointer; }
+  .toolbar-bottom{ margin-top:8px; margin-bottom:24px; }
   .lock-badge{
     font-size:12px;
     opacity:0.65;
@@ -345,18 +476,29 @@
     .toolbar{ display:none; }
     .app{ max-width:100%; padding:0 8px; }
     .movement{ box-shadow:none; border:1px solid #ccc; break-inside:avoid; margin-bottom:14px; }
-    .drag-handle, .remove-btn, .add-element, .type-select, .lock-badge{ display:none; }
+    .drag-handle, .remove-btn, .add-element, .type-select, .lock-badge, .minister-select{ display:none; }
+    .minister-tag{
+      display:inline-block; font-size:11px; font-style:italic; color:var(--ink-soft);
+      margin-left:6px; font-family:'Inter',sans-serif; font-weight:500;
+    }
+    .minister-tag::before{ content:"— "; }
     .element-card{ border:none; background:#fff; padding:6px 0; }
     .element-title, .reference-input, .content-area, .hymn-number-input, .hymn-title-input{ border:none; background:transparent; padding:0; }
     .content-area{ resize:none; }
     footer.note{ display:none; }
     .sync-status{ display:none; }
+    .esv-settings{ display:none; }
+    .minister-settings{ display:none; }
+    .hamburger-btn{ display:none; }
+    .settings-menu{ display:none !important; }
+    .modal-overlay{ display:none !important; }
     .response-fields{ display:none; }
     .print-response{ display:block; }
     .text-hide-in-print{ display:none !important; }
     .alt-toggle{ display:none; }
     .lectionary-label{ color:var(--ink-soft) !important; }
     .skip-toggle{ display:none; }
+    .esv-fetch-btn{ display:none; }
   }
 </style>
 </head>
@@ -364,13 +506,29 @@
 <div class="app">
 
   <header class="masthead">
-    <div class="eyebrow">Covenant Renewal Worship</div>
-    <h1 contenteditable="true" id="churchTitle">Order of Worship</h1>
+    <button id="settingsToggle" class="hamburger-btn" onclick="toggleSettingsMenu()" title="Settings (ESV key, ministers)">☰</button>
+    <div class="eyebrow">Pillar Reformed Church</div>
+    <h1 contenteditable="true" id="churchTitle">The Lord's Service</h1>
     <div class="service-meta">
       <input type="text" id="serviceTitle" placeholder="e.g. Second Sunday after Pentecost">
       <input type="date" id="serviceDate">
     </div>
     <div id="syncStatus" class="sync-status"></div>
+    <div id="settingsMenu" class="settings-menu">
+      <div class="esv-settings">
+        <label for="esvApiKey">ESV API Key</label>
+        <input type="password" id="esvApiKey" placeholder="paste your key from api.esv.org">
+        <button onclick="saveEsvKey()">Save</button>
+        <a href="https://api.esv.org/" target="_blank" rel="noopener">Get a free key →</a>
+        <span id="esvKeyStatus"></span>
+      </div>
+      <div class="minister-settings">
+        <label>Ministers</label>
+        <div id="ministerChips" class="minister-chips"></div>
+        <input type="text" id="newMinisterName" placeholder="Add a name">
+        <button onclick="addMinisterFromInput()">Add</button>
+      </div>
+    </div>
   </header>
 
   <div class="toolbar">
@@ -381,7 +539,23 @@
     <input type="file" id="loadInput" accept="application/json">
   </div>
 
+  <div id="modalOverlay" class="modal-overlay">
+    <div class="modal-box">
+      <p id="modalMessage"></p>
+      <input type="text" id="modalInput" style="display:none">
+      <div class="modal-buttons">
+        <button id="modalCancel" class="modal-btn-cancel">Cancel</button>
+        <button id="modalOk" class="modal-btn-ok">OK</button>
+      </div>
+    </div>
+  </div>
+
   <div id="movements"></div>
+
+  <div class="toolbar toolbar-bottom">
+    <button class="primary" onclick="window.print()">🖨 Export / Print to PDF</button>
+    <button onclick="saveToFile()">💾 Save Liturgy File</button>
+  </div>
 
   <footer class="note">
     Drag the ⠿ handle to reorder elements — within a movement, or between movements.<br>
@@ -455,8 +629,12 @@ const DEFAULT_TEMPLATE = [
     ]},
     { title:'Response to the Reading', type:'response', reference:'', locked:true,
       leaderText:'This is the word of the Lord.', peopleText:'Thanks be to God!' },
-    { title:'Pastoral Prayer', type:'text', reference:'',
-      content:'Opening:\n\nThanksgiving:\n\nPetitions:' },
+    { title:'Pastoral Prayer', type:'pastoral-prayer', reference:'',
+      sections:[
+        { key:'opening', label:'Opening', reference:'', content:'' },
+        { key:'thanksgiving', label:'Thanksgiving', reference:'', content:'' },
+        { key:'petitions', label:'Petitions', reference:'', content:'' },
+      ] },
     { title:'The Lord\'s Prayer', type:'response', reference:'', locked:true,
       leaderText:'...And now, as you taught us, we pray together:',
       peopleText:'Our Father which art in heaven, hallowed be Thy name.\nThy kingdom come, Thy will be done, on earth as it is in heaven.\nGive us this day our daily bread and forgive us our debts as we forgive our debtors.\nLead us not into temptation but deliver us from evil.\nFor Thine is the kingdom, and the power, and the glory forever.\nAmen!' },
@@ -496,7 +674,7 @@ const DEFAULT_TEMPLATE = [
   { key:'commission', label:'God Commissions Us with His Blessing', color:'var(--commission)', elements:[
     { title:'Charge', type:'text', reference:'', content:'' },
     { title:'Benediction', type:'scripture', reference:'', content:'' },
-    { title:'Response', type:'response', reference:'', leaderText:'Amen!', peopleText:'Amen!' },
+    { title:'Response', type:'response', reference:'', leaderText:'Amen!', peopleText:'Amen!', allowSkipLeader:true },
     { title:'Dismissal', type:'text', reference:'', content:'Go in peace.' },
   ]},
 ];
@@ -524,7 +702,6 @@ function render(){
       <div class="movement-head">
         <span class="icon">${ICONS[movement.key] || ''}</span>
         <h2>${movement.label}</h2>
-        <span class="count">${movement.elements.length} element${movement.elements.length===1?'':'s'}</span>
       </div>
       <div class="elements" data-movement="${movement.key}"></div>
       <div style="padding:0 14px 14px;">
@@ -544,6 +721,7 @@ function render(){
       onEnd: syncStateFromDOM
     });
   });
+  autoResizeAll();
 }
 
 function renderElement(el){
@@ -555,6 +733,12 @@ function renderElement(el){
     <div class="element-row1">
       <input class="element-title" value="${escapeAttr(el.title)}" placeholder="Element title" oninput="updateField('${el.id}','title',this.value)">
       ${el.locked ? '<span class="lock-badge" title="Standing text — part of every service">🔒</span>' : ''}
+      <select class="minister-select" title="Minister leading this element" onchange="handleMinisterChange('${el.id}',this)">
+        <option value="" ${!el.minister?'selected':''}>— Minister —</option>
+        ${ministerRoster.map(name => `<option value="${escapeAttr(name)}" ${el.minister===name?'selected':''}>${escapeHTML(name)}</option>`).join('')}
+        <option value="__add__">+ Add new minister…</option>
+      </select>
+      ${el.minister ? `<span class="minister-tag">${escapeHTML(el.minister)}</span>` : ''}
       <select class="type-select" onchange="updateField('${el.id}','type',this.value)">
         <option value="scripture" ${el.type==='scripture'?'selected':''}>Scripture</option>
         <option value="text" ${el.type==='text'?'selected':''}>Text / Prayer</option>
@@ -562,6 +746,7 @@ function renderElement(el){
         <option value="rubric" ${el.type==='rubric'?'selected':''}>Rubric</option>
         <option value="hymn" ${el.type==='hymn'?'selected':''}>Hymn</option>
         <option value="lectionary" ${el.type==='lectionary'?'selected':''}>Lectionary</option>
+        <option value="pastoral-prayer" ${el.type==='pastoral-prayer'?'selected':''}>Pastoral Prayer (Opening/Thanksgiving/Petitions)</option>
         <option value="variant-text" ${el.type==='variant-text'?'selected':''}>Prayer (multiple versions)</option>
         <option value="exhortation" ${el.type==='exhortation'?'selected':''}>Exhortation</option>
         <option value="sermon" ${el.type==='sermon'?'selected':''}>Sermon</option>
@@ -618,10 +803,11 @@ function renderElement(el){
           <label>Leader says</label>
           <textarea class="response-input" placeholder="e.g. The Lord be with you!" oninput="updateField('${el.id}','leaderText',this.value)">${escapeHTML(el.leaderText)}</textarea>
         </div>
+        ${el.allowSkipLeader ? `
         <label class="skip-toggle" title="Leave the Leader's line out of this week's printed liturgy (e.g. if the passage above already ends in Amen)">
           <input type="checkbox" ${el.skipLeader?'checked':''} onchange="updateField('${el.id}','skipLeader',this.checked)">
           Skip the Leader's line this week
-        </label>
+        </label>` : ''}
         <div class="response-line">
           <label>People respond</label>
           <textarea class="response-input" placeholder="e.g. And also with you!" oninput="updateField('${el.id}','peopleText',this.value)">${escapeHTML(el.peopleText)}</textarea>
@@ -664,7 +850,10 @@ function renderElement(el){
     const rows = el.readings.map(r => `
       <div class="lectionary-row">
         <div class="lectionary-label">${escapeHTML(r.label)}</div>
-        <input class="reference-input" placeholder="${escapeAttr(r.label)} reference" value="${escapeAttr(r.reference)}" oninput="updateReadingField('${el.id}','${r.key}','reference',this.value)">
+        <div class="ref-row">
+          <input class="reference-input" placeholder="${escapeAttr(r.label)} reference" value="${escapeAttr(r.reference)}" oninput="updateReadingField('${el.id}','${r.key}','reference',this.value)">
+          <button class="esv-fetch-btn" onclick="fetchEsvForReading('${el.id}','${r.key}')">📖 Fetch ESV</button>
+        </div>
         <textarea class="content-area${el.includeText ? '' : ' text-hide-in-print'}" placeholder="Passage text (optional)" oninput="updateReadingField('${el.id}','${r.key}','content',this.value)">${escapeHTML(r.content)}</textarea>
       </div>
     `).join('');
@@ -675,9 +864,25 @@ function renderElement(el){
         Include full text for these readings in the printed liturgy
       </label>
     `;
+  } else if(el.type === 'pastoral-prayer'){
+    const rows = el.sections.map(s => `
+      <div class="lectionary-row">
+        <div class="lectionary-label">${escapeHTML(s.label)}</div>
+        <div class="ref-row">
+          <input class="reference-input" placeholder="${escapeAttr(s.label)} scripture reference" value="${escapeAttr(s.reference)}" oninput="updateReadingField('${el.id}','${s.key}','reference',this.value)">
+          <button class="esv-fetch-btn" onclick="fetchEsvForReading('${el.id}','${s.key}')">📖 Fetch ESV</button>
+        </div>
+        <textarea class="content-area" placeholder="${escapeAttr(s.label)} content…" oninput="updateReadingField('${el.id}','${s.key}','content',this.value)">${escapeHTML(s.content)}</textarea>
+      </div>
+    `).join('');
+    body = rows;
   } else {
     body = `
-      ${el.type==='scripture' ? `<input class="reference-input" placeholder="Scripture reference (e.g. Psalm 95:1-7)" value="${escapeAttr(el.reference)}" oninput="updateField('${el.id}','reference',this.value)">` : ''}
+      ${el.type==='scripture' ? `
+      <div class="ref-row">
+        <input class="reference-input" placeholder="Scripture reference (e.g. Psalm 95:1-7)" value="${escapeAttr(el.reference)}" oninput="updateField('${el.id}','reference',this.value)">
+        <button class="esv-fetch-btn" onclick="fetchEsvForElement('${el.id}')">📖 Fetch ESV</button>
+      </div>` : ''}
       <textarea class="content-area" placeholder="${placeholderFor(el.type)}" oninput="updateField('${el.id}','content',this.value)">${escapeHTML(el.content)}</textarea>
     `;
   }
@@ -691,8 +896,10 @@ function renderElement(el){
 
 function updateReadingField(id, key, field, value){
   const el = findEl(id);
-  if(!el || !el.readings) return;
-  const r = el.readings.find(r => r.key === key);
+  if(!el) return;
+  const list = el.readings || el.sections;
+  if(!list) return;
+  const r = list.find(r => r.key === key);
   if(r) r[field] = value;
 }
 
@@ -738,11 +945,18 @@ function updateField(id, field, value){
     ];
     el.includeText = false;
   }
+  if(field === 'type' && value === 'pastoral-prayer' && !el.sections){
+    el.sections = [
+      { key:'opening', label:'Opening', reference:'', content:'' },
+      { key:'thanksgiving', label:'Thanksgiving', reference:'', content:'' },
+      { key:'petitions', label:'Petitions', reference:'', content:'' },
+    ];
+  }
   if(field === 'type' && value === 'variant-text' && !el.variants){
     el.variants = [{ id:'v'+Date.now(), label:'Standard', content:'' }];
     el.activeVariantId = el.variants[0].id;
   }
-  if(['type','hasAlt','hasManuscript','includeText','activeVariantId'].includes(field)){ render(); return; }
+  if(['type','hasAlt','hasManuscript','includeText','activeVariantId','minister'].includes(field)){ render(); return; }
   if(el.type === 'response') refreshResponsePrint(id);
 }
 
@@ -819,6 +1033,7 @@ function saveToFile(){
     churchTitle: document.getElementById('churchTitle').innerText,
     serviceTitle: document.getElementById('serviceTitle').value,
     serviceDate: document.getElementById('serviceDate').value,
+    ministerRoster: ministerRoster,
     movements: state
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
@@ -838,9 +1053,14 @@ document.getElementById('loadInput').addEventListener('change', function(e){
   reader.onload = function(evt){
     try{
       const data = JSON.parse(evt.target.result);
-      document.getElementById('churchTitle').innerText = data.churchTitle || 'Order of Worship';
+      document.getElementById('churchTitle').innerText = data.churchTitle || "The Lord's Service";
       document.getElementById('serviceTitle').value = data.serviceTitle || '';
       document.getElementById('serviceDate').value = data.serviceDate || '';
+      (data.ministerRoster || []).forEach(name => {
+        if(!ministerRoster.includes(name)) ministerRoster.push(name);
+      });
+      saveMinisterRoster();
+      renderMinisterChips();
       state = data.movements.map(m => ({
         ...m,
         elements: m.elements.map(el => ({ ...el, id: newId() }))
@@ -1040,7 +1260,230 @@ function syncLectionary(dateStr){
   }
 }
 
+/* ---------------------------------------------------------------------
+   ESV Bible text (best-effort, live). Requires your own free API key
+   from api.esv.org — the key is stored only in your browser's local
+   storage on this site, never sent anywhere but Crossway's API, and
+   never saved into your liturgy files. Like the RCL source, this
+   depends on Crossway's server allowing requests from this site;
+   if it doesn't, you'll get a clear message rather than a silent
+   failure, and can always paste text in by hand instead.
+--------------------------------------------------------------------- */
+function loadEsvKey(){
+  try{ return localStorage.getItem('esvApiKey') || ''; }catch(e){ return ''; }
+}
+function saveEsvKey(){
+  const val = document.getElementById('esvApiKey').value.trim();
+  try{ localStorage.setItem('esvApiKey', val); }catch(e){}
+  const status = document.getElementById('esvKeyStatus');
+  status.textContent = val ? 'Saved ✓' : '';
+  status.className = val ? 'saved' : '';
+}
+(function initEsvKey(){
+  const key = loadEsvKey();
+  const input = document.getElementById('esvApiKey');
+  if(key){
+    input.value = key;
+    const status = document.getElementById('esvKeyStatus');
+    status.textContent = 'Saved ✓';
+    status.className = 'saved';
+  }
+})();
+
+async function fetchEsvPassage(reference){
+  const key = loadEsvKey();
+  if(!key){
+    alert('Enter and save your free ESV API key first (see the field near the top of the page — get one at api.esv.org).');
+    return null;
+  }
+  if(!reference || !reference.trim()){
+    alert('Enter a Scripture reference first.');
+    return null;
+  }
+  const url = `https://api.esv.org/v3/passage/text/?q=${encodeURIComponent(reference)}&include-headings=false&include-footnotes=false&include-verse-numbers=false&include-short-copyright=true&include-passage-references=false`;
+  try{
+    const resp = await fetch(url, { headers: { 'Authorization': 'Token ' + key } });
+    if(!resp.ok) throw new Error('ESV API returned an error (' + resp.status + ')');
+    const data = await resp.json();
+    const text = (data.passages && data.passages[0]) ? data.passages[0].trim() : '';
+    if(!text) throw new Error('No passage returned — check the reference.');
+    return text;
+  }catch(err){
+    alert("Couldn't fetch that passage from the ESV API. This could be a wrong reference, an invalid key, or this site not being allowed to reach api.esv.org directly. You can always paste the text in by hand instead.\n\n(" + err.message + ')');
+    return null;
+  }
+}
+
+async function fetchEsvForElement(id){
+  const el = findEl(id);
+  if(!el) return;
+  const btn = document.querySelector(`.element-card[data-id="${id}"] .esv-fetch-btn`);
+  if(btn){ btn.disabled = true; btn.textContent = 'Fetching…'; }
+  const text = await fetchEsvPassage(el.reference);
+  if(btn){ btn.disabled = false; btn.textContent = '📖 Fetch ESV'; }
+  if(text){
+    el.content = text;
+    render();
+  }
+}
+
+async function fetchEsvForReading(id, key){
+  const el = findEl(id);
+  if(!el) return;
+  const list = el.readings || el.sections;
+  if(!list) return;
+  const r = list.find(r => r.key === key);
+  if(!r) return;
+  const text = await fetchEsvPassage(r.reference);
+  if(text){
+    r.content = text;
+    if(el.readings) el.includeText = true;
+    render();
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Minister roster. Shared across the whole liturgy (not per-element) so
+   the same list of names shows up everywhere. Persisted to this
+   browser's local storage (so it's remembered week to week) and also
+   saved into each liturgy file, so it travels with the file too — on
+   load, names from the file are merged into the roster rather than
+   replacing it.
+--------------------------------------------------------------------- */
+let ministerRoster = [];
+
+function loadMinisterRoster(){
+  try{
+    const raw = localStorage.getItem('ministerRoster');
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return ['Clint', 'Ace'];
+}
+function saveMinisterRoster(){
+  try{ localStorage.setItem('ministerRoster', JSON.stringify(ministerRoster)); }catch(e){}
+}
+function renderMinisterChips(){
+  const box = document.getElementById('ministerChips');
+  box.innerHTML = ministerRoster.map(name => `
+    <span class="minister-chip">${escapeHTML(name)}
+      <button title="Remove ${escapeAttr(name)}" onclick="removeMinister('${escapeAttr(name).replace(/'/g,"\\'")}')">✕</button>
+    </span>
+  `).join('');
+}
+function addMinister(name){
+  name = (name || '').trim();
+  if(!name || ministerRoster.includes(name)) return;
+  ministerRoster.push(name);
+  saveMinisterRoster();
+  renderMinisterChips();
+  render();
+}
+function addMinisterFromInput(){
+  const input = document.getElementById('newMinisterName');
+  addMinister(input.value);
+  input.value = '';
+}
+async function removeMinister(name){
+  const ok = await customConfirm(`Remove "${name}" from the minister list? Elements currently assigned to them will keep showing the name, but it won't be selectable from the dropdown anymore.`);
+  if(!ok) return;
+  ministerRoster = ministerRoster.filter(n => n !== name);
+  saveMinisterRoster();
+  renderMinisterChips();
+  render();
+}
+async function handleMinisterChange(id, selectEl){
+  const value = selectEl.value;
+  if(value === '__add__'){
+    const name = await customPrompt('Add a new minister:');
+    if(name && name.trim()){
+      addMinister(name.trim());
+      updateField(id, 'minister', name.trim());
+    } else {
+      render();
+    }
+    return;
+  }
+  updateField(id, 'minister', value);
+}
+
+/* ---------------------------------------------------------------------
+   Custom modal — replaces window.confirm/prompt. Native browser dialogs
+   can get silently suppressed (some mobile browsers, or after a page
+   has shown a few of them), which looks like the button just doing
+   nothing. This in-page version can't have that problem.
+--------------------------------------------------------------------- */
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+function customConfirm(message){
+  return new Promise(resolve => {
+    const overlay = document.getElementById('modalOverlay');
+    document.getElementById('modalMessage').textContent = message;
+    document.getElementById('modalInput').style.display = 'none';
+    overlay.classList.add('open');
+    const ok = document.getElementById('modalOk');
+    const cancel = document.getElementById('modalCancel');
+    function cleanup(result){
+      closeModal();
+      ok.onclick = null; cancel.onclick = null;
+      resolve(result);
+    }
+    ok.onclick = () => cleanup(true);
+    cancel.onclick = () => cleanup(false);
+  });
+}
+function customPrompt(message, defaultValue){
+  return new Promise(resolve => {
+    const overlay = document.getElementById('modalOverlay');
+    document.getElementById('modalMessage').textContent = message;
+    const input = document.getElementById('modalInput');
+    input.style.display = 'block';
+    input.value = defaultValue || '';
+    overlay.classList.add('open');
+    setTimeout(() => input.focus(), 50);
+    const ok = document.getElementById('modalOk');
+    const cancel = document.getElementById('modalCancel');
+    function cleanup(result){
+      closeModal();
+      ok.onclick = null; cancel.onclick = null;
+      input.onkeydown = null;
+      resolve(result);
+    }
+    ok.onclick = () => cleanup(input.value);
+    cancel.onclick = () => cleanup(null);
+    input.onkeydown = (e) => { if(e.key === 'Enter') cleanup(input.value); };
+  });
+}
+
+/* ---------------------------------------------------------------------
+   Auto-resizing text boxes — every textarea grows to fit its content
+   instead of scrolling or needing a manual drag-resize.
+--------------------------------------------------------------------- */
+function autoResize(ta){
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+function autoResizeAll(){
+  document.querySelectorAll('#movements textarea').forEach(autoResize);
+}
+document.addEventListener('input', function(e){
+  if(e.target.tagName === 'TEXTAREA') autoResize(e.target);
+});
+
+function toggleSettingsMenu(){
+  document.getElementById('settingsMenu').classList.toggle('open');
+}
+document.addEventListener('click', function(e){
+  const menu = document.getElementById('settingsMenu');
+  const btn = document.getElementById('settingsToggle');
+  if(menu.classList.contains('open') && !menu.contains(e.target) && e.target !== btn){
+    menu.classList.remove('open');
+  }
+});
+
 // Init
+ministerRoster = loadMinisterRoster();
+renderMinisterChips();
 loadStateFromTemplate(DEFAULT_TEMPLATE);
 render();
 </script>
