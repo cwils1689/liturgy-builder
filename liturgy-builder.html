@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liturgy Builder — Covenant Renewal Worship</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<style>
+  :root{
+    --bg: #ECEFEA;
+    --surface: #FFFFFF;
+    --ink: #1B2A45;
+    --ink-soft: #55637A;
+    --ink-faint: #8A93A3;
+    --border: #DADFD6;
+    --gold: #A9812F;
+    --call: #A9812F;
+    --confession: #5B6B7A;
+    --consecration: #7A2E3B;
+    --communion: #5C2A52;
+    --commission: #3F6B4A;
+    --welcome: #3D6E74;
+    --radius: 6px;
+    --shadow: 0 1px 2px rgba(27,42,69,0.06), 0 1px 8px rgba(27,42,69,0.05);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{
+    max-width:900px;
+    margin:0 auto;
+    padding:32px 24px 120px;
+  }
+  header.masthead{
+    text-align:center;
+    margin-bottom:28px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--border);
+  }
+  header.masthead .eyebrow{
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    font-weight:600;
+  }
+  header.masthead h1{
+    font-family:'Spectral',serif;
+    font-weight:600;
+    font-size:32px;
+    margin:6px 0 14px;
+  }
+  .service-meta{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .service-meta input{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:7px 10px;
+    background:var(--surface);
+    color:var(--ink);
+  }
+  .service-meta input#serviceTitle{ min-width:220px; font-style:italic; }
+
+  .sync-status{
+    text-align:center;
+    font-size:11.5px;
+    margin-top:8px;
+    color:var(--ink-faint);
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .sync-status .dot{ width:7px; height:7px; border-radius:50%; background:var(--ink-faint); flex-shrink:0; }
+  .sync-status.is-synced .dot{ background:#3F6B4A; }
+  .sync-status.is-synced{ color:#3F6B4A; }
+  .sync-status.is-checking .dot{ background:var(--gold); }
+  .sync-status.is-offline .dot{ background:#7A2E3B; }
+  .sync-status.is-offline{ color:#7A2E3B; }
+  .sync-status a{ color:inherit; text-decoration:underline; }
+
+  .toolbar{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-bottom:32px;
+  }
+  .toolbar button{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--ink);
+    border-radius:var(--radius);
+    padding:9px 14px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    transition:border-color .15s, color .15s;
+  }
+  .toolbar button:hover{ border-color:var(--ink-soft); }
+  .toolbar button.primary{
+    background:var(--ink);
+    color:#fff;
+    border-color:var(--ink);
+  }
+  .toolbar button.primary:hover{ background:#101b30; }
+  .toolbar button.danger{ color:#8a3a3a; }
+
+  .movement{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-left:5px solid var(--m-color, var(--gold));
+    border-radius:var(--radius);
+    margin-bottom:20px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .movement-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:16px 18px 14px;
+    border-bottom:1px solid var(--border);
+  }
+  .movement-head .icon{ width:22px; height:22px; flex-shrink:0; color:var(--m-color); }
+  .movement-head h2{
+    font-family:'Spectral',serif;
+    font-weight:600;
+    font-size:19px;
+    margin:0;
+    flex:1;
+  }
+  .movement-head .count{
+    font-size:12px;
+    color:var(--ink-faint);
+    font-weight:500;
+  }
+  .elements{
+    padding:10px 14px 14px;
+    min-height:14px;
+  }
+  .element-card{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:12px 12px 12px 10px;
+    margin-bottom:10px;
+    display:flex;
+    gap:10px;
+  }
+  .element-card.sortable-ghost{ opacity:0.35; }
+  .drag-handle{
+    cursor:grab;
+    color:var(--ink-faint);
+    padding:2px 2px 0 0;
+    user-select:none;
+    line-height:1;
+    font-size:16px;
+    flex-shrink:0;
+  }
+  .element-body{ flex:1; min-width:0; }
+  .element-row1{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-bottom:8px;
+    flex-wrap:wrap;
+  }
+  .element-title{
+    font-family:'Spectral',serif;
+    font-weight:600;
+    font-size:14.5px;
+    border:none;
+    background:transparent;
+    color:var(--ink);
+    flex:1;
+    min-width:120px;
+    padding:2px 0;
+  }
+  .element-title:focus{ outline:none; border-bottom:1px solid var(--m-color); }
+  .type-select{
+    font-size:11.5px;
+    font-weight:600;
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--ink-soft);
+    border-radius:4px;
+    padding:4px 6px;
+  }
+  .remove-btn{
+    border:none;
+    background:transparent;
+    color:var(--ink-faint);
+    cursor:pointer;
+    font-size:16px;
+    line-height:1;
+    padding:2px 4px;
+  }
+  .remove-btn:hover{ color:#8a3a3a; }
+  .reference-input{
+    width:100%;
+    font-size:12.5px;
+    font-style:italic;
+    color:var(--ink-soft);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:6px 8px;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  .content-area{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    line-height:1.5;
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:8px;
+    resize:vertical;
+    min-height:44px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .content-area::placeholder, .reference-input::placeholder{ color:var(--ink-faint); font-style:italic; }
+
+  .add-element{
+    width:100%;
+    background:transparent;
+    border:1.5px dashed var(--border);
+    color:var(--ink-faint);
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    border-radius:var(--radius);
+    padding:9px;
+    cursor:pointer;
+    margin-top:2px;
+  }
+  .add-element:hover{ border-color:var(--m-color); color:var(--m-color); }
+
+  .response-fields{ display:flex; flex-direction:column; gap:8px; }
+  .response-line{ display:flex; align-items:flex-start; gap:8px; }
+  .response-line label{
+    font-size:11.5px; font-weight:600; color:var(--ink-soft);
+    width:112px; flex-shrink:0; padding-top:6px;
+  }
+  .response-input, .alt-label-input, .version-select{
+    flex:1;
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:6px 8px;
+    background:#fff;
+    color:var(--ink);
+    resize:vertical;
+    min-height:34px;
+    line-height:1.4;
+  }
+  select.version-select{ min-height:auto; resize:none; }
+  .alt-toggle{
+    display:flex; align-items:center; gap:6px;
+    font-size:12px; color:var(--ink-soft); font-weight:600;
+    margin-top:2px; cursor:pointer;
+  }
+  .alt-toggle input{ cursor:pointer; }
+  .alt-fields{
+    display:flex; flex-direction:column; gap:8px;
+    border-left:2px solid var(--border);
+    padding:8px 0 2px 10px;
+    margin-top:2px;
+  }
+  .alt-label-input{ font-style:italic; }
+  .print-response{ display:none; }
+  .print-response p{ margin:2px 0 8px; font-size:13.5px; line-height:1.5; white-space:pre-line; }
+  .print-response .speaker{ font-weight:600; }
+  .print-response .footnote{ font-size:11.5px; font-style:italic; color:var(--ink-soft); }
+  .hymn-fields{ display:flex; gap:8px; align-items:center; }
+  .hymn-number-input{
+    width:64px; flex-shrink:0;
+    font-family:'Inter',sans-serif; font-size:13px;
+    border:1px solid var(--border); border-radius:4px;
+    padding:6px 8px; background:#fff; color:var(--ink);
+    text-align:center;
+  }
+  .hymn-title-input{
+    flex:1;
+    font-family:'Spectral',serif; font-size:14px; font-style:italic;
+    border:1px solid var(--border); border-radius:4px;
+    padding:6px 8px; background:#fff; color:var(--ink);
+  }
+  .lectionary-row{
+    border-top:1px solid var(--border);
+    padding-top:8px; margin-top:8px;
+  }
+  .lectionary-row:first-child{ border-top:none; padding-top:0; margin-top:0; }
+  .lectionary-label{
+    font-size:11px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;
+    color:var(--m-color); margin-bottom:5px;
+  }
+  .locked-note{
+    font-size:11px; color:var(--ink-faint); font-style:italic; margin-top:4px;
+  }
+  .skip-toggle{
+    display:flex; align-items:center; gap:4px;
+    font-size:11px; color:var(--ink-faint); font-weight:500;
+    cursor:pointer; white-space:nowrap;
+    margin-top:-2px;
+  }
+  .skip-toggle input{ cursor:pointer; }
+  .lock-badge{
+    font-size:12px;
+    opacity:0.65;
+    flex-shrink:0;
+    cursor:default;
+  }
+
+  footer.note{
+    text-align:center;
+    color:var(--ink-faint);
+    font-size:12px;
+    margin-top:30px;
+    line-height:1.6;
+  }
+
+  input[type=file]{ display:none; }
+
+  /* ---- Print / PDF styles ---- */
+  @media print{
+    body{ background:#fff; }
+    .toolbar{ display:none; }
+    .app{ max-width:100%; padding:0 8px; }
+    .movement{ box-shadow:none; border:1px solid #ccc; break-inside:avoid; margin-bottom:14px; }
+    .drag-handle, .remove-btn, .add-element, .type-select, .lock-badge{ display:none; }
+    .element-card{ border:none; background:#fff; padding:6px 0; }
+    .element-title, .reference-input, .content-area, .hymn-number-input, .hymn-title-input{ border:none; background:transparent; padding:0; }
+    .content-area{ resize:none; }
+    footer.note{ display:none; }
+    .sync-status{ display:none; }
+    .response-fields{ display:none; }
+    .print-response{ display:block; }
+    .text-hide-in-print{ display:none !important; }
+    .alt-toggle{ display:none; }
+    .lectionary-label{ color:var(--ink-soft) !important; }
+    .skip-toggle{ display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="masthead">
+    <div class="eyebrow">Covenant Renewal Worship</div>
+    <h1 contenteditable="true" id="churchTitle">Order of Worship</h1>
+    <div class="service-meta">
+      <input type="text" id="serviceTitle" placeholder="e.g. Second Sunday after Pentecost">
+      <input type="date" id="serviceDate">
+    </div>
+    <div id="syncStatus" class="sync-status"></div>
+  </header>
+
+  <div class="toolbar">
+    <button class="primary" onclick="window.print()">🖨 Export / Print to PDF</button>
+    <button onclick="saveToFile()">💾 Save Liturgy File</button>
+    <button onclick="document.getElementById('loadInput').click()">📂 Load Liturgy File</button>
+    <button class="danger" onclick="resetTemplate()">↺ Reset to Default Template</button>
+    <input type="file" id="loadInput" accept="application/json">
+  </div>
+
+  <div id="movements"></div>
+
+  <footer class="note">
+    Drag the ⠿ handle to reorder elements — within a movement, or between movements.<br>
+    Save regularly to a file in your synced Zoho WorkDrive folder to keep a backup across devices.
+  </footer>
+</div>
+
+<script>
+const ICONS = {
+  welcome: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="3" width="12" height="18" rx="1"/><circle cx="13.5" cy="12" r="1"/><path d="M17 3v18"/></svg>',
+  call: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3a5 5 0 0 0-5 5v3.5c0 1-.4 2-1.2 2.8L4 16h16l-1.8-1.7c-.8-.8-1.2-1.8-1.2-2.8V8a5 5 0 0 0-5-5Z"/><path d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg>',
+  confession: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c3 4 5.5 7.4 5.5 10.5a5.5 5.5 0 1 1-11 0C6.5 10.4 9 7 12 3Z"/></svg>',
+  consecration: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22c3 0 5-2 5-4.8 0-2-1.2-3.3-2-4.7.3 1.4-.3 2.3-1 2.5.4-2.2-.6-4.2-2.3-5.7.2 1.6-.4 2.4-1 3-1 1-2.2 2.5-2.2 4.9C8.5 20 9.8 22 12 22Z"/></svg>',
+  communion: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8h12l-1.2 8.2A2 2 0 0 1 14.8 18H9.2a2 2 0 0 1-2-1.8L6 8Z"/><path d="M4 8h16"/><path d="M12 8V5m0 0-1.5 1.5M12 5l1.5 1.5"/></svg>',
+  commission: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12c3-4 6-6 8-6M4 12c3 4 6 6 8 6M4 12h16" /><path d="M15 8l4 4-4 4"/></svg>'
+};
+
+const DEFAULT_TEMPLATE = [
+  { key:'welcome', label:'Welcome & Announcements', color:'var(--welcome)', elements:[
+    { title:'Welcome', type:'text', reference:'', locked:true,
+      content:'To all who are weary and seek rest;\nto all who mourn and long for comfort;\nto all who struggle and desire victory;\nto all who sin and need a Savior;\nto all who are lonely and want fellowship;\nto all who hunger and thirst for righteousness;\nand to whoever will come —\nthis church opens wide her doors and offers her welcome in the name of the Lord Jesus Christ.' },
+    { title:'Announcements', type:'rubric', reference:'', content:'' },
+    { title:'Moment of Silence to Prepare for Worship', type:'rubric', reference:'', content:'' },
+  ]},
+  { key:'call', label:'God Calls Us', color:'var(--call)', elements:[
+    { title:'Call to Worship', type:'text', reference:'', content:'Let us rise and worship the Triune God!' },
+    { title:'Greeting', type:'response', reference:'', locked:true,
+      leaderText:'Grace, mercy, and peace from God the Father, the Son, and the Holy Spirit.\nThe Lord be with you!',
+      peopleText:'And also with you!',
+      allowSeasonal:true, altMode:'add', hasAlt:true, altLabel:'Eastertide', altActive:false,
+      altLeaderText:'Alleluia! Christ is Risen!', altPeopleText:'Christ is risen, indeed! Alleluia!' },
+    { title:'Scripture Reading', type:'scripture', reference:'', content:'' },
+    { title:'Collect', type:'variant-text', reference:'', bcpLinked:true,
+      variants:[{ id:'default', label:'Option 1', content:'' }], activeVariantId:'default' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'' },
+  ]},
+  { key:'confession', label:'God Cleanses Us as We Confess Our Sin', color:'var(--confession)', elements:[
+    { title:'Exhortation', type:'exhortation', reference:'', subtitle:'', content:'' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'' },
+    { title:'Call to Confession', type:'response', reference:'', locked:true,
+      leaderText:'Come, let us worship and bow down!',
+      peopleText:'And kneel before the Lord our Maker. (Ps. 95:6)' },
+    { title:'Kneeling Instruction', type:'rubric', reference:'', content:'Let all who are able kneel.' },
+    { title:'Scripture Reading', type:'scripture', reference:'', content:'' },
+    { title:'Prayer of Confession', type:'text', reference:'',
+      content:'[Followed by a moment of silent, personal confession.]' },
+    { title:'Call to Assurance', type:'rubric', reference:'', content:'Rise and hear the good news of forgiveness in Christ!' },
+    { title:'Scripture Reading', type:'scripture', reference:'', content:'' },
+    { title:'Pastoral Application', type:'text', reference:'', content:'' },
+    { title:'Declaration of Pardon', type:'response', reference:'', locked:true,
+      leaderText:'On the basis of this promise of God, and as his minister,\nI declare unto you that your sins are forgiven through Jesus Christ our Lord!',
+      peopleText:'Thanks be to God!' },
+  ]},
+  { key:'consecration', label:'God Consecrates Us by His Powerful Word', color:'var(--consecration)', elements:[
+    { title:'Sursum Corda', type:'response', reference:'', locked:true,
+      leaderText:'Lift up your hearts!', peopleText:'We lift them up to the Lord!' },
+    { title:'The Creed', type:'response', reference:'', locked:true,
+      leaderText:'Having confessed our sin, let us now confess our faith in the words of the Apostles\' Creed.\nChristian, what do you believe?',
+      peopleText:'I believe in God the Father Almighty; Maker of heaven and earth,\nand in Jesus Christ, his only begotten Son, our Lord,\nWho was conceived by the Holy Spirit, and born of the virgin Mary.\nHe suffered under Pontius Pilate, was crucified, died, and was buried.\nHe descended to the dead.\nOn the third day He rose again from the dead;\nHe ascended into Heaven, and sits at the right hand of God the Father Almighty;\nfrom there He will come to judge the living and the dead.\nI believe in the Holy Spirit, the holy catholic* Church, the communion of saints,\nthe forgiveness of sins, the resurrection of the body, and the life everlasting.\nAmen.',
+      hasFootnote:true, footnote:'*catholic means universal, and does not always refer to the Roman Catholic Church.',
+      allowSeasonal:true, altMode:'replace', altLabel:'Advent & Christmastide', altActive:false,
+      altLeaderText:'Having confessed our sin, let us now confess our faith in the words of the Nicene Creed.\nChristian, what do you believe?',
+      altPeopleText:'I believe in one God, the Father Almighty, Maker of heaven and earth\nand of all things visible and invisible;\nand in one Lord Jesus Christ, the only-begotten Son of God,\nbegotten of the Father before all worlds,\nGod of God, Light of Light, very God of very God, begotten, not made,\nbeing of one substance with the Father; by whom all things were made;\nwho, for us men, and for our salvation, came down from Heaven,\nand was incarnate by the Holy Spirit of the virgin, Mary, and was made man;\nand was crucified also for us under Pontius Pilate; He suffered and was buried;\nand the third day he rose again, according to the Scriptures;\nand ascended into Heaven, and sits on the right hand of the Father;\nand He shall come again, with glory, to judge both the living and the dead;\nwhose kingdom shall have no end.\nAnd I believe in the Holy Spirit, the Lord, and Giver of Life,\nwho proceeds from the Father and the Son;\nwho with the Father and the Son together is worshipped and glorified;\nwho spoke by the prophets.\nAnd I believe in one, holy, catholic and apostolic church;\nI acknowledge one baptism for the remission of sins;\nand I look for the resurrection of the dead, and the life of the world to come. Amen',
+      altFootnote:'*catholic means universal, and does not always refer to the Roman Catholic Church.' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'' },
+    { title:'Lectionary', type:'lectionary', reference:'', includeText:false, readings:[
+      { key:'ot', label:'Old Testament', reference:'', content:'' },
+      { key:'psalm', label:'Psalm', reference:'', content:'' },
+      { key:'nt', label:'New Testament', reference:'', content:'' },
+      { key:'gospel', label:'Gospel', reference:'', content:'' },
+    ]},
+    { title:'Response to the Reading', type:'response', reference:'', locked:true,
+      leaderText:'This is the word of the Lord.', peopleText:'Thanks be to God!' },
+    { title:'Pastoral Prayer', type:'text', reference:'',
+      content:'Opening:\n\nThanksgiving:\n\nPetitions:' },
+    { title:'The Lord\'s Prayer', type:'response', reference:'', locked:true,
+      leaderText:'...And now, as you taught us, we pray together:',
+      peopleText:'Our Father which art in heaven, hallowed be Thy name.\nThy kingdom come, Thy will be done, on earth as it is in heaven.\nGive us this day our daily bread and forgive us our debts as we forgive our debtors.\nLead us not into temptation but deliver us from evil.\nFor Thine is the kingdom, and the power, and the glory forever.\nAmen!' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'' },
+    { title:'Sermon', type:'sermon', reference:'', sermonTitle:'', passageReference:'', hasManuscript:false, manuscript:'' },
+    { title:'Offering Exhortation', type:'rubric', reference:'',
+      content:'What is required of you today? If you are a guest, there is no expectation for you to give this morning.' },
+    { title:'Offertory Sentence', type:'response', reference:'', locked:true,
+      leaderText:'All things come from you, O Lord.', peopleText:'And from your own have we given you. (1 Chr. 29:14)' },
+    { title:'Offertory Prayer', type:'text', reference:'', locked:true,
+      content:'Oh God, receive these gifts given in and through your Son. Make these tithes and offerings profitable for your kingdom. May they be used to support your church, to care for the poor and needy, and to take the gospel to the ends of the earth. Bless it, O God. In Jesus\' name we pray. Amen.' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'' },
+  ]},
+  { key:'communion', label:'God Communes with Us', color:'var(--communion)', elements:[
+    { title:'Communion Instructions', type:'rubric', reference:'',
+      content:'This sacrament is for all baptized believers in Jesus Christ, who are not under disciplinary action of another local church. If you are not a believer or have not been baptized, we\'re glad you\'re here, and you are welcome to observe, but please allow the elements to pass today and talk to the pastor about how you may partake in the future.\n\nTwo distributions, the bread first and then the wine. Wait and we\'ll partake together.' },
+    { title:'The Bread', type:'scripture', reference:'1 Corinthians 11:23-24', content:'' },
+    { title:'Blessing of the Bread', type:'variant-text',
+      variants:[{ id:'bread-standard', label:'Standard', content:'Father, we thank you for this bread and the body of your Son. As truly as this bread arose from the earth, endured the furnace of affliction, and rose glorified for us to enjoy today, we remember and proclaim the same of our Savior. God, turn our hearts to be satisfied in our crucified and glorified Lord. In this bread, give us Christ. Amen.' }],
+      activeVariantId:'bread-standard' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'' },
+    { title:'Reception of the Bread', type:'text', reference:'', content:'The bread is communion in the body of Christ. Take and eat.' },
+    { title:'The Wine', type:'scripture', reference:'1 Corinthians 11:25', content:'' },
+    { title:'Blessing of the Wine', type:'variant-text',
+      variants:[{ id:'wine-standard', label:'Standard', content:'O God, you give wine to gladden the heart of man. Grant us gladness of heart as we remember the blood of your Son that made full atonement for our sin. We give thanks and ask your blessing. In this cup, give us Christ.' }],
+      activeVariantId:'wine-standard' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'' },
+    { title:'Reception of the Wine', type:'text', reference:'', content:'The cup of blessing is communion in the blood of Christ. Let us drink together.' },
+    { title:'Proclamation of Remembrance', type:'response', reference:'', locked:true,
+      leaderText:'For as often as you eat this bread and drink the cup, you proclaim the Lord\'s death until he comes. (1 Cor. 11:26)',
+      peopleText:'We remember his death,\nWe proclaim his resurrection,\nWe await his coming in glory.' },
+    { title:'Eucharistic Blessing', type:'response', reference:'', locked:true,
+      leaderText:'Now may the body and blood of our Lord Jesus Christ strengthen and preserve you all steadfast in the most holy faith until life everlasting!',
+      peopleText:'Amen!' },
+    { title:'Hymn — Doxology', type:'hymn', locked:true, hymnNumber:'1076', hymnTitle:'Doxology' },
+  ]},
+  { key:'commission', label:'God Commissions Us with His Blessing', color:'var(--commission)', elements:[
+    { title:'Charge', type:'text', reference:'', content:'' },
+    { title:'Benediction', type:'scripture', reference:'', content:'' },
+    { title:'Response', type:'response', reference:'', leaderText:'Amen!', peopleText:'Amen!' },
+    { title:'Dismissal', type:'text', reference:'', content:'Go in peace.' },
+  ]},
+];
+
+let state = null;
+let idCounter = 1;
+function newId(){ return 'el' + (idCounter++); }
+
+function loadStateFromTemplate(template){
+  state = template.map(m => ({
+    key:m.key, label:m.label, color:m.color,
+    elements: m.elements.map(e => ({ id:newId(), ...e }))
+  }));
+}
+
+function render(){
+  const container = document.getElementById('movements');
+  container.innerHTML = '';
+  state.forEach(movement => {
+    const sec = document.createElement('section');
+    sec.className = 'movement';
+    sec.style.setProperty('--m-color', movement.color);
+
+    sec.innerHTML = `
+      <div class="movement-head">
+        <span class="icon">${ICONS[movement.key] || ''}</span>
+        <h2>${movement.label}</h2>
+        <span class="count">${movement.elements.length} element${movement.elements.length===1?'':'s'}</span>
+      </div>
+      <div class="elements" data-movement="${movement.key}"></div>
+      <div style="padding:0 14px 14px;">
+        <button class="add-element" onclick="addElement('${movement.key}')">+ Add Element</button>
+      </div>
+    `;
+    container.appendChild(sec);
+
+    const list = sec.querySelector('.elements');
+    movement.elements.forEach(el => list.appendChild(renderElement(el)));
+
+    Sortable.create(list, {
+      group: 'liturgy-elements',
+      handle: '.drag-handle',
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      onEnd: syncStateFromDOM
+    });
+  });
+}
+
+function renderElement(el){
+  const card = document.createElement('div');
+  card.className = 'element-card';
+  card.dataset.id = el.id;
+
+  const header = `
+    <div class="element-row1">
+      <input class="element-title" value="${escapeAttr(el.title)}" placeholder="Element title" oninput="updateField('${el.id}','title',this.value)">
+      ${el.locked ? '<span class="lock-badge" title="Standing text — part of every service">🔒</span>' : ''}
+      <select class="type-select" onchange="updateField('${el.id}','type',this.value)">
+        <option value="scripture" ${el.type==='scripture'?'selected':''}>Scripture</option>
+        <option value="text" ${el.type==='text'?'selected':''}>Text / Prayer</option>
+        <option value="response" ${el.type==='response'?'selected':''}>Congregational Response</option>
+        <option value="rubric" ${el.type==='rubric'?'selected':''}>Rubric</option>
+        <option value="hymn" ${el.type==='hymn'?'selected':''}>Hymn</option>
+        <option value="lectionary" ${el.type==='lectionary'?'selected':''}>Lectionary</option>
+        <option value="variant-text" ${el.type==='variant-text'?'selected':''}>Prayer (multiple versions)</option>
+        <option value="exhortation" ${el.type==='exhortation'?'selected':''}>Exhortation</option>
+        <option value="sermon" ${el.type==='sermon'?'selected':''}>Sermon</option>
+      </select>
+      ${el.locked ? '' : `<button class="remove-btn" title="Remove" onclick="removeElement('${el.id}')">✕</button>`}
+    </div>
+  `;
+
+  let body;
+  if(el.type === 'hymn'){
+    body = `
+      <div class="hymn-fields">
+        <input class="hymn-number-input" placeholder="No." value="${escapeAttr(el.hymnNumber)}" oninput="updateField('${el.id}','hymnNumber',this.value)">
+        <input class="hymn-title-input" placeholder="Hymn title" value="${escapeAttr(el.hymnTitle)}" oninput="updateField('${el.id}','hymnTitle',this.value)">
+      </div>
+    `;
+  } else if(el.type === 'exhortation'){
+    body = `
+      <input class="reference-input" placeholder="Title of the exhortation" value="${escapeAttr(el.subtitle)}" oninput="updateField('${el.id}','subtitle',this.value)">
+      <textarea class="content-area" placeholder="Exhortation manuscript…" style="min-height:110px" oninput="updateField('${el.id}','content',this.value)">${escapeHTML(el.content)}</textarea>
+    `;
+  } else if(el.type === 'sermon'){
+    body = `
+      <input class="reference-input" placeholder="Sermon title" value="${escapeAttr(el.sermonTitle)}" oninput="updateField('${el.id}','sermonTitle',this.value)">
+      <input class="reference-input" placeholder="Sermon text (e.g. Jonah 1:4-10)" value="${escapeAttr(el.passageReference)}" oninput="updateField('${el.id}','passageReference',this.value)">
+      <label class="alt-toggle">
+        <input type="checkbox" ${el.hasManuscript?'checked':''} onchange="updateField('${el.id}','hasManuscript',this.checked)">
+        Include a manuscript text box
+      </label>
+      ${el.hasManuscript ? `<textarea class="content-area" placeholder="Sermon manuscript…" style="min-height:110px" oninput="updateField('${el.id}','manuscript',this.value)">${escapeHTML(el.manuscript)}</textarea>` : ''}
+    `;
+  } else if(el.type === 'variant-text'){
+    const activeId = el.activeVariantId || (el.variants[0] && el.variants[0].id);
+    const active = el.variants.find(v => v.id === activeId) || el.variants[0];
+    const options = el.variants.map(v => `<option value="${v.id}" ${v.id===activeId?'selected':''}>${escapeHTML(v.label)}</option>`).join('');
+    body = `
+      <div class="response-fields">
+        <div class="response-line">
+          <label>Version</label>
+          <select class="version-select" onchange="updateField('${el.id}','activeVariantId',this.value)">${options}</select>
+        </div>
+        <textarea class="content-area" placeholder="Prayer text…" oninput="updateVariantContent('${el.id}','${active.id}',this.value)">${escapeHTML(active.content)}</textarea>
+        <button class="add-element" onclick="addVariant('${el.id}')">+ Add &amp; save a new version</button>
+      </div>
+      <div class="print-response"><p>${escapeHTML(active.content)}</p></div>
+    `;
+  } else if(el.type === 'response'){
+    const toggleLabel = el.altMode==='replace'
+      ? `Use the ${escapeHTML(el.altLabel)||'seasonal'} version this week (replaces the text above)`
+      : `Add this ${escapeHTML(el.altLabel)||'seasonal'} exchange this week (goes before the text above)`;
+    body = `
+      <div class="response-fields">
+        <div class="response-line">
+          <label>Leader says</label>
+          <textarea class="response-input" placeholder="e.g. The Lord be with you!" oninput="updateField('${el.id}','leaderText',this.value)">${escapeHTML(el.leaderText)}</textarea>
+        </div>
+        <label class="skip-toggle" title="Leave the Leader's line out of this week's printed liturgy (e.g. if the passage above already ends in Amen)">
+          <input type="checkbox" ${el.skipLeader?'checked':''} onchange="updateField('${el.id}','skipLeader',this.checked)">
+          Skip the Leader's line this week
+        </label>
+        <div class="response-line">
+          <label>People respond</label>
+          <textarea class="response-input" placeholder="e.g. And also with you!" oninput="updateField('${el.id}','peopleText',this.value)">${escapeHTML(el.peopleText)}</textarea>
+        </div>
+        ${el.hasFootnote ? `
+        <div class="response-line">
+          <label>Footnote (optional)</label>
+          <input class="response-input" style="min-height:auto" placeholder="Explanatory note shown under the text, e.g. *catholic means universal…" value="${escapeAttr(el.footnote)}" oninput="updateField('${el.id}','footnote',this.value)">
+        </div>` : ''}
+        ${el.allowSeasonal ? `
+        <label class="alt-toggle">
+          <input type="checkbox" ${el.hasAlt?'checked':''} onchange="updateField('${el.id}','hasAlt',this.checked)">
+          Has a seasonal variant
+        </label>
+        ${el.hasAlt ? `
+        <div class="alt-fields">
+          <input class="alt-label-input" placeholder="Season name (e.g. Eastertide)" value="${escapeAttr(el.altLabel)}" oninput="updateField('${el.id}','altLabel',this.value)">
+          <div class="response-line">
+            <label>Leader (alt.)</label>
+            <textarea class="response-input" oninput="updateField('${el.id}','altLeaderText',this.value)">${escapeHTML(el.altLeaderText)}</textarea>
+          </div>
+          <div class="response-line">
+            <label>People (alt.)</label>
+            <textarea class="response-input" oninput="updateField('${el.id}','altPeopleText',this.value)">${escapeHTML(el.altPeopleText)}</textarea>
+          </div>
+          ${el.hasFootnote ? `
+          <div class="response-line">
+            <label>Footnote (alt.)</label>
+            <input class="response-input" style="min-height:auto" placeholder="Same footnote, if unchanged" value="${escapeAttr(el.altFootnote)}" oninput="updateField('${el.id}','altFootnote',this.value)">
+          </div>` : ''}
+          <label class="alt-toggle">
+            <input type="checkbox" ${el.altActive?'checked':''} onchange="updateField('${el.id}','altActive',this.checked)">
+            ${toggleLabel}
+          </label>
+        </div>` : ''}` : ''}
+      </div>
+      <div class="print-response">${buildResponsePrintHTML(el)}</div>
+    `;
+  } else if(el.type === 'lectionary'){
+    const rows = el.readings.map(r => `
+      <div class="lectionary-row">
+        <div class="lectionary-label">${escapeHTML(r.label)}</div>
+        <input class="reference-input" placeholder="${escapeAttr(r.label)} reference" value="${escapeAttr(r.reference)}" oninput="updateReadingField('${el.id}','${r.key}','reference',this.value)">
+        <textarea class="content-area${el.includeText ? '' : ' text-hide-in-print'}" placeholder="Passage text (optional)" oninput="updateReadingField('${el.id}','${r.key}','content',this.value)">${escapeHTML(r.content)}</textarea>
+      </div>
+    `).join('');
+    body = `
+      ${rows}
+      <label class="alt-toggle">
+        <input type="checkbox" ${el.includeText?'checked':''} onchange="updateField('${el.id}','includeText',this.checked)">
+        Include full text for these readings in the printed liturgy
+      </label>
+    `;
+  } else {
+    body = `
+      ${el.type==='scripture' ? `<input class="reference-input" placeholder="Scripture reference (e.g. Psalm 95:1-7)" value="${escapeAttr(el.reference)}" oninput="updateField('${el.id}','reference',this.value)">` : ''}
+      <textarea class="content-area" placeholder="${placeholderFor(el.type)}" oninput="updateField('${el.id}','content',this.value)">${escapeHTML(el.content)}</textarea>
+    `;
+  }
+
+  card.innerHTML = `
+    <span class="drag-handle">⠿</span>
+    <div class="element-body">${header}${body}</div>
+  `;
+  return card;
+}
+
+function updateReadingField(id, key, field, value){
+  const el = findEl(id);
+  if(!el || !el.readings) return;
+  const r = el.readings.find(r => r.key === key);
+  if(r) r[field] = value;
+}
+
+function placeholderFor(type){
+  if(type==='scripture') return 'Paste or type the passage text here (optional)…';
+  if(type==='rubric') return 'Instruction for congregation/leader (e.g. "If you are able, let us kneel together…")';
+  return 'Prayer, exhortation, or custom text…';
+}
+
+function buildResponsePrintHTML(el){
+  const useAlt = el.allowSeasonal && el.hasAlt && el.altActive;
+  let html = '';
+  if(useAlt && el.altMode === 'replace'){
+    html += `<p><span class="speaker">Leader:</span> ${escapeHTML(el.altLeaderText)}</p><p><span class="speaker">People:</span> ${escapeHTML(el.altPeopleText)}</p>`;
+    const fn = el.altFootnote || el.footnote;
+    if(fn) html += `<p class="footnote">${escapeHTML(fn)}</p>`;
+    return html;
+  }
+  if(useAlt){
+    html += `<p><span class="speaker">Leader:</span> ${escapeHTML(el.altLeaderText)}</p><p><span class="speaker">People:</span> ${escapeHTML(el.altPeopleText)}</p>`;
+  }
+  if(!el.skipLeader) html += `<p><span class="speaker">Leader:</span> ${escapeHTML(el.leaderText)}</p>`;
+  html += `<p><span class="speaker">People:</span> ${escapeHTML(el.peopleText)}</p>`;
+  if(el.footnote) html += `<p class="footnote">${escapeHTML(el.footnote)}</p>`;
+  return html;
+}
+
+function findEl(id){
+  for(const m of state) for(const e of m.elements) if(e.id===id) return e;
+  return null;
+}
+
+function updateField(id, field, value){
+  const el = findEl(id);
+  if(!el) return;
+  el[field] = value;
+  if(field === 'type' && value === 'lectionary' && !el.readings){
+    el.readings = [
+      { key:'ot', label:'Old Testament', reference:'', content:'' },
+      { key:'psalm', label:'Psalm', reference:'', content:'' },
+      { key:'nt', label:'New Testament', reference:'', content:'' },
+      { key:'gospel', label:'Gospel', reference:'', content:'' },
+    ];
+    el.includeText = false;
+  }
+  if(field === 'type' && value === 'variant-text' && !el.variants){
+    el.variants = [{ id:'v'+Date.now(), label:'Standard', content:'' }];
+    el.activeVariantId = el.variants[0].id;
+  }
+  if(['type','hasAlt','hasManuscript','includeText','activeVariantId'].includes(field)){ render(); return; }
+  if(el.type === 'response') refreshResponsePrint(id);
+}
+
+function updateVariantContent(id, variantId, value){
+  const el = findEl(id);
+  if(!el || !el.variants) return;
+  const v = el.variants.find(v => v.id === variantId);
+  if(v) v.content = value;
+  const target = document.querySelector(`.element-card[data-id="${id}"] .print-response p`);
+  if(target) target.textContent = value;
+}
+
+function addVariant(id){
+  const el = findEl(id);
+  if(!el || !el.variants) return;
+  const label = prompt('Who is this version for? (e.g. a minister\'s name)', '');
+  if(label === null) return;
+  const newVariant = { id:'v'+Date.now(), label: label.trim() || 'New Version', content:'' };
+  el.variants.push(newVariant);
+  el.activeVariantId = newVariant.id;
+  render();
+}
+
+function refreshResponsePrint(id){
+  const el = findEl(id);
+  const target = document.querySelector(`.element-card[data-id="${id}"] .print-response`);
+  if(target) target.innerHTML = buildResponsePrintHTML(el);
+}
+
+function removeElement(id){
+  for(const m of state){
+    const idx = m.elements.findIndex(e => e.id===id);
+    if(idx>-1){ m.elements.splice(idx,1); render(); return; }
+  }
+}
+
+function addElement(movementKey){
+  const m = state.find(x => x.key===movementKey);
+  m.elements.push({ id:newId(), title:'New Element', type:'text', reference:'', content:'' });
+  render();
+}
+
+function syncStateFromDOM(){
+  const container = document.getElementById('movements');
+  const lists = container.querySelectorAll('.elements');
+  const newState = [];
+  lists.forEach(list => {
+    const key = list.dataset.movement;
+    const movement = state.find(m => m.key === key);
+    const ids = Array.from(list.children).map(c => c.dataset.id);
+    const elements = ids.map(id => findEl(id));
+    newState.push({ ...movement, elements });
+  });
+  state = newState;
+}
+
+function escapeHTML(str){
+  return (str||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+}
+function escapeAttr(str){
+  return (str||'').replace(/"/g,'&quot;');
+}
+
+function resetTemplate(){
+  if(!confirm('Reset to the default Covenant Renewal Worship template? Unsaved changes will be lost.')) return;
+  loadStateFromTemplate(DEFAULT_TEMPLATE);
+  document.getElementById('serviceTitle').value = '';
+  document.getElementById('serviceDate').value = '';
+  render();
+}
+
+function saveToFile(){
+  const payload = {
+    churchTitle: document.getElementById('churchTitle').innerText,
+    serviceTitle: document.getElementById('serviceTitle').value,
+    serviceDate: document.getElementById('serviceDate').value,
+    movements: state
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = payload.serviceDate || new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `liturgy-${dateStr}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('loadInput').addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    try{
+      const data = JSON.parse(evt.target.result);
+      document.getElementById('churchTitle').innerText = data.churchTitle || 'Order of Worship';
+      document.getElementById('serviceTitle').value = data.serviceTitle || '';
+      document.getElementById('serviceDate').value = data.serviceDate || '';
+      state = data.movements.map(m => ({
+        ...m,
+        elements: m.elements.map(el => ({ ...el, id: newId() }))
+      }));
+      render();
+    }catch(err){
+      alert('Could not read that file. Please make sure it is a liturgy file saved from this app.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+/* ---------------------------------------------------------------------
+   Liturgical calendar engine — computed entirely offline (no network,
+   no external lectionary data needed) from the date alone:
+   - Easter via the standard Gregorian algorithm
+   - Season / Sunday name (e.g. "Third Sunday after the Epiphany")
+   - RCL Year A/B/C  (anchored: Advent 2025 = Year A, confirmed against
+     the published 2026-2027 RCL calendar)
+   - Whether Eastertide / Advent–Christmastide is in effect, to drive
+     the Greeting and Creed seasonal toggles automatically
+   Note: named special Sundays (Trinity Sunday, Christ the King,
+   Baptism of the Lord, Transfiguration, All Saints) aren't labeled by
+   name — they'll show as their season/number instead. The subtitle
+   field stays a normal text box, so it's always easy to hand-correct.
+--------------------------------------------------------------------- */
+function computeEaster(year){
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19*a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2*e + 2*i - h - k) % 7;
+  const m = Math.floor((a + 11*h + 22*l) / 451);
+  const month = Math.floor((h + l - 7*m + 114) / 31);
+  const day = ((h + l - 7*m + 114) % 31) + 1;
+  return new Date(year, month - 1, day);
+}
+function addDays(date, n){ const d = new Date(date); d.setDate(d.getDate() + n); return d; }
+function daysBetween(a, b){ return Math.round((b - a) / 86400000); }
+function sundayOnOrBefore(date){ return addDays(date, -date.getDay()); }
+function sundayOnOrAfter(date){ return date.getDay() === 0 ? date : addDays(date, 7 - date.getDay()); }
+function closestSunday(date){
+  const before = sundayOnOrBefore(date), after = sundayOnOrAfter(date);
+  return (after - date) < (date - before) ? after : before;
+}
+function adventSunday(year){ return closestSunday(new Date(year, 10, 30)); }
+function ordinal(n){
+  const s = ['th','st','nd','rd'], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+function getLiturgicalInfo(dateStr){
+  if(!dateStr) return null;
+  const [Y, M, D] = dateStr.split('-').map(Number);
+  const date = new Date(Y, M - 1, D);
+  const easter = computeEaster(Y);
+  const ashWed = addDays(easter, -46);
+  const palmSunday = addDays(easter, -7);
+  const pentecost = addDays(easter, 49);
+  const epiphany = new Date(Y, 0, 6);
+  const christmasThis = new Date(Y, 11, 25);
+  const adventThis = adventSunday(Y);
+
+  let label, isEastertide = false, isAdventOrChristmastide = false, yearAnchor;
+
+  if(date < epiphany){
+    label = 'Christmastide'; isAdventOrChristmastide = true; yearAnchor = Y - 1;
+  } else if(date < ashWed){
+    const weeks = Math.max(1, Math.round(daysBetween(epiphany, date) / 7) + 1);
+    label = `${ordinal(weeks)} Sunday after the Epiphany`; yearAnchor = Y - 1;
+  } else if(date < easter){
+    if(daysBetween(date, palmSunday) === 0){ label = 'Palm Sunday'; }
+    else { const weeks = Math.max(1, Math.round(daysBetween(ashWed, date) / 7)); label = `${ordinal(weeks)} Sunday in Lent`; }
+    yearAnchor = Y - 1;
+  } else if(date < pentecost){
+    const weeks = Math.round(daysBetween(easter, date) / 7) + 1;
+    label = weeks <= 1 ? 'Easter Sunday' : `${ordinal(weeks)} Sunday of Easter`;
+    isEastertide = true; yearAnchor = Y - 1;
+  } else if(daysBetween(date, pentecost) === 0){
+    label = 'Day of Pentecost'; yearAnchor = Y - 1;
+  } else if(date < adventThis){
+    const may11 = new Date(Y, 4, 11);
+    const proper = Math.min(29, Math.max(1, Math.round(daysBetween(may11, date) / 7) + 1));
+    const afterPentecostWeeks = Math.round(daysBetween(pentecost, date) / 7) + 1;
+    label = `${ordinal(afterPentecostWeeks)} Sunday after Pentecost (Proper ${proper})`;
+    yearAnchor = Y - 1;
+  } else if(date < christmasThis){
+    const weeks = Math.round(daysBetween(adventThis, date) / 7) + 1;
+    label = `${ordinal(weeks)} Sunday of Advent`; isAdventOrChristmastide = true; yearAnchor = Y;
+  } else {
+    label = 'Christmastide'; isAdventOrChristmastide = true; yearAnchor = Y;
+  }
+
+  const letters = ['A','B','C'];
+  const rclYear = letters[((yearAnchor - 2025) % 3 + 3) % 3];
+  return { label, rclYear, isEastertide, isAdventOrChristmastide, yearAnchor };
+}
+
+function onDateChange(){
+  const dateStr = document.getElementById('serviceDate').value;
+  if(!dateStr) return;
+  const info = getLiturgicalInfo(dateStr);
+  if(!info) return;
+  document.getElementById('serviceTitle').value = `${info.label} (Year ${info.rclYear})`;
+  state.forEach(m => m.elements.forEach(e => {
+    if(e.type === 'response' && e.allowSeasonal){
+      e.altActive = e.altMode === 'replace' ? info.isAdventOrChristmastide : info.isEastertide;
+    }
+  }));
+  render();
+  syncLectionary(dateStr);
+}
+document.getElementById('serviceDate').addEventListener('change', onDateChange);
+
+/* ---------------------------------------------------------------------
+   RCL lookup — static, embedded, offline. No network requests, so it
+   can't fail from a browser security block or a source going down.
+   Covers the current two RCL cycles (Year A: Nov 2025-Nov 2026, Year
+   B: Nov 2026-Nov 2027) by exact Sunday/feast date, sourced from the
+   Vanderbilt Divinity Library's published RCL citation lists. Outside
+   that date range, or for a date that isn't a Sunday/feast on the
+   RCL, it says so plainly and links out to look it up.
+--------------------------------------------------------------------- */
+const RCL_DATA = {"2025-11-30":{"name":"First Sunday of Advent","ot":"Isaiah 2:1-5","psalm":"Psalm 122","nt":"Romans 13:11-14","gospel":"Matthew 24:36-44"},"2025-12-07":{"name":"Second Sunday of Advent","ot":"Isaiah 11:1-10","psalm":"Psalm 72:1-7, 18-19","nt":"Romans 15:4-13","gospel":"Matthew 3:1-12"},"2025-12-14":{"name":"Third Sunday of Advent","ot":"Isaiah 35:1-10","psalm":"Psalm 146:5-10 or Luke 1:46b-55","nt":"James 5:7-10","gospel":"Matthew 11:2-11"},"2025-12-21":{"name":"Fourth Sunday of Advent","ot":"Isaiah 7:10-16","psalm":"Psalm 80:1-7, 17-19","nt":"Romans 1:1-7","gospel":"Matthew 1:18-25"},"2025-12-25":{"name":"Nativity of the Lord (Christmas)","ot":"Isaiah 9:2-7","psalm":"Psalm 96","nt":"Titus 2:11-14","gospel":"Luke 2:1-14, (15-20)"},"2025-12-28":{"name":"First Sunday after Christmas Day","ot":"Isaiah 63:7-9","psalm":"Psalm 148","nt":"Hebrews 2:10-18","gospel":"Matthew 2:13-23"},"2026-01-01":{"name":"Holy Name of Jesus","ot":"Numbers 6:22-27","psalm":"Psalm 8","nt":"Galatians 4:4-7 or Philippians 2:5-11","gospel":"Luke 2:15-21"},"2026-01-04":{"name":"Second Sunday after Christmas","ot":"Jeremiah 31:7-14 or Sirach 24:1-12","psalm":"Psalm 147:12-20 or Wisdom of Solomon 10:15-21","nt":"Ephesians 1:3-14","gospel":"John 1:(1-9), 10-18"},"2026-01-06":{"name":"Epiphany of the Lord","ot":"Isaiah 60:1-6","psalm":"Psalm 72:1-7, 10-14","nt":"Ephesians 3:1-12","gospel":"Matthew 2:1-12"},"2026-01-11":{"name":"Baptism of the Lord","ot":"Isaiah 42:1-9","psalm":"Psalm 29","nt":"Acts 10:34-43","gospel":"Matthew 3:13-17"},"2026-01-18":{"name":"Second Sunday after the Epiphany","ot":"Isaiah 49:1-7","psalm":"Psalm 40:1-11","nt":"1 Corinthians 1:1-9","gospel":"John 1:29-42"},"2026-01-25":{"name":"Third Sunday after the Epiphany","ot":"Isaiah 9:1-4","psalm":"Psalm 27:1, 4-9","nt":"1 Corinthians 1:10-18","gospel":"Matthew 4:12-23"},"2026-02-01":{"name":"Fourth Sunday after the Epiphany","ot":"Micah 6:1-8","psalm":"Psalm 15","nt":"1 Corinthians 1:18-31","gospel":"Matthew 5:1-12"},"2026-02-02":{"name":"Presentation of the Lord","ot":"Malachi 3:1-4","psalm":"Psalm 84 or Psalm 24:7-10","nt":"Hebrews 2:14-18","gospel":"Luke 2:22-40"},"2026-02-08":{"name":"Fifth Sunday after the Epiphany","ot":"Isaiah 58:1-9a (9b-12)","psalm":"Psalm 112:1-9 (10)","nt":"1 Corinthians 2:1-12 (13-16)","gospel":"Matthew 5:13-20"},"2026-02-15":{"name":"Transfiguration Sunday","ot":"Exodus 24:12-18","psalm":"Psalm 2 or Psalm 99","nt":"2 Peter 1:16-21","gospel":"Matthew 17:1-9"},"2026-02-18":{"name":"Ash Wednesday","ot":"Joel 2:1-2, 12-17 or Isaiah 58:1-12","psalm":"Psalm 51:1-17","nt":"2 Corinthians 5:20b-6:10","gospel":"Matthew 6:1-6, 16-21"},"2026-02-22":{"name":"First Sunday in Lent","ot":"Genesis 2:15-17; 3:1-7","psalm":"Psalm 32","nt":"Romans 5:12-19","gospel":"Matthew 4:1-11"},"2026-03-01":{"name":"Second Sunday in Lent","ot":"Genesis 12:1-4a","psalm":"Psalm 121","nt":"Romans 4:1-5, 13-17","gospel":"John 3:1-17 or Matthew 17:1-9"},"2026-03-08":{"name":"Third Sunday in Lent","ot":"Exodus 17:1-7","psalm":"Psalm 95","nt":"Romans 5:1-11","gospel":"John 4:5-42"},"2026-03-15":{"name":"Fourth Sunday in Lent","ot":"1 Samuel 16:1-13","psalm":"Psalm 23","nt":"Ephesians 5:8-14","gospel":"John 9:1-41"},"2026-03-22":{"name":"Fifth Sunday in Lent","ot":"Ezekiel 37:1-14","psalm":"Psalm 130","nt":"Romans 8:6-11","gospel":"John 11:1-45"},"2026-03-25":{"name":"Annunciation of the Lord","ot":"Isaiah 7:10-14","psalm":"Psalm 45 or Psalm 40:5-10","nt":"Hebrews 10:4-10","gospel":"Luke 1:26-38"},"2026-03-29":{"name":"Liturgy of the Passion","ot":"Isaiah 50:4-9a","psalm":"Psalm 31:9-16","nt":"Philippians 2:5-11","gospel":"Matthew 26:14-27:66 or Matthew 27:11-54"},"2026-03-30":{"name":"Monday of Holy Week","ot":"Isaiah 42:1-9","psalm":"Psalm 36:5-11","nt":"Hebrews 9:11-15","gospel":"John 12:1-11"},"2026-03-31":{"name":"Tuesday of Holy Week","ot":"Isaiah 49:1-7","psalm":"Psalm 71:1-14","nt":"1 Corinthians 1:18-31","gospel":"John 12:20-36"},"2026-04-01":{"name":"Wednesday of Holy Week","ot":"Isaiah 50:4-9a","psalm":"Psalm 70","nt":"Hebrews 12:1-3","gospel":"John 13:21-32"},"2026-04-02":{"name":"Maundy Thursday","ot":"Exodus 12:1-4, (5-10), 11-14","psalm":"Psalm 116:1-2, 12-19","nt":"1 Corinthians 11:23-26","gospel":"John 13:1-17, 31b-35"},"2026-04-03":{"name":"Good Friday","ot":"Isaiah 52:13-53:12","psalm":"Psalm 22","nt":"Hebrews 10:16-25 or Hebrews 4:14-16; 5:7-9","gospel":"John 18:1-19:42"},"2026-04-05":{"name":"Resurrection of the Lord","ot":"Acts 10:34-43 or Jeremiah 31:1-6","psalm":"Psalm 118:1-2, 14-24","nt":"Colossians 3:1-4 or Acts 10:34-43","gospel":"John 20:1-18 or Matthew 28:1-10"},"2026-04-12":{"name":"Second Sunday of Easter","ot":"Acts 2:14a, 22-32","psalm":"Psalm 16","nt":"1 Peter 1:3-9","gospel":"John 20:19-31"},"2026-04-19":{"name":"Third Sunday of Easter","ot":"Acts 2:14a, 36-41","psalm":"Psalm 116:1-4, 12-19","nt":"1 Peter 1:17-23","gospel":"Luke 24:13-35"},"2026-04-26":{"name":"Fourth Sunday of Easter","ot":"Acts 2:42-47","psalm":"Psalm 23","nt":"1 Peter 2:19-25","gospel":"John 10:1-10"},"2026-05-03":{"name":"Fifth Sunday of Easter","ot":"Acts 7:55-60","psalm":"Psalm 31:1-5, 15-16","nt":"1 Peter 2:2-10","gospel":"John 14:1-14"},"2026-05-10":{"name":"Sixth Sunday of Easter","ot":"Acts 17:22-31","psalm":"Psalm 66:8-20","nt":"1 Peter 3:13-22","gospel":"John 14:15-21"},"2026-05-14":{"name":"Ascension of the Lord","ot":"Acts 1:1-11","psalm":"Psalm 47 or Psalm 93","nt":"Ephesians 1:15-23","gospel":"Luke 24:44-53"},"2026-05-17":{"name":"Seventh Sunday of Easter","ot":"Acts 1:6-14","psalm":"Psalm 68:1-10, 32-35","nt":"1 Peter 4:12-14; 5:6-11","gospel":"John 17:1-11"},"2026-05-24":{"name":"Day of Pentecost","ot":"Acts 2:1-21 or Numbers 11:24-30","psalm":"Psalm 104:24-34, 35b","nt":"1 Corinthians 12:3b-13 or Acts 2:1-21","gospel":"John 20:19-23 or John 7:37-39"},"2026-05-31":{"name":"Trinity Sunday","ot":"Genesis 1:1-2:4a","psalm":"Psalm 8","nt":"2 Corinthians 13:11-13","gospel":"Matthew 28:16-20"},"2026-06-07":{"name":"Proper 5 (10)","ot":"Genesis 12:1-9 and Psalm 33:1-12","psalm":"Hosea 5:15-6:6 and Psalm 50:7-15","nt":"Romans 4:13-25","gospel":"Matthew 9:9-13, 18-26"},"2026-06-14":{"name":"Proper 6 (11)","ot":"Genesis 18:1-15, (21:1-7) and Psalm 116:1-2, 12-19","psalm":"Exodus 19:2-8a and Psalm 100","nt":"Romans 5:1-8","gospel":"Matthew 9:35-10:8, (9-23)"},"2026-06-21":{"name":"Proper 7 (12)","ot":"Genesis 21:8-21 and Psalm 86:1-10, 16-17","psalm":"Jeremiah 20:7-13 and Psalm 69:7-10, (11-15), 16-18","nt":"Romans 6:1b-11","gospel":"Matthew 10:24-39"},"2026-06-28":{"name":"Proper 8 (13)","ot":"Genesis 22:1-14 and Psalm 13","psalm":"Jeremiah 28:5-9 and Psalm 89:1-4, 15-18","nt":"Romans 6:12-23","gospel":"Matthew 10:40-42"},"2026-07-05":{"name":"Proper 9 (14)","ot":"Genesis 24:34-38, 42-49, 58-67 and Psalm 45:10-17 or Song of Solomon 2:8-13","psalm":"Zechariah 9:9-12 and Psalm 145:8-14","nt":"Romans 7:15-25a","gospel":"Matthew 11:16-19, 25-30"},"2026-07-12":{"name":"Proper 10 (15)","ot":"Genesis 25:19-34 and Psalm 119:105-112","psalm":"Isaiah 55:10-13 and Psalm 65:(1-8), 9-13","nt":"Romans 8:1-11","gospel":"Matthew 13:1-9, 18-23"},"2026-07-19":{"name":"Proper 11 (16)","ot":"Genesis 28:10-19a and Psalm 139:1-12, 23-24","psalm":"Wisdom of Solomon 12:13, 16-19 or Isaiah 44:6-8 and Psalm 86:11-17","nt":"Romans 8:12-25","gospel":"Matthew 13:24-30, 36-43"},"2026-07-26":{"name":"Proper 12 (17)","ot":"Genesis 29:15-28 and Psalm 105:1-11, 45b or Psalm 128","psalm":"1 Kings 3:5-12 and Psalm 119:129-136","nt":"Romans 8:26-39","gospel":"Matthew 13:31-33, 44-52"},"2026-08-02":{"name":"Proper 13 (18)","ot":"Genesis 32:22-31 and Psalm 17:1-7, 15","psalm":"Isaiah 55:1-5 and Psalm 145:8-9, 14-21","nt":"Romans 9:1-5","gospel":"Matthew 14:13-21"},"2026-08-09":{"name":"Proper 14 (19)","ot":"Genesis 37:1-4, 12-28 and Psalm 105:1-6, 16-22, 45b","psalm":"1 Kings 19:9-18 and Psalm 85:8-13","nt":"Romans 10:5-15","gospel":"Matthew 14:22-33"},"2026-08-16":{"name":"Proper 15 (20)","ot":"Genesis 45:1-15 and Psalm 133","psalm":"Isaiah 56:1, 6-8 and Psalm 67","nt":"Romans 11:1-2a, 29-32","gospel":"Matthew 15:(10-20), 21-28"},"2026-08-23":{"name":"Proper 16 (21)","ot":"Exodus 1:8-2:10 and Psalm 124","psalm":"Isaiah 51:1-6 and Psalm 138","nt":"Romans 12:1-8","gospel":"Matthew 16:13-20"},"2026-08-30":{"name":"Proper 17 (22)","ot":"Exodus 3:1-15 and Psalm 105:1-6, 23-26, 45b","psalm":"Jeremiah 15:15-21 and Psalm 26:1-8","nt":"Romans 12:9-21","gospel":"Matthew 16:21-28"},"2026-09-06":{"name":"Proper 18 (23)","ot":"Exodus 12:1-14 and Psalm 149","psalm":"Ezekiel 33:7-11 and Psalm 119:33-40","nt":"Romans 13:8-14","gospel":"Matthew 18:15-20"},"2026-09-13":{"name":"Proper 19 (24)","ot":"Exodus 14:19-31 and Psalm 114 or Exodus 15:1b-11, 20-21","psalm":"Genesis 50:15-21 and Psalm 103:(1-7), 8-13","nt":"Romans 14:1-12","gospel":"Matthew 18:21-35"},"2026-09-20":{"name":"Proper 20 (25)","ot":"Exodus 16:2-15 and Psalm 105:1-6, 37-45","psalm":"Jonah 3:10-4:11 and Psalm 145:1-8","nt":"Philippians 1:21-30","gospel":"Matthew 20:1-16"},"2026-09-27":{"name":"Proper 21 (26)","ot":"Exodus 17:1-7 and Psalm 78:1-4, 12-16","psalm":"Ezekiel 18:1-4, 25-32 and Psalm 25:1-9","nt":"Philippians 2:1-13","gospel":"Matthew 21:23-32"},"2026-10-04":{"name":"Proper 22 (27)","ot":"Exodus 20:1-4, 7-9, 12-20 and Psalm 19","psalm":"Isaiah 5:1-7 and Psalm 80:7-15","nt":"Philippians 3:4b-14","gospel":"Matthew 21:33-46"},"2026-10-11":{"name":"Proper 23 (28)","ot":"Exodus 32:1-14 and Psalm 106:1-6, 19-23","psalm":"Isaiah 25:1-9 and Psalm 23","nt":"Philippians 4:1-9","gospel":"Matthew 22:1-14"},"2026-10-18":{"name":"Proper 24 (29)","ot":"Exodus 33:12-23 and Psalm 99","psalm":"Isaiah 45:1-7 and Psalm 96:1-9, (10-13)","nt":"1 Thessalonians 1:1-10","gospel":"Matthew 22:15-22"},"2026-10-25":{"name":"Proper 25 (30)","ot":"Deuteronomy 34:1-12 and Psalm 90:1-6, 13-17","psalm":"Leviticus 19:1-2, 15-18 and Psalm 1","nt":"1 Thessalonians 2:1-8","gospel":"Matthew 22:34-46"},"2026-11-01":{"name":"Proper 26 (31)","ot":"Joshua 3:7-17 and Psalm 107:1-7, 33-37","psalm":"Micah 3:5-12 and Psalm 43","nt":"1 Thessalonians 2:9-13","gospel":"Matthew 23:1-12"},"2026-11-08":{"name":"Proper 27 (32)","ot":"Joshua 24:1-3a, 14-25 and Psalm 78:1-7","psalm":"Wisdom of Solomon 6:12-16 or Amos 5:18-24 and Wisdom of Solomon 6:17-20 or Psalm 70","nt":"1 Thessalonians 4:13-18","gospel":"Matthew 25:1-13"},"2026-11-15":{"name":"Proper 28 (33)","ot":"Judges 4:1-7 and Psalm 123","psalm":"Zephaniah 1:7, 12-18 and Psalm 90:1-8, (9-11), 12","nt":"1 Thessalonians 5:1-11","gospel":"Matthew 25:14-30"},"2026-11-22":{"name":"Reign of Christ","ot":"Ezekiel 34:11-16, 20-24","psalm":"Psalm 100","nt":"Ephesians 1:15-23","gospel":"Matthew 25:31-46"},"2026-11-29":{"name":"First Sunday of Advent","ot":"Isaiah 64:1-9","psalm":"Psalm 80:1-7, 17-19","nt":"1 Corinthians 1:3-9","gospel":"Mark 13:24-37"},"2026-12-06":{"name":"Second Sunday of Advent","ot":"Isaiah 40:1-11","psalm":"Psalm 85:1-2, 8-13","nt":"2 Peter 3:8-15a","gospel":"Mark 1:1-8"},"2026-12-13":{"name":"Third Sunday of Advent","ot":"Isaiah 61:1-4, 8-11","psalm":"Psalm 126 or Luke 1:46b-55","nt":"1 Thessalonians 5:16-24","gospel":"John 1:6-8, 19-28"},"2026-12-20":{"name":"Fourth Sunday of Advent","ot":"2 Samuel 7:1-11, 16","psalm":"Luke 1:46b-55 or Psalm 89:1-4, 19-26","nt":"Romans 16:25-27","gospel":"Luke 1:26-38"},"2026-12-25":{"name":"Nativity of the Lord (Christmas)","ot":"Isaiah 9:2-7","psalm":"Psalm 96","nt":"Titus 2:11-14","gospel":"Luke 2:1-14, (15-20)"},"2026-12-27":{"name":"First Sunday after Christmas Day","ot":"Isaiah 61:10-62:3","psalm":"Psalm 148","nt":"Galatians 4:4-7","gospel":"Luke 2:22-40"},"2027-01-01":{"name":"Holy Name of Jesus","ot":"Numbers 6:22-27","psalm":"Psalm 8","nt":"Galatians 4:4-7 or Philippians 2:5-11","gospel":"Luke 2:15-21"},"2027-01-03":{"name":"Second Sunday after Christmas","ot":"Jeremiah 31:7-14 or Sirach 24:1-12","psalm":"Psalm 147:12-20 or Wisdom of Solomon 10:15-21","nt":"Ephesians 1:3-14","gospel":"John 1:(1-9), 10-18"},"2027-01-06":{"name":"Epiphany of the Lord","ot":"Isaiah 60:1-6","psalm":"Psalm 72:1-7, 10-14","nt":"Ephesians 3:1-12","gospel":"Matthew 2:1-12"},"2027-01-10":{"name":"Baptism of the Lord","ot":"Genesis 1:1-5","psalm":"Psalm 29","nt":"Acts 19:1-7","gospel":"Mark 1:4-11"},"2027-01-17":{"name":"Second Sunday after the Epiphany","ot":"1 Samuel 3:1-10, (11-20)","psalm":"Psalm 139:1-6, 13-18","nt":"1 Corinthians 6:12-20","gospel":"John 1:43-51"},"2027-01-24":{"name":"Third Sunday after the Epiphany","ot":"Jonah 3:1-5, 10","psalm":"Psalm 62:5-12","nt":"1 Corinthians 7:29-31","gospel":"Mark 1:14-20"},"2027-01-31":{"name":"Fourth Sunday after the Epiphany","ot":"Deuteronomy 18:15-20","psalm":"Psalm 111","nt":"1 Corinthians 8:1-13","gospel":"Mark 1:21-28"},"2027-02-02":{"name":"Presentation of the Lord","ot":"Malachi 3:1-4","psalm":"Psalm 84 or Psalm 24:7-10","nt":"Hebrews 2:14-18","gospel":"Luke 2:22-40"},"2027-02-07":{"name":"Transfiguration Sunday","ot":"2 Kings 2:1-12","psalm":"Psalm 50:1-6","nt":"2 Corinthians 4:3-6","gospel":"Mark 9:2-9"},"2027-02-10":{"name":"Ash Wednesday","ot":"Joel 2:1-2, 12-17 or Isaiah 58:1-12","psalm":"Psalm 51:1-17","nt":"2 Corinthians 5:20b-6:10","gospel":"Matthew 6:1-6, 16-21"},"2027-02-14":{"name":"First Sunday in Lent","ot":"Genesis 9:8-17","psalm":"Psalm 25:1-10","nt":"1 Peter 3:18-22","gospel":"Mark 1:9-15"},"2027-02-21":{"name":"Second Sunday in Lent","ot":"Genesis 17:1-7, 15-16","psalm":"Psalm 22:23-31","nt":"Romans 4:13-25","gospel":"Mark 8:31-38"},"2027-02-28":{"name":"Third Sunday in Lent","ot":"Exodus 20:1-17","psalm":"Psalm 19","nt":"1 Corinthians 1:18-25","gospel":"John 2:13-22"},"2027-03-07":{"name":"Fourth Sunday in Lent","ot":"Numbers 21:4-9","psalm":"Psalm 107:1-3, 17-22","nt":"Ephesians 2:1-10","gospel":"John 3:14-21"},"2027-03-14":{"name":"Fifth Sunday in Lent","ot":"Jeremiah 31:31-34","psalm":"Psalm 51:1-12 or Psalm 119:9-16","nt":"Hebrews 5:5-10","gospel":"John 12:20-33"},"2027-03-21":{"name":"Liturgy of the Passion","ot":"Isaiah 50:4-9a","psalm":"Psalm 31:9-16","nt":"Philippians 2:5-11","gospel":"Mark 14:1-15:47"},"2027-03-22":{"name":"Monday of Holy Week","ot":"Isaiah 42:1-9","psalm":"Psalm 36:5-11","nt":"Hebrews 9:11-15","gospel":"John 12:1-11"},"2027-03-23":{"name":"Tuesday of Holy Week","ot":"Isaiah 49:1-7","psalm":"Psalm 71:1-14","nt":"1 Corinthians 1:18-31","gospel":"John 12:20-36"},"2027-03-24":{"name":"Wednesday of Holy Week","ot":"Isaiah 50:4-9a","psalm":"Psalm 70","nt":"Hebrews 12:1-3","gospel":"John 13:21-32"},"2027-03-25":{"name":"Maundy Thursday","ot":"Exodus 12:1-4, (5-10), 11-14","psalm":"Psalm 116:1-2, 12-19","nt":"1 Corinthians 11:23-26","gospel":"John 13:1-17, 31b-35"},"2027-03-26":{"name":"Good Friday","ot":"Isaiah 52:13-53:12","psalm":"Psalm 22","nt":"Hebrews 10:16-25 or Hebrews 4:14-16; 5:7-9","gospel":"John 18:1-19:42"},"2027-03-28":{"name":"Resurrection of the Lord","ot":"Acts 10:34-43 or Isaiah 25:6-9","psalm":"Psalm 118:1-2, 14-24","nt":"1 Corinthians 15:1-11 or Acts 10:34-43","gospel":"John 20:1-18 or Mark 16:1-8"},"2027-04-04":{"name":"Second Sunday of Easter","ot":"Acts 4:32-35","psalm":"Psalm 133","nt":"1 John 1:1-2:2","gospel":"John 20:19-31"},"2027-04-11":{"name":"Third Sunday of Easter","ot":"Acts 3:12-19","psalm":"Psalm 4","nt":"1 John 3:1-7","gospel":"Luke 24:36b-48"},"2027-04-18":{"name":"Fourth Sunday of Easter","ot":"Acts 4:5-12","psalm":"Psalm 23","nt":"1 John 3:16-24","gospel":"John 10:11-18"},"2027-04-25":{"name":"Fifth Sunday of Easter","ot":"Acts 8:26-40","psalm":"Psalm 22:25-31","nt":"1 John 4:7-21","gospel":"John 15:1-8"},"2027-05-02":{"name":"Sixth Sunday of Easter","ot":"Acts 10:44-48","psalm":"Psalm 98","nt":"1 John 5:1-6","gospel":"John 15:9-17"},"2027-05-06":{"name":"Ascension of the Lord","ot":"Acts 1:1-11","psalm":"Psalm 47 or Psalm 93","nt":"Ephesians 1:15-23","gospel":"Luke 24:44-53"},"2027-05-09":{"name":"Seventh Sunday of Easter","ot":"Acts 1:15-17, 21-26","psalm":"Psalm 1","nt":"1 John 5:9-13","gospel":"John 17:6-19"},"2027-05-16":{"name":"Day of Pentecost","ot":"Acts 2:1-21 or Ezekiel 37:1-14","psalm":"Psalm 104:24-34, 35b","nt":"Romans 8:22-27 or Acts 2:1-21","gospel":"John 15:26-27; 16:4b-15"},"2027-05-23":{"name":"Trinity Sunday","ot":"Isaiah 6:1-8","psalm":"Psalm 29","nt":"Romans 8:12-17","gospel":"John 3:1-17"},"2027-05-30":{"name":"Proper 4 (9)","ot":"1 Samuel 3:1-10, (11-20) and Psalm 139:1-6, 13-18","psalm":"Deuteronomy 5:12-15 and Psalm 81:1-10","nt":"2 Corinthians 4:5-12","gospel":"Mark 2:23-3:6"},"2027-06-06":{"name":"Proper 5 (10)","ot":"1 Samuel 8:4-11, (12-15), 16-20, (11:14-15) and Psalm 138","psalm":"Genesis 3:8-15 and Psalm 130","nt":"2 Corinthians 4:13-5:1","gospel":"Mark 3:20-35"},"2027-06-13":{"name":"Proper 6 (11)","ot":"1 Samuel 15:34-16:13 and Psalm 20","psalm":"Ezekiel 17:22-24 and Psalm 92:1-4, 12-15","nt":"2 Corinthians 5:6-10, (11-13), 14-17","gospel":"Mark 4:26-34"},"2027-06-20":{"name":"Proper 7 (12)","ot":"1 Samuel 17:(1a, 4-11, 19-23), 32-49 and Psalm 9:9-20","psalm":"Job 38:1-11 and Psalm 107:1-3, 23-32","nt":"2 Corinthians 6:1-13","gospel":"Mark 4:35-41"},"2027-06-27":{"name":"Proper 8 (13)","ot":"2 Samuel 1:1, 17-27 and Psalm 130","psalm":"Wisdom of Solomon 1:13-15, 2:23-24 or Lamentations 3:22-33 and Psalm 30","nt":"2 Corinthians 8:7-15","gospel":"Mark 5:21-43"},"2027-07-04":{"name":"Proper 9 (14)","ot":"2 Samuel 5:1-5, 9-10 and Psalm 48","psalm":"Ezekiel 2:1-5 and Psalm 123","nt":"2 Corinthians 12:2-10","gospel":"Mark 6:1-13"},"2027-07-11":{"name":"Proper 10 (15)","ot":"2 Samuel 6:1-5, 12b-19 and Psalm 24","psalm":"Amos 7:7-15 and Psalm 85:8-13","nt":"Ephesians 1:3-14","gospel":"Mark 6:14-29"},"2027-07-18":{"name":"Proper 11 (16)","ot":"2 Samuel 7:1-14a and Psalm 89:20-37","psalm":"Jeremiah 23:1-6 and Psalm 23","nt":"Ephesians 2:11-22","gospel":"Mark 6:30-34, 53-56"},"2027-07-25":{"name":"Proper 12 (17)","ot":"2 Samuel 11:1-15 and Psalm 14","psalm":"2 Kings 4:42-44 and Psalm 145:10-18","nt":"Ephesians 3:14-21","gospel":"John 6:1-21"},"2027-08-01":{"name":"Proper 13 (18)","ot":"2 Samuel 11:26-12:13a and Psalm 51:1-12","psalm":"Exodus 16:2-4, 9-15 and Psalm 78:23-29","nt":"Ephesians 4:1-16","gospel":"John 6:24-35"},"2027-08-08":{"name":"Proper 14 (19)","ot":"2 Samuel 18:5-9, 15, 31-33 and Psalm 130","psalm":"1 Kings 19:4-8 and Psalm 34:1-8","nt":"Ephesians 4:25-5:2","gospel":"John 6:35, 41-51"},"2027-08-15":{"name":"Proper 15 (20)","ot":"1 Kings 2:10-12; 3:3-14 and Psalm 111","psalm":"Proverbs 9:1-6 and Psalm 34:9-14","nt":"Ephesians 5:15-20","gospel":"John 6:51-58"},"2027-08-22":{"name":"Proper 16 (21)","ot":"1 Kings 8:(1,6,10-11), 22-30, 41-43 and Psalm 84","psalm":"Joshua 24:1-2a, 14-18 and Psalm 34:15-22","nt":"Ephesians 6:10-20","gospel":"John 6:56-69"},"2027-08-29":{"name":"Proper 17 (22)","ot":"Song of Solomon 2:8-13 and Psalm 45:1-2, 6-9","psalm":"Deuteronomy 4:1-2, 6-9 and Psalm 15","nt":"James 1:17-27","gospel":"Mark 7:1-8, 14-15, 21-23"},"2027-09-05":{"name":"Proper 18 (23)","ot":"Proverbs 22:1-2, 8-9, 22-23 and Psalm 125","psalm":"Isaiah 35:4-7a and Psalm 146","nt":"James 2:1-10, (11-13), 14-17","gospel":"Mark 7:24-37"},"2027-09-12":{"name":"Proper 19 (24)","ot":"Proverbs 1:20-33 and Psalm 19","psalm":"Isaiah 50:4-9a and Psalm 116:1-9","nt":"James 3:1-12","gospel":"Mark 8:27-38"},"2027-09-19":{"name":"Proper 20 (25)","ot":"Proverbs 31:10-31 and Psalm 1","psalm":"Wisdom of Solomon 1:16-2:1, 12-22 or Jeremiah 11:18-20 and Psalm 54","nt":"James 3:13-4:3, 7-8a","gospel":"Mark 9:30-37"},"2027-09-26":{"name":"Proper 21 (26)","ot":"Esther 7:1-6, 9-10; 9:20-22 and Psalm 124","psalm":"Numbers 11:4-6, 10-16, 24-29 and Psalm 19:7-14","nt":"James 5:13-20","gospel":"Mark 9:38-50"},"2027-10-03":{"name":"Proper 22 (27)","ot":"Job 1:1, 2:1-10 and Psalm 26","psalm":"Genesis 2:18-24 and Psalm 8","nt":"Hebrews 1:1-4, 2:5-12","gospel":"Mark 10:2-16"},"2027-10-10":{"name":"Proper 23 (28)","ot":"Job 23:1-9, 16-17 and Psalm 22:1-15","psalm":"Amos 5:6-7, 10-15 and Psalm 90:12-17","nt":"Hebrews 4:12-16","gospel":"Mark 10:17-31"},"2027-10-17":{"name":"Proper 24 (29)","ot":"Job 38:1-7, (34-41) and Psalm 104:1-9, 24, 35c","psalm":"Isaiah 53:4-12 and Psalm 91:9-16","nt":"Hebrews 5:1-10","gospel":"Mark 10:35-45"},"2027-10-24":{"name":"Proper 25 (30)","ot":"Job 42:1-6, 10-17 and Psalm 34:1-8, (19-22)","psalm":"Jeremiah 31:7-9 and Psalm 126","nt":"Hebrews 7:23-28","gospel":"Mark 10:46-52"},"2027-10-31":{"name":"Proper 26 (31)","ot":"Ruth 1:1-18 and Psalm 146","psalm":"Deuteronomy 6:1-9 and Psalm 119:1-8","nt":"Hebrews 9:11-14","gospel":"Mark 12:28-34"},"2027-11-01":{"name":"All Saints Day","ot":"Wisdom of Solomon 3:1-9 or Isaiah 25:6-9","psalm":"Psalm 24","nt":"Revelation 21:1-6a","gospel":"John 11:32-44"},"2027-11-07":{"name":"Proper 27 (32)","ot":"Ruth 3:1-5; 4:13-17 and Psalm 127","psalm":"1 Kings 17:8-16 and Psalm 146","nt":"Hebrews 9:24-28","gospel":"Mark 12:38-44"},"2027-11-14":{"name":"Proper 28 (33)","ot":"1 Samuel 1:4-20 and 1 Samuel 2:1-10","psalm":"Daniel 12:1-3 and Psalm 16","nt":"Hebrews 10:11-14, (15-18), 19-25","gospel":"Mark 13:1-8"},"2027-11-21":{"name":"Reign of Christ","ot":"2 Samuel 23:1-7 and Psalm 132:1-12, (13-18)","psalm":"Daniel 7:9-10, 13-14 and Psalm 93","nt":"Revelation 1:4b-8","gospel":"John 18:33-37"}}
+;
+
+function setSyncStatus(state, message){
+  const box = document.getElementById('syncStatus');
+  box.className = 'sync-status is-' + state;
+  box.innerHTML = `<span class="dot"></span> ${message}`;
+}
+
+function findLectionaryElement(){
+  for(const m of state) for(const e of m.elements) if(e.type === 'lectionary') return e;
+  return null;
+}
+
+function lookupLink(dateStr){
+  const info = getLiturgicalInfo(dateStr);
+  const y = info ? info.yearAnchor : new Date(dateStr).getFullYear();
+  return `https://lectionary.library.vanderbilt.edu/calendar/${y}-${String(y + 1).slice(-2)}/?season=all`;
+}
+
+const BCP_DATA = {"First Sunday of Advent":["Almighty God, give us grace to cast away the works of darkness, and put on the armor of light, now in the time of this mortal life in which your Son Jesus Christ came to visit us in great humility; that in the last day, when he shall come again in his glorious majesty to judge both the living and the dead, we may rise to the life immortal; through him who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Second Sunday of Advent":["Merciful God, who sent your messengers the prophets to preach repentance and prepare the way for our salvation: Give us grace to heed their warnings and forsake our sins, that we may greet with joy the coming of Jesus Christ our Redeemer; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Third Sunday of Advent":["Stir up your power, O Lord, and with great might come among us; and, because we are sorely hindered by our sins, let your bountiful grace and mercy speedily help and deliver us; through Jesus Christ our Lord, to whom, with you and the Holy Spirit, be honor and glory, now and for ever. Amen."],"Fourth Sunday of Advent":["Purify our conscience, Almighty God, by your daily visitation, that your Son Jesus Christ, at his coming, may find in us a mansion prepared for himself; who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Nativity of the Lord (Christmas)":["O God, you make us glad by the yearly festival of the birth of your only Son Jesus Christ: Grant that we, who joyfully receive him as our Redeemer, may with sure confidence behold him when he comes to be our Judge; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen.","O God, you have caused this holy night to shine with the brightness of the true Light: Grant that we, who have known the mystery of that Light on earth, may also enjoy him perfectly in heaven; where with you and the Holy Spirit he lives and reigns, one God, in glory everlasting. Amen.","Almighty God, you have given your only-begotten Son to take our nature upon him, and to be born of a pure virgin: Grant that we, who have been born again and made your children by adoption and grace, may daily be renewed by your Holy Spirit; through our Lord Jesus Christ, to whom with you and the same Spirit be honor and glory, now and for ever. Amen."],"First Sunday after Christmas Day":["Almighty God, you have poured upon us the new light of your incarnate Word: Grant that this light, enkindled in our hearts, may shine forth in our lives; through Jesus Christ our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Holy Name of Jesus":["Eternal Father, you gave to your incarnate Son the holy name of Jesus to be the sign of our salvation: Plant in every heart, we pray, the love of him who is the Savior of the world, our Lord Jesus Christ; who lives and reigns with you and the Holy Spirit, one God, in glory everlasting. Amen."],"Second Sunday after Christmas":["O God, who wonderfully created, and yet more wonderfully restored, the dignity of human nature: Grant that we may share the divine life of him who humbled himself to share our humanity, your Son Jesus Christ; who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen."],"Epiphany of the Lord":["O God, by the leading of a star you manifested your only Son to the Peoples of the earth: Lead us, who know you now by faith, to your presence, where we may see your glory face to face; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Baptism of the Lord":["Father in heaven, who at the baptism of Jesus in the River Jordan proclaimed him your beloved Son and anointed him with the Holy Spirit: Grant that all who are baptized into his Name may keep the covenant they have made, and boldly confess him as Lord and Savior; who with you and the Holy Spirit lives and reigns, one God, in glory everlasting. Amen."],"Second Sunday after the Epiphany":["Almighty God, whose Son our Savior Jesus Christ is the light of the world: Grant that your people, illumined by your Word and Sacraments, may shine with the radiance of Christ's glory, that he may be known, worshiped, and obeyed to the ends of the earth; through Jesus Christ our Lord, who with you and the Holy Spirit lives and reigns, one God, now and for ever. Amen."],"Third Sunday after the Epiphany":["Give us grace, O Lord, to answer readily the call of our Savior Jesus Christ and proclaim to all people the Good News of his salvation, that we and the whole world may perceive the glory of his marvelous works; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Fourth Sunday after the Epiphany":["Almighty and everlasting God, you govern all things both in heaven and on earth: Mercifully hear the supplications of your people, and in our time grant us your peace; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Fifth Sunday after the Epiphany":["Set us free, O God, from the bondage of our sins, and give us the liberty of that abundant life which you have made known to us in your Son our Savior Jesus Christ; who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Transfiguration Sunday":["O God, who before the passion of your only-begotten Son revealed his glory upon the holy mountain: Grant to us that we, beholding by faith the light of his countenance, may be strengthened to bear our cross, and be changed into his likeness from glory to glory; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Ash Wednesday":["Almighty and everlasting God, you hate nothing you have made and forgive the sins of all who are penitent: Create and make in us new and contrite hearts, that we, worthily lamenting our sins and acknowledging our wretchedness, may obtain of you, the God of all mercy, perfect remission and forgiveness; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"First Sunday in Lent":["Almighty God, whose blessed Son was led by the Spirit to be tempted by Satan: Come quickly to help us who are assaulted by many temptations; and, as you know the weaknesses of each of us, let each one find you mighty to save; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Second Sunday in Lent":["O God, whose glory it is always to have mercy: Be gracious to all who have gone astray from your ways, and bring them again with penitent hearts and steadfast faith to embrace and hold fast the unchangeable truth of your Word, Jesus Christ your Son; who with you and the Holy Spirit lives and reigns, one God, for ever and ever. Amen."],"Third Sunday in Lent":["Almighty God, you know that we have no power in ourselves to help ourselves: Keep us both outwardly in our bodies and inwardly in our souls, that we may be defended from all adversities which may happen to the body, and from all evil thoughts which may assault and hurt the soul; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Fourth Sunday in Lent":["Gracious Father, whose blessed Son Jesus Christ came down from heaven to be the true bread which gives life to the world: Evermore give us this bread, that he may live in us, and we in him; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Fifth Sunday in Lent":["Almighty God, you alone can bring into order the unruly wills and affections of sinners: Grant your people grace to love what you command and desire what you promise; that, among the swift and varied changes of the world, our hearts may surely there be fixed where true joys are to be found; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Liturgy of the Passion":["Almighty and everliving God, in your tender love for the human race you sent your Son our Savior Jesus Christ to take upon him our nature, and to suffer death upon the cross, giving us the example of his great humility: Mercifully grant that we may walk in the way of his suffering, and also share in his resurrection; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Monday of Holy Week":["Almighty God, whose dear Son went not up to joy but first he suffered pain, and entered not into glory before he was crucified: Mercifully grant that we, walking in the way of the cross, may find it none other that the way of life and peace; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Tuesday of Holy Week":["O God, by the passion of your blessed Son you made an instrument of shameful death to be for us the means of life: Grant us so to glory in the cross of Christ, that we may gladly suffer shame and loss for the sake of your Son our Savior Jesus Christ; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Wednesday of Holy Week":["Lord God, whose blessed Son our Savior gave his body to be whipped and his face to be spit upon: Give us grace to accept joyfully the sufferings of the present time, confident of the glory that shall be revealed; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Maundy Thursday":["Almighty Father, whose dear Son, on the night before he suffered, instituted the Sacrament of his Body and Blood: Mercifully grant that we may receive it thankfully in remembrance of Jesus Christ our Lord, who in these holy mysteries gives us a pledge of eternal life; and who now lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Good Friday":["Almighty God, we pray you graciously to behold this your family, for whom our Lord Jesus Christ was willing to be betrayed, and given into the hands of sinners, and to suffer death upon the cross; who now lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Resurrection of the Lord":["O God, who for our redemption gave your only-begotten Son to the death of the cross, and by his glorious resurrection delivered us from the power of our enemy: Grant us so to die daily to sin, that we may evermore live with him in the joy of his resurrection; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen.","O God, who made this most holy night to shine with the glory of the Lord's resurrection: Stir up in your Church that Spirit of adoption which is given to us in Baptism, that we, being renewed both in body and mind, may worship you in sincerity and truth; through Jesus Christ our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen.","Almighty God, who through your only-begotten Son Jesus Christ overcame death and opened to us the gate of everlasting life: Grant that we, who celebrate with joy the day of the Lord's resurrection, may be raised from the death of sin by your life-giving Spirit; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Second Sunday of Easter":["Almighty and everlasting God, who in the Paschal mystery established the new covenant of reconciliation: Grant that all who have been reborn into the fellowship of Christ's Body may show forth in their lives what they profess by their faith; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Third Sunday of Easter":["O God, whose blessed Son made himself known to his disciples in the breaking of bread: Open the eyes of our faith, that we may behold him in all his redeeming work; who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Fourth Sunday of Easter":["O God, whose Son Jesus is the good shepherd of your people; Grant that when we hear his voice we may know him who calls us each by name, and follow where he leads; who, with you and the Holy Spirit, lives and reigns, one God, for ever and ever. Amen."],"Fifth Sunday of Easter":["Almighty God, whom truly to know is everlasting life: Grant us so perfectly to know your Son Jesus Christ to be the way, the truth, and the life, that we may steadfastly follow his steps in the way that leads to eternal life; through Jesus Christ your Son our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen."],"Sixth Sunday of Easter":["O God, you have prepared for those who love you such good things as surpass our understanding: Pour into our hearts such love towards you, that we, loving you in all things and above all things, may obtain your promises, which exceed all that we can desire; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Ascension of the Lord":["Almighty God, whose blessed Son our Savior Jesus Christ ascended far above all heavens that he might fill all things: Mercifully give us faith to perceive that, according to his promise, he abides with his Church on earth, even to the end of the ages; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, in glory everlasting. Amen.","Grant, we pray, Almighty God, that as we believe your only-begotten Son our Lord Jesus Christ to have ascended into heaven, so we may also in heart and mind there ascend, and with him continually dwell; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Seventh Sunday of Easter":["O God, the King of glory, you have exalted your only Son Jesus Christ with great triumph to your kingdom in heaven: Do not leave us comfortless, but send us your Holy Spirit to strengthen us, and exalt us to that place where our Savior Christ has gone before; who lives and reigns with you and the Holy Spirit, one God, in glory everlasting. Amen."],"Day of Pentecost":["Almighty God, on this day you opened the way of eternal life to every race and nation by the promised gift of your Holy Spirit: Shed abroad this gift throughout the world by the preaching of the Gospel, that it may reach to the ends of the earth; through Jesus Christ our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen.","O God, who on this day taught the hearts of your faithful people by sending to them the light of your Holy Spirit: Grant us by the same Spirit to have a right judgment in all things, and evermore to rejoice in his holy comfort; through Jesus Christ your Son our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen."],"Trinity Sunday":["Almighty and everlasting God, you have given to us your servants grace, by the confession of a true faith, to acknowledge the glory of the eternal Trinity, and in the power of your divine Majesty to worship the Unity: Keep us steadfast in this faith and worship, and bring us at last to see you in your one and eternal glory, O Father; who with the Son and the Holy Spirit live and reign, one God, for ever and ever. Amen."],"Reign of Christ":["Almighty and everlasting God, whose will it is to restore all things in your well-beloved Son, the King of kings and Lord of lords: Mercifully grant that the peoples of the earth, divided and enslaved by sin, may be freed and brought together under his most gracious rule; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 1":["Remember, O Lord, what you have wrought in us and not what we deserve; and, as you have called us to your service, make us worthy of our calling; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 2":["Almighty and merciful God, in your goodness keep us, we pray, from all things that may hurt us, that we, being ready both in mind and body, may accomplish with free hearts those things which belong to your purpose; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 3":["Grant, O Lord, that the course of this world may be peaceably governed by your providence; and that your Church may joyfully serve you in confidence and serenity; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 4":["O God, your never-failing providence sets in order all things both in heaven and earth: Put away from us, we entreat you, all hurtful things, and give us those things which are profitable for us; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 5":["O God, from whom all good proceeds: Grant that by your inspiration we may think those things that are right, and by your merciful guiding may do them; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 6":["Keep, O Lord, your household the Church in your steadfast faith and love, that through your grace we may proclaim your truth with boldness, and minister your justice with compassion; for the sake of our Savior Jesus Christ, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 7":["O Lord, make us have perpetual love and reverence for your holy Name, for you never fail to help and govern those whom you have set upon the sure foundation of your loving-kindness; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 8":["Almighty God, you have built your Church upon the foundation of the apostles and prophets, Jesus Christ himself being the chief cornerstone: Grant us so to be joined together in unity of spirit by their teaching, that we may be made a holy temple acceptable to you; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 9":["O God, you have taught us to keep all your commandments by loving you and our neighbor: Grant us the grace of your Holy Spirit, that we may be devoted to you with our whole heart, and united to one another with pure affection; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 10":["O Lord, mercifully receive the prayers of your people who call upon you, and grant that they may know and understand what things they ought to do, and also may have grace and power faithfully to accomplish them; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 11":["Almighty God, the fountain of all wisdom, you know our necessities before we ask and our ignorance in asking: Have compassion on our weakness, and mercifully give us those things which for our unworthiness we dare not, and for our blindness we cannot ask; through the worthiness of your Son Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 12":["O God, the protector of all who trust in you, without whom nothing is strong, nothing is holy: Increase and multiply upon us your mercy; that, with you as our ruler and guide, we may so pass through things temporal, that we lose not the things eternal; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 13":["Let your continual mercy, O Lord, cleanse and defend your Church; and, because it cannot continue in safety without your help, protect and govern it always by your goodness; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 14":["Grant to us, Lord, we pray, the spirit to think and do always those things that are right, that we, who cannot exist without you, may by you be enabled to live according to your will; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 15":["Almighty God, you have given your only Son to be for us a sacrifice for sin, and also an example of godly life: Give us grace to receive thankfully the fruits of his redeeming work, and to follow daily in the blessed steps of his most holy life; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 16":["Grant, O merciful God, that your Church, being gathered together in unity by your Holy Spirit, may show forth your power among all peoples, to the glory of your Name; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 17":["Lord of all power and might, the author and giver of all good things: Graft in our hearts the love of your Name; increase in us true religion; nourish us with all goodness; and bring forth in us the fruit of good works; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 18":["Grant us, O Lord, to trust in you with all our hearts; for, as you always resist the proud who confide in their own strength, so you never forsake those who make their boast of your mercy; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 19":["O God, because without you we are not able to please you, mercifully grant that your Holy Spirit may in all things direct and rule our hearts; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 20":["Grant us, Lord, not to be anxious about earthly things, but to love things heavenly; and even now, while we are placed among things that are passing away, to hold fast to those that shall endure; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 21":["O God, you declare your almighty power chiefly in showing mercy and pity: Grant us the fullness of your grace, that we, running to obtain your promises, may become partakers of your heavenly treasure; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 22":["Almighty and everlasting God, you are always more ready to hear than we to pray, and to give more than we either desire or deserve: Pour upon us the abundance of your mercy, forgiving us those things of which our conscience is afraid, and giving us those good things for which we are not worthy to ask, except through the merits and mediation of Jesus Christ our Savior; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 23":["Lord, we pray that your grace may always precede and follow us, that we may continually be given to good works; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 24":["Almighty and everlasting God, in Christ you have revealed your glory among the nations: Preserve the works of your mercy, that your Church throughout the world may persevere with steadfast faith in the confession of your Name; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 25":["Almighty and everlasting God, increase in us the gifts of faith, hope, and charity; and, that we may obtain what you promise, make us love what you command; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 26":["Almighty and merciful God, it is only by your gift that your faithful people offer you true and laudable service: Grant that we may run without stumbling to obtain your heavenly promises; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 27":["O God, whose blessed Son came into the world that he might destroy the works of the devil and make us children of God and heirs of eternal life: Grant that, having this hope, we may purify ourselves as he is pure; that, when he comes again with power and great glory, we may be made like him in his eternal and glorious kingdom; where he lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 28":["Blessed Lord, who caused all holy Scriptures to be written for our learning: Grant us so to hear them, read, mark, learn, and inwardly digest them, that we may embrace and ever hold fast the blessed hope of everlasting life, which you have given us in our Savior Jesus Christ; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 29":["Almighty and everlasting God, whose will it is to restore all things in your well-beloved Son, the King of kings and Lord of lords: Mercifully grant that the peoples of the earth, divided and enslaved by sin, may be freed and brought together under his most gracious rule; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."]};
+
+function findCollectElement(){
+  for(const m of state) for(const e of m.elements) if(e.bcpLinked) return e;
+  return null;
+}
+
+function bcpOptionsFor(entry){
+  if(!entry) return null;
+  const properMatch = entry.name.match(/^Proper (\d+)/);
+  if(properMatch) return BCP_DATA['Proper ' + properMatch[1]] || null;
+  return BCP_DATA[entry.name] || null;
+}
+
+function syncLectionary(dateStr){
+  const lec = findLectionaryElement();
+  const col = findCollectElement();
+  const link = `<a href="${lookupLink(dateStr)}" target="_blank" rel="noopener">Look it up →</a>`;
+  const entry = RCL_DATA[dateStr];
+  if(!entry){
+    setSyncStatus('offline', `No RCL data on file for this date. ${link}`);
+    return;
+  }
+  let filled = [];
+  if(lec){
+    lec.readings.find(r=>r.key==='ot').reference = entry.ot;
+    lec.readings.find(r=>r.key==='psalm').reference = entry.psalm;
+    lec.readings.find(r=>r.key==='nt').reference = entry.nt;
+    lec.readings.find(r=>r.key==='gospel').reference = entry.gospel;
+    filled.push('readings');
+  }
+  const collectOptions = bcpOptionsFor(entry);
+  if(col && collectOptions){
+    col.variants = collectOptions.map((text, i) => ({
+      id: 'bcp' + i,
+      label: collectOptions.length > 1 ? `Option ${i + 1}` : 'Standard',
+      content: text
+    }));
+    col.activeVariantId = col.variants[0].id;
+    filled.push('collect');
+  }
+  render();
+  if(filled.length){
+    setSyncStatus('synced', `Filled in the ${filled.join(' and ')} for ${entry.name}.`);
+  } else {
+    setSyncStatus('offline', `Found ${entry.name}, but no matching elements or BCP text on file. ${link}`);
+  }
+}
+
+// Init
+loadStateFromTemplate(DEFAULT_TEMPLATE);
+render();
+</script>
+</body>
+</html>
