@@ -33,6 +33,11 @@
     color:var(--ink);
     font-family:'Inter',sans-serif;
     -webkit-font-smoothing:antialiased;
+    transition:padding-right .22s ease;
+  }
+  body.hymnal-open{ padding-right:360px; }
+  @media (max-width: 680px){
+    body.hymnal-open{ padding-right:0; }
   }
   .app{
     max-width:900px;
@@ -392,7 +397,7 @@
     position:fixed; top:0; right:0; height:100vh; width:360px; max-width:90vw;
     background:var(--surface); border-left:1px solid var(--border);
     box-shadow:-8px 0 24px rgba(0,0,0,0.12);
-    z-index:500;
+    z-index:900;
     display:flex; flex-direction:column;
     transform:translateX(100%);
     transition:transform .22s ease;
@@ -422,6 +427,18 @@
     font-family:'Inter',sans-serif; font-size:11px; font-weight:600;
     border:none; background:transparent; color:var(--ink-faint); text-decoration:underline; cursor:pointer; padding:0;
   }
+  .hymnal-lyrics-status{ font-size:10.5px; color:var(--ink-faint); font-style:italic; }
+  .hymnal-lyrics-toggle{
+    font-family:'Inter',sans-serif; font-size:10.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:3px 7px; cursor:pointer; margin-top:4px;
+  }
+  .hymnal-lyrics-toggle:hover{ border-color:var(--gold); color:var(--gold); }
+  .hymnal-lyrics-box{
+    margin-top:6px; padding:8px 9px; background:#fff; border:1px solid var(--border); border-radius:5px;
+    font-size:11.5px; line-height:1.5; white-space:pre-line; color:var(--ink); max-height:220px; overflow-y:auto;
+  }
+  .hymnal-lyrics-box mark{ background:#fff59d; }
   .hymnal-results-count{
     padding:8px 16px 0; font-size:11px; color:var(--ink-faint); flex-shrink:0;
   }
@@ -454,11 +471,19 @@
     z-index:800; align-items:center; justify-content:center; padding:24px;
   }
   .schedule-overlay.open{ display:flex; }
+  .schedule-overlay.make-room{ justify-content:flex-start; padding-right:400px; }
   .schedule-panel{
     background:var(--surface); border-radius:10px;
     width:100%; max-width:1400px; height:100%; max-height:900px;
     display:flex; flex-direction:column; overflow:hidden;
     box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    transition:max-width .22s ease;
+  }
+  .schedule-overlay.make-room .schedule-panel{
+    max-width:calc(1400px - 380px);
+  }
+  @media (max-width: 1100px){
+    .schedule-overlay.make-room .schedule-panel{ max-width:100%; }
   }
   .schedule-header{
     display:flex; align-items:center; justify-content:space-between;
@@ -512,6 +537,24 @@
     border:none; background:transparent; color:var(--ink-faint); cursor:pointer; font-size:13px;
   }
   .schedule-remove-row:hover{ color:#8a3a3a; }
+  .schedule-batch-bar{
+    display:none; align-items:center; gap:10px;
+    padding:8px 20px; background:var(--bg); border-bottom:1px solid var(--border);
+    font-size:12px; color:var(--ink-soft); flex-shrink:0; flex-wrap:wrap;
+  }
+  .schedule-batch-bar.on{ display:flex; }
+  .schedule-batch-bar label{ display:flex; align-items:center; gap:5px; }
+  .schedule-batch-bar select{
+    font-family:'Inter',sans-serif; font-size:12px; border:1px solid var(--border);
+    border-radius:4px; padding:4px 6px; background:#fff; color:var(--ink);
+  }
+  .schedule-batch-bar button{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:5px 10px; cursor:pointer;
+  }
+  .schedule-batch-bar button:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .schedule-row-checkbox{ width:14px; height:14px; cursor:pointer; }
 
   .hymn-playback-bar{
     display:none;
@@ -695,6 +738,7 @@
     .floating-toolbar{ display:none !important; }
     .hymnal-panel{ display:none !important; }
     .schedule-overlay{ display:none !important; }
+    .schedule-batch-bar{ display:none !important; }
     .hymn-playback-bar{ display:none !important; }
     .hymn-play-btn{ display:none !important; }
     .response-fields{ display:none; }
@@ -766,6 +810,13 @@
         </div>
       </div>
       <div class="schedule-hint">Fill in what you plan ahead of time — picking that date in the builder will fill these into the liturgy automatically (and take priority over the RCL/BCP defaults). Leave a cell blank to let the normal defaults apply.</div>
+      <div id="scheduleBatchBar" class="schedule-batch-bar">
+        <span id="scheduleSelectedCount">0 selected</span>
+        <label>Preacher: <select id="batchPreacherSelect"></select></label>
+        <label>Series: <select id="batchSeriesSelect"></select></label>
+        <button onclick="applyScheduleBatch()">Apply to selected</button>
+        <button onclick="clearScheduleSelection()">Clear selection</button>
+      </div>
       <div class="schedule-table-wrap">
         <table class="schedule-table" id="scheduleTable"></table>
       </div>
@@ -781,6 +832,8 @@
       <input type="text" id="hymnalSearchTitle" placeholder="Search title, tune, or number…" oninput="renderHymnalResults()">
       <input type="text" id="hymnalSearchTopic" list="hymnalTopicList" placeholder="Filter by topic…" oninput="renderHymnalResults()">
       <input type="text" id="hymnalSearchScripture" placeholder="Filter by scripture (e.g. Psalm 23)…" oninput="renderHymnalResults()">
+      <input type="text" id="hymnalSearchLyrics" placeholder="Search lyrics for a phrase…" oninput="renderHymnalResults()">
+      <span id="hymnalLyricsStatus" class="hymnal-lyrics-status"></span>
       <datalist id="hymnalTopicList"></datalist>
       <button class="hymnal-clear-btn" onclick="clearHymnalSearch()">Clear filters</button>
     </div>
@@ -1204,6 +1257,7 @@ function updateReadingField(id, key, field, value){
   if(!list) return;
   const r = list.find(r => r.key === key);
   if(r) r[field] = value;
+  syncElementBackToSchedule(id);
 }
 
 function placeholderFor(type){
@@ -1243,6 +1297,7 @@ function updateField(id, field, value){
   const el = findEl(id);
   if(!el) return;
   el[field] = value;
+  syncElementBackToSchedule(id);
   if(field === 'type' && value === 'lectionary' && !el.readings){
     el.readings = [
       { key:'ot', label:'Old Testament', reference:'', content:'' },
@@ -1277,6 +1332,7 @@ function updateVariantContent(id, variantId, value){
   if(v) v.content = value;
   const target = document.querySelector(`.element-card[data-id="${id}"] .print-response p`);
   if(target) target.innerHTML = formatMarkup(value);
+  syncElementBackToSchedule(id);
 }
 
 function addVariant(id){
@@ -2058,6 +2114,7 @@ function toggleHymnalPanel(){
   const panel = document.getElementById('hymnalPanel');
   if(panel.classList.contains('open')){
     panel.classList.remove('open');
+    updatePanelLayout();
     return;
   }
   openHymnalPanel();
@@ -2073,11 +2130,38 @@ function openHymnalPanel(){
     renderHymnalResults();
     hymnalPanelRendered = true;
   }
+  loadHymnLyricsIfNeeded();
+  updatePanelLayout();
+}
+function updatePanelLayout(){
+  const hymnalOpen = document.getElementById('hymnalPanel').classList.contains('open');
+  document.getElementById('scheduleOverlay').classList.toggle('make-room', hymnalOpen);
+  document.body.classList.toggle('hymnal-open', hymnalOpen);
+}
+let hymnLyrics = null;
+let hymnLyricsLoading = false;
+async function loadHymnLyricsIfNeeded(){
+  if(hymnLyrics || hymnLyricsLoading) return;
+  hymnLyricsLoading = true;
+  const statusEl = document.getElementById('hymnalLyricsStatus');
+  if(statusEl) statusEl.textContent = 'Loading lyrics…';
+  try{
+    const resp = await fetch('hymnal-lyrics.json');
+    if(!resp.ok) throw new Error('HTTP ' + resp.status);
+    hymnLyrics = await resp.json();
+    if(statusEl) statusEl.textContent = '';
+    renderHymnalResults();
+  }catch(err){
+    if(statusEl) statusEl.textContent = "Couldn't load lyrics — check hymnal-lyrics.json is uploaded to the repo.";
+    hymnLyrics = {};
+  }
+  hymnLyricsLoading = false;
 }
 function clearHymnalSearch(){
   document.getElementById('hymnalSearchTitle').value = '';
   document.getElementById('hymnalSearchTopic').value = '';
   document.getElementById('hymnalSearchScripture').value = '';
+  document.getElementById('hymnalSearchLyrics').value = '';
   renderHymnalResults();
 }
 function findHymnByNum(num){
@@ -2091,6 +2175,7 @@ function renderHymnalResults(){
   const titleQ = document.getElementById('hymnalSearchTitle').value.toLowerCase().trim();
   const topicQ = document.getElementById('hymnalSearchTopic').value.toLowerCase().trim();
   const scrQ = document.getElementById('hymnalSearchScripture').value.toLowerCase().trim();
+  const lyricsQ = document.getElementById('hymnalSearchLyrics').value.toLowerCase().trim();
   let results = HYMNAL_DATA;
   if(titleQ){
     results = results.filter(s =>
@@ -2106,6 +2191,9 @@ function renderHymnalResults(){
       s.scripture.some(r => r.toLowerCase().includes(scrQ)) ||
       s.basedOn.toLowerCase().includes(scrQ)
     );
+  }
+  if(lyricsQ){
+    results = hymnLyrics ? results.filter(s => (hymnLyrics[s.num] || '').toLowerCase().includes(lyricsQ)) : [];
   }
   hymnalCurrentResults = results;
   hymnalRenderedCount = 0;
@@ -2134,6 +2222,7 @@ document.getElementById('hymnalResults').addEventListener('scroll', function(){
 function hymnalResultCard(s){
   const movementOptions = state.map(m => `<option value="${m.key}">${escapeHTML(m.label)}</option>`).join('');
   const meta = [s.basedOn, s.topics.slice(0,3).join(', ')].filter(Boolean).join(' · ');
+  const hasLyrics = hymnLyrics && hymnLyrics[s.num];
   return `
     <div class="hymnal-result" draggable="true" ondragstart="hymnalDragStart(event,'${s.num}')">
       <div class="hymnal-result-main">
@@ -2146,8 +2235,29 @@ function hymnalResultCard(s){
         <option value="">+ Add to…</option>
         ${movementOptions}
       </select>
+      ${hasLyrics ? `<button class="hymnal-lyrics-toggle" onclick="toggleHymnalLyrics('${s.num}',this)">📄 Lyrics</button>` : ''}
     </div>
   `;
+}
+function toggleHymnalLyrics(num, btn){
+  const container = btn.closest('.hymnal-result');
+  const existing = container.querySelector('.hymnal-lyrics-box');
+  if(existing){
+    existing.remove();
+    btn.textContent = '📄 Lyrics';
+    return;
+  }
+  const text = (hymnLyrics && hymnLyrics[num]) || '';
+  const lyricsQ = document.getElementById('hymnalSearchLyrics').value.trim();
+  const box = document.createElement('div');
+  box.className = 'hymnal-lyrics-box';
+  box.innerHTML = lyricsQ ? highlightMatch(escapeHTML(text), lyricsQ) : escapeHTML(text);
+  container.appendChild(box);
+  btn.textContent = '📄 Hide lyrics';
+}
+function highlightMatch(escapedText, query){
+  const escapedQuery = escapeHTML(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return escapedText.replace(new RegExp('(' + escapedQuery + ')', 'ig'), '<mark>$1</mark>');
 }
 function hymnalDragStart(e, num){
   e.dataTransfer.setData('text/plain', 'HYMN:' + num);
@@ -2164,6 +2274,7 @@ function handleHymnCardDrop(e, elId){
   if(el && song){
     el.hymnNumber = song.num;
     el.hymnTitle = song.title;
+    syncElementBackToSchedule(elId);
     render();
   }
 }
@@ -2417,7 +2528,10 @@ function toggleSchedulePanel(){
   const overlay = document.getElementById('scheduleOverlay');
   const opening = !overlay.classList.contains('open');
   overlay.classList.toggle('open');
-  if(opening) renderScheduleTable();
+  if(opening){
+    renderScheduleTable();
+    updatePanelLayout();
+  }
 }
 function updateScheduleField(dateKey, field, value){
   if(!scheduleData[dateKey]) scheduleData[dateKey] = {};
@@ -2463,16 +2577,18 @@ function renderScheduleTable(){
   const groups = [];
   SCHEDULE_COLUMNS.forEach(c => { if(!groups.length || groups[groups.length-1].name !== c.group) groups.push({ name:c.group, count:1 }); else groups[groups.length-1].count++; });
 
-  let thead = '<thead><tr class="schedule-group-row"><th class="schedule-date-col"></th>' +
-    groups.map(g => `<th colspan="${g.count}">${escapeHTML(g.name)}</th>`).join('') + '</tr><tr>' +
-    '<th class="schedule-date-col">Date</th>' +
-    SCHEDULE_COLUMNS.map(c => `<th>${escapeHTML(c.label)}</th>`).join('') + '</tr></thead>';
-
   const todayStr = new Date().toISOString().slice(0,10);
   const showPast = document.getElementById('scheduleShowPast')?.checked;
   const dates = Object.keys(scheduleData).filter(d => showPast || d >= todayStr).sort();
+  const allSelected = dates.length > 0 && dates.every(d => scheduleSelectedDates.has(d));
+
+  let thead = '<thead><tr class="schedule-group-row"><th class="schedule-date-col"></th>' +
+    groups.map(g => `<th colspan="${g.count}">${escapeHTML(g.name)}</th>`).join('') + '</tr><tr>' +
+    `<th class="schedule-date-col"><input type="checkbox" class="schedule-row-checkbox" ${allSelected?'checked':''} onchange="toggleScheduleSelectAll(this.checked)" title="Select all"> Date</th>` +
+    SCHEDULE_COLUMNS.map(c => `<th>${escapeHTML(c.label)}</th>`).join('') + '</tr></thead>';
+
   const ministerOptions = name => `<option value="">—</option>` + ministerRoster.map(m => `<option value="${escapeAttr(m)}" ${name===m?'selected':''}>${escapeHTML(m)}</option>`).join('');
-  const seriesOptions = name => `<option value="">—</option>` + sermonSeriesRoster.map(s => `<option value="${escapeAttr(s)}" ${name===s?'selected':''}>${escapeHTML(s)}</option>`).join('');
+  const seriesOptions = name => `<option value="">—</option>` + sermonSeriesRoster.map(s => `<option value="${escapeAttr(s)}" ${name===s?'selected':''}>${escapeHTML(s)}</option>`).join('') + `<option value="__add__">+ Add new series…</option>`;
 
   let rows = dates.map(dateKey => {
     const entry = scheduleData[dateKey] || {};
@@ -2483,17 +2599,19 @@ function renderScheduleTable(){
       if(c.kind === 'minister'){
         inputHtml = `<select onchange="updateScheduleField('${dateKey}','${c.key}',this.value)">${ministerOptions(val)}</select>`;
       } else if(c.kind === 'series'){
-        inputHtml = `<select onchange="updateScheduleField('${dateKey}','${c.key}',this.value)">${seriesOptions(val)}</select>`;
+        inputHtml = `<select onchange="handleScheduleSeriesChange('${dateKey}',this)">${seriesOptions(val)}</select>`;
       } else if(c.wide){
         inputHtml = `<textarea onchange="updateScheduleField('${dateKey}','${c.key}',this.value)">${escapeHTML(val)}</textarea>`;
       } else {
-        inputHtml = `<input type="text" value="${escapeAttr(val)}" onchange="updateScheduleField('${dateKey}','${c.key}',this.value)">`;
+        const hymnFocus = c.key.startsWith('hymn') ? ' onfocus="openHymnalPanel()"' : '';
+        inputHtml = `<input type="text" value="${escapeAttr(val)}" onchange="updateScheduleField('${dateKey}','${c.key}',this.value)"${hymnFocus}>`;
       }
       const cellStyle = (c.key === 'preacher' && preacherColor) ? ` style="background:${preacherColor}22"` : '';
       return `<td${cellStyle}>${inputHtml}</td>`;
     }).join('');
     return `<tr>
       <td class="schedule-date-cell">
+        <input type="checkbox" class="schedule-row-checkbox" ${scheduleSelectedDates.has(dateKey)?'checked':''} onchange="toggleScheduleRowSelect('${dateKey}',this.checked)">
         ${scheduleColorDotHtml(dateKey)}
         <input type="date" value="${dateKey}" onchange="updateScheduleDate('${dateKey}',this.value)">
         <button class="schedule-remove-row" onclick="removeScheduleRow('${dateKey}')" title="Remove this row">✕</button>
@@ -2503,6 +2621,62 @@ function renderScheduleTable(){
   }).join('');
 
   table.innerHTML = thead + '<tbody>' + (rows || `<tr><td colspan="${SCHEDULE_COLUMNS.length+1}" style="padding:16px;color:var(--ink-faint);">No dates scheduled yet — click "+ Add date" to start.</td></tr>`) + '</tbody>';
+
+  document.getElementById('batchPreacherSelect').innerHTML = `<option value="">— Don't change —</option>` + ministerRoster.map(m => `<option value="${escapeAttr(m)}">${escapeHTML(m)}</option>`).join('');
+  document.getElementById('batchSeriesSelect').innerHTML = `<option value="">— Don't change —</option>` + sermonSeriesRoster.map(s => `<option value="${escapeAttr(s)}">${escapeHTML(s)}</option>`).join('');
+  updateScheduleBatchBar();
+}
+async function handleScheduleSeriesChange(dateKey, selectEl){
+  const value = selectEl.value;
+  if(value === '__add__'){
+    const name = await customPrompt('Add a new sermon series:');
+    if(name && name.trim()){
+      addSeries(name.trim());
+      updateScheduleField(dateKey, 'sermonSeries', name.trim());
+    } else {
+      renderScheduleTable();
+      return;
+    }
+  } else {
+    updateScheduleField(dateKey, 'sermonSeries', value);
+  }
+  renderScheduleTable();
+}
+let scheduleSelectedDates = new Set();
+function toggleScheduleRowSelect(dateKey, checked){
+  if(checked) scheduleSelectedDates.add(dateKey);
+  else scheduleSelectedDates.delete(dateKey);
+  updateScheduleBatchBar();
+}
+function toggleScheduleSelectAll(checked){
+  const todayStr = new Date().toISOString().slice(0,10);
+  const showPast = document.getElementById('scheduleShowPast')?.checked;
+  const visibleDates = Object.keys(scheduleData).filter(d => showPast || d >= todayStr);
+  if(checked) visibleDates.forEach(d => scheduleSelectedDates.add(d));
+  else visibleDates.forEach(d => scheduleSelectedDates.delete(d));
+  renderScheduleTable();
+}
+function updateScheduleBatchBar(){
+  const bar = document.getElementById('scheduleBatchBar');
+  const count = scheduleSelectedDates.size;
+  bar.classList.toggle('on', count > 0);
+  document.getElementById('scheduleSelectedCount').textContent = count + (count===1 ? ' date selected' : ' dates selected');
+}
+function applyScheduleBatch(){
+  const preacher = document.getElementById('batchPreacherSelect').value;
+  const series = document.getElementById('batchSeriesSelect').value;
+  if(!preacher && !series){ alert('Choose a preacher and/or sermon series to apply first.'); return; }
+  scheduleSelectedDates.forEach(dateKey => {
+    if(!scheduleData[dateKey]) scheduleData[dateKey] = {};
+    if(preacher) scheduleData[dateKey].preacher = preacher;
+    if(series) scheduleData[dateKey].sermonSeries = series;
+  });
+  saveSchedule();
+  renderScheduleTable();
+}
+function clearScheduleSelection(){
+  scheduleSelectedDates.clear();
+  renderScheduleTable();
 }
 function saveScheduleToFile(){
   const blob = new Blob([JSON.stringify(scheduleData, null, 2)], { type:'application/json' });
@@ -2535,17 +2709,67 @@ function findByScheduleKey(key){
   for(const m of state) for(const el of m.elements) if(el.scheduleKey === key) return el;
   return null;
 }
+
+/* ---------------------------------------------------------------------
+   Builder → Schedule sync (the reverse direction of applyScheduleForDate).
+   Whenever a scheduleKey'd element changes in the Builder — a hymn is
+   set, a reference typed, a minister assigned, the Collect edited —
+   this writes that change back into the Schedule entry for whatever
+   date is currently selected, so the two stay in step both ways.
+--------------------------------------------------------------------- */
+function syncElementBackToSchedule(id){
+  const dateStr = document.getElementById('serviceDate')?.value;
+  if(!dateStr) return;
+  const el = findEl(id);
+  if(!el || !el.scheduleKey) return;
+  if(!scheduleData[dateStr]) scheduleData[dateStr] = {};
+  const entry = scheduleData[dateStr];
+  const key = el.scheduleKey;
+
+  if(key === 'hymn1' || key === 'hymn2' || key === 'hymn4' || key === 'hymn5'){
+    entry[key] = el.hymnNumber ? `${el.hymnNumber} - ${el.hymnTitle || ''}` : (el.hymnTitle || '');
+  } else if(key === 'collect'){
+    const active = el.variants && el.variants.find(v => v.id === el.activeVariantId);
+    entry.collect = active ? (active.content || '') : '';
+  } else if(key === 'lectionaryReader'){
+    entry.lectionaryReader = el.minister || '';
+  } else if(key === 'sermon'){
+    entry.sermonSeries = el.series || '';
+    entry.sermonText = el.passageReference || '';
+    entry.preacher = el.minister || '';
+  } else if(key === 'offering'){
+    entry.offering = el.content || '';
+  } else if(key === 'pastoralPrayer' && el.sections){
+    const opening = el.sections.find(s => s.key === 'opening');
+    const thanksgiving = el.sections.find(s => s.key === 'thanksgiving');
+    const petitions = el.sections.find(s => s.key === 'petitions');
+    entry.opening = (opening && opening.reference) || '';
+    entry.thanksgiving = (thanksgiving && thanksgiving.reference) || '';
+    entry.petitions = (petitions && petitions.reference) || '';
+  } else {
+    entry[key] = el.reference || '';
+  }
+  saveSchedule();
+  const overlay = document.getElementById('scheduleOverlay');
+  if(overlay && overlay.classList.contains('open')) renderScheduleTable();
+}
 function parseHymnString(str){
   if(!str) return null;
   const m = str.match(/^\s*([0-9]+[a-zA-Z]?)\s*-\s*(.+?)\s*$/);
   if(m) return { num:m[1], title:m[2] };
   return { num:'', title:str.trim() };
 }
-function applyScheduleForDate(dateStr){
+async function applyScheduleForDate(dateStr){
   const entry = scheduleData[dateStr];
   if(!entry) return;
 
-  const setRef = (key, value) => { if(value){ const el = findByScheduleKey(key); if(el) el.reference = value; } };
+  const fetchTargets = [];
+  const setRef = (key, value) => {
+    if(value){
+      const el = findByScheduleKey(key);
+      if(el){ el.reference = value; fetchTargets.push({ id: el.id }); }
+    }
+  };
   const setHymn = (key, value) => {
     if(!value) return;
     const el = findByScheduleKey(key);
@@ -2570,9 +2794,9 @@ function applyScheduleForDate(dateStr){
   setMinister('lectionaryReader', entry.lectionaryReader);
   const pp = findByScheduleKey('pastoralPrayer');
   if(pp && pp.sections){
-    if(entry.opening) pp.sections.find(s => s.key==='opening').reference = entry.opening;
-    if(entry.thanksgiving) pp.sections.find(s => s.key==='thanksgiving').reference = entry.thanksgiving;
-    if(entry.petitions) pp.sections.find(s => s.key==='petitions').reference = entry.petitions;
+    if(entry.opening){ pp.sections.find(s => s.key==='opening').reference = entry.opening; fetchTargets.push({ id: pp.id, key:'opening' }); }
+    if(entry.thanksgiving){ pp.sections.find(s => s.key==='thanksgiving').reference = entry.thanksgiving; fetchTargets.push({ id: pp.id, key:'thanksgiving' }); }
+    if(entry.petitions){ pp.sections.find(s => s.key==='petitions').reference = entry.petitions; fetchTargets.push({ id: pp.id, key:'petitions' }); }
   }
   setHymn('hymn4', entry.hymn4);
   const sermon = findByScheduleKey('sermon');
@@ -2584,6 +2808,14 @@ function applyScheduleForDate(dateStr){
   if(entry.offering){ const off = findByScheduleKey('offering'); if(off) off.content = entry.offering; }
   setHymn('hymn5', entry.hymn5);
   setRef('benediction', entry.benediction);
+
+  // Fetch ESV text one reference at a time (never in parallel) — firing several
+  // requests to Crossway's API at once risks tripping their rate limit, which
+  // was making every fetch fail, not just the schedule-triggered ones.
+  for(const t of fetchTargets){
+    if(t.key) await autoFetchEsvForReading(t.id, t.key);
+    else await autoFetchEsvForElement(t.id);
+  }
 }
 
 // Init
