@@ -113,6 +113,12 @@
   }
   .service-meta input#serviceTitle{ min-width:220px; font-style:italic; }
   #mainColorDot{ display:inline-flex; align-items:center; }
+  .resync-btn{
+    font-family:'Inter',sans-serif; font-size:11px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:5px; padding:5px 9px; cursor:pointer;
+  }
+  .resync-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
 
   .sync-status{
     text-align:center;
@@ -530,21 +536,21 @@
     flex-shrink:0; line-height:1.5;
   }
   .schedule-table-wrap{ flex:1; overflow:auto; padding:0; }
-  .schedule-table{ border-collapse:collapse; font-family:'Inter',sans-serif; font-size:12px; white-space:nowrap; }
+  .schedule-table{ border-collapse:collapse; font-family:'Inter',sans-serif; font-size:12px; white-space:nowrap; table-layout:fixed; }
   .schedule-table th, .schedule-table td{
-    border:1px solid var(--border); padding:4px; vertical-align:top;
+    border:1px solid var(--border); padding:4px; vertical-align:top; overflow:hidden;
   }
   .schedule-table thead th{
     position:sticky; top:0; background:var(--bg); z-index:2;
     font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;
-    color:var(--ink-soft); padding:6px 4px;
+    color:var(--ink-soft); padding:6px 4px; position:sticky; overflow:visible;
   }
   .schedule-table thead tr.schedule-group-row th{
     background:var(--surface); font-size:10px; color:var(--ink-faint); border-bottom:none;
   }
   .schedule-table td.schedule-date-cell, .schedule-table th.schedule-date-col{
     position:sticky; left:0; z-index:1; background:var(--surface);
-    min-width:130px;
+    min-width:70px;
   }
   .schedule-table thead th.schedule-date-col{ z-index:3; }
   .schedule-date-cell{ display:flex; align-items:center; gap:6px; padding:4px 6px !important; }
@@ -552,14 +558,20 @@
   .schedule-table input, .schedule-table select, .schedule-table textarea{
     font-family:'Inter',sans-serif; font-size:11.5px;
     border:1px solid transparent; border-radius:3px; padding:3px 4px;
-    background:transparent; color:var(--ink); width:130px; white-space:normal;
+    background:transparent; color:var(--ink); width:100%; box-sizing:border-box; white-space:normal;
   }
   .schedule-table textarea{ resize:vertical; min-height:32px; }
   .schedule-table input:hover, .schedule-table select:hover, .schedule-table textarea:hover,
   .schedule-table input:focus, .schedule-table select:focus, .schedule-table textarea:focus{
     border-color:var(--border); background:#fff; outline:none;
   }
-  .schedule-table input[type=date]{ width:120px; }
+  .schedule-table input[type=date]{ min-width:0; }
+  .schedule-col-resize{
+    position:absolute; top:0; right:0; width:6px; height:100%; cursor:col-resize;
+    user-select:none; touch-action:none; z-index:5;
+  }
+  .schedule-col-resize:hover, .schedule-col-resize.active{ background:var(--gold); opacity:0.5; }
+  .schedule-table thead th{ position:relative; }
   .schedule-remove-row{
     border:none; background:transparent; color:var(--ink-faint); cursor:pointer; font-size:13px;
   }
@@ -796,6 +808,7 @@
     .hymnal-panel{ display:none !important; }
     .schedule-overlay{ display:none !important; }
     .schedule-batch-bar{ display:none !important; }
+    .resync-btn{ display:none !important; }
     .backup-nudge{ display:none !important; }
     .hymn-playback-bar{ display:none !important; }
     .hymn-play-btn{ display:none !important; }
@@ -823,6 +836,7 @@
       <input type="text" id="serviceTitle" placeholder="e.g. Second Sunday after Pentecost">
       <input type="date" id="serviceDate">
       <span id="mainColorDot"></span>
+      <button class="resync-btn" onclick="resyncCurrentDate()" title="Re-pull the RCL, BCP, and Schedule data for this date — refreshes those specific fields (even if you've edited them) but leaves everything else in the liturgy untouched">🔄 Re-sync</button>
     </div>
     <div id="syncStatus" class="sync-status"></div>
     <div id="settingsMenu" class="settings-menu">
@@ -1775,11 +1789,51 @@ function getLiturgicalInfo(dateStr){
   return { label, rclYear, isEastertide, isAdventOrChristmastide, yearAnchor, color };
 }
 
+let currentLoadedDate = '';
+function saveCurrentLiturgyToArchive(dateStr){
+  if(!dateStr) return;
+  const snapshot = {
+    churchTitle: document.getElementById('churchTitle').innerText,
+    serviceTitle: document.getElementById('serviceTitle').value,
+    serviceDate: dateStr,
+    movements: state,
+    savedAt: Date.now()
+  };
+  try{
+    const archive = loadLiturgyArchive();
+    archive[dateStr] = snapshot;
+    localStorage.setItem('liturgyArchive', JSON.stringify(archive));
+    localStorage.setItem('currentAutosave', JSON.stringify(snapshot));
+  }catch(e){}
+}
 function onDateChange(){
   const dateStr = document.getElementById('serviceDate').value;
   if(!dateStr) return;
+
+  if(currentLoadedDate && currentLoadedDate !== dateStr){
+    saveCurrentLiturgyToArchive(currentLoadedDate);
+  }
+
+  const archive = loadLiturgyArchive();
+  if(archive[dateStr] && archive[dateStr].movements){
+    const snap = archive[dateStr];
+    document.getElementById('churchTitle').innerText = snap.churchTitle || "The Lord's Service";
+    document.getElementById('serviceTitle').value = snap.serviceTitle || '';
+    state = snap.movements.map(m => ({
+      ...m,
+      elements: m.elements.map(el => ({ ...el, id: newId() }))
+    }));
+    currentLoadedDate = dateStr;
+    document.getElementById('mainColorDot').innerHTML = scheduleColorDotHtml(dateStr);
+    render();
+    return;
+  }
+
+  loadStateFromTemplate(DEFAULT_TEMPLATE);
+  currentLoadedDate = dateStr;
+
   const info = getLiturgicalInfo(dateStr);
-  if(!info) return;
+  if(!info){ render(); return; }
   document.getElementById('serviceTitle').value = `${info.label} (Year ${info.rclYear})`;
   document.getElementById('mainColorDot').innerHTML = scheduleColorDotHtml(dateStr);
   state.forEach(m => m.elements.forEach(e => {
@@ -1788,6 +1842,25 @@ function onDateChange(){
       if(e.altActive) e.hasAlt = true;
     }
   }));
+  render();
+  syncLectionary(dateStr);
+  applyScheduleForDate(dateStr);
+  carryForwardPetitions(dateStr);
+  render();
+}
+function resyncCurrentDate(){
+  const dateStr = document.getElementById('serviceDate').value;
+  if(!dateStr) return;
+  const info = getLiturgicalInfo(dateStr);
+  if(info){
+    document.getElementById('serviceTitle').value = `${info.label} (Year ${info.rclYear})`;
+    state.forEach(m => m.elements.forEach(e => {
+      if(e.type === 'response' && e.allowSeasonal){
+        e.altActive = e.altMode === 'replace' ? info.isAdventOrChristmastide : info.isEastertide;
+        if(e.altActive) e.hasAlt = true;
+      }
+    }));
+  }
   render();
   syncLectionary(dateStr);
   applyScheduleForDate(dateStr);
@@ -2733,6 +2806,48 @@ function loadSchedule(){
 function saveSchedule(){
   try{ localStorage.setItem('liturgySchedule', JSON.stringify(scheduleData)); }catch(e){}
 }
+function loadScheduleColumnWidths(){
+  try{
+    const raw = localStorage.getItem('scheduleColumnWidths');
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {};
+}
+function saveScheduleColumnWidths(widths){
+  try{ localStorage.setItem('scheduleColumnWidths', JSON.stringify(widths)); }catch(e){}
+}
+let scheduleColResize = null;
+function startScheduleColResize(e, key){
+  e.preventDefault();
+  const th = e.target.closest('th');
+  const table = document.getElementById('scheduleTable');
+  const colIndex = Array.from(th.parentElement.children).indexOf(th);
+  const col = table.querySelectorAll('colgroup col')[colIndex];
+  scheduleColResize = {
+    key, col,
+    startX: e.clientX,
+    startWidth: col.offsetWidth
+  };
+  e.target.classList.add('active');
+  document.addEventListener('mousemove', onScheduleColResizeMove);
+  document.addEventListener('mouseup', onScheduleColResizeEnd);
+}
+function onScheduleColResizeMove(e){
+  if(!scheduleColResize) return;
+  const delta = e.clientX - scheduleColResize.startX;
+  const newWidth = Math.max(50, scheduleColResize.startWidth + delta);
+  scheduleColResize.col.style.width = newWidth + 'px';
+}
+function onScheduleColResizeEnd(){
+  if(!scheduleColResize) return;
+  const widths = loadScheduleColumnWidths();
+  widths[scheduleColResize.key] = parseInt(scheduleColResize.col.style.width, 10);
+  saveScheduleColumnWidths(widths);
+  document.querySelectorAll('.schedule-col-resize.active').forEach(el => el.classList.remove('active'));
+  scheduleColResize = null;
+  document.removeEventListener('mousemove', onScheduleColResizeMove);
+  document.removeEventListener('mouseup', onScheduleColResizeEnd);
+}
 function toggleSchedulePanel(){
   const overlay = document.getElementById('scheduleOverlay');
   const opening = !overlay.classList.contains('open');
@@ -2791,10 +2906,19 @@ function renderScheduleTable(){
   const dates = Object.keys(scheduleData).filter(d => showPast || d >= todayStr).sort();
   const allSelected = dates.length > 0 && dates.every(d => scheduleSelectedDates.has(d));
 
+  const widths = loadScheduleColumnWidths();
+  const colgroup = '<colgroup>' +
+    `<col style="width:${widths['__date']||150}px">` +
+    SCHEDULE_COLUMNS.map(c => `<col style="width:${widths[c.key]||150}px">`).join('') +
+    '</colgroup>';
+
   let thead = '<thead><tr class="schedule-group-row"><th class="schedule-date-col"></th>' +
     groups.map(g => `<th colspan="${g.count}">${escapeHTML(g.name)}</th>`).join('') + '</tr><tr>' +
-    `<th class="schedule-date-col"><input type="checkbox" class="schedule-row-checkbox" ${allSelected?'checked':''} onchange="toggleScheduleSelectAll(this.checked)" title="Select all"> Date</th>` +
-    SCHEDULE_COLUMNS.map(c => `<th>${escapeHTML(c.label)}</th>`).join('') + '</tr></thead>';
+    `<th class="schedule-date-col">` +
+      `<input type="checkbox" class="schedule-row-checkbox" ${allSelected?'checked':''} onchange="toggleScheduleSelectAll(this.checked)" title="Select all"> Date` +
+      `<span class="schedule-col-resize" onmousedown="startScheduleColResize(event,'__date')"></span>` +
+    `</th>` +
+    SCHEDULE_COLUMNS.map(c => `<th>${escapeHTML(c.label)}<span class="schedule-col-resize" onmousedown="startScheduleColResize(event,'${c.key}')"></span></th>`).join('') + '</tr></thead>';
 
   const ministerOptions = name => `<option value="">—</option>` + ministerRoster.map(m => `<option value="${escapeAttr(m)}" ${name===m?'selected':''}>${escapeHTML(m)}</option>`).join('');
   const seriesOptions = name => `<option value="">—</option>` + sermonSeriesRoster.map(s => `<option value="${escapeAttr(s)}" ${name===s?'selected':''}>${escapeHTML(s)}</option>`).join('') + `<option value="__add__">+ Add new series…</option>`;
@@ -2831,7 +2955,7 @@ function renderScheduleTable(){
     </tr>`;
   }).join('');
 
-  table.innerHTML = thead + '<tbody>' + (rows || `<tr><td colspan="${SCHEDULE_COLUMNS.length+1}" style="padding:16px;color:var(--ink-faint);">No dates scheduled yet — click "+ Add date" to start.</td></tr>`) + '</tbody>';
+  table.innerHTML = colgroup + thead + '<tbody>' + (rows || `<tr><td colspan="${SCHEDULE_COLUMNS.length+1}" style="padding:16px;color:var(--ink-faint);">No dates scheduled yet — click "+ Add date" to start.</td></tr>`) + '</tbody>';
 
   document.getElementById('batchPreacherSelect').innerHTML = `<option value="">— Don't change —</option>` + ministerRoster.map(m => `<option value="${escapeAttr(m)}">${escapeHTML(m)}</option>`).join('');
   document.getElementById('batchSeriesSelect').innerHTML = `<option value="">— Don't change —</option>` + sermonSeriesRoster.map(s => `<option value="${escapeAttr(s)}">${escapeHTML(s)}</option>`).join('');
@@ -3092,6 +3216,7 @@ async function checkForAutosaveRestore(){
   document.getElementById('churchTitle').innerText = snap.churchTitle || "The Lord's Service";
   document.getElementById('serviceTitle').value = snap.serviceTitle || '';
   document.getElementById('serviceDate').value = snap.serviceDate || '';
+  currentLoadedDate = snap.serviceDate || '';
   state = snap.movements.map(m => ({
     ...m,
     elements: m.elements.map(el => ({ ...el, id: newId() }))
