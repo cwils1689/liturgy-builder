@@ -877,6 +877,7 @@
           <button onclick="addScheduleRow()">+ Add date</button>
           <button onclick="saveScheduleToFile()">💾 Save schedule</button>
           <button onclick="document.getElementById('scheduleLoadInput').click()">📂 Load schedule</button>
+          <button onclick="resetScheduleColumnWidths()" title="Clear any saved column widths and go back to the default sizes">↺ Reset column widths</button>
           <input type="file" id="scheduleLoadInput" accept="application/json" style="display:none">
           <button class="schedule-close-btn" onclick="toggleSchedulePanel()" title="Close">✕</button>
         </div>
@@ -2816,6 +2817,10 @@ function loadScheduleColumnWidths(){
 function saveScheduleColumnWidths(widths){
   try{ localStorage.setItem('scheduleColumnWidths', JSON.stringify(widths)); }catch(e){}
 }
+function resetScheduleColumnWidths(){
+  try{ localStorage.removeItem('scheduleColumnWidths'); }catch(e){}
+  renderScheduleTable();
+}
 let scheduleColResize = null;
 function startScheduleColResize(e, key){
   e.preventDefault();
@@ -2826,7 +2831,7 @@ function startScheduleColResize(e, key){
   scheduleColResize = {
     key, col,
     startX: e.clientX,
-    startWidth: col.offsetWidth
+    startWidth: th.offsetWidth
   };
   e.target.classList.add('active');
   document.addEventListener('mousemove', onScheduleColResizeMove);
