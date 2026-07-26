@@ -536,42 +536,46 @@
     flex-shrink:0; line-height:1.5;
   }
   .schedule-table-wrap{ flex:1; overflow:auto; padding:0; }
-  .schedule-table{ border-collapse:collapse; font-family:'Inter',sans-serif; font-size:12px; white-space:nowrap; table-layout:fixed; }
-  .schedule-table th, .schedule-table td{
-    border:1px solid var(--border); padding:4px; vertical-align:top; overflow:hidden;
+  .schedule-grid{ display:grid; font-family:'Inter',sans-serif; font-size:12px; }
+  .sg-cell, .sg-head{
+    border:1px solid var(--border); padding:4px; overflow:hidden; box-sizing:border-box;
+    white-space:nowrap;
   }
-  .schedule-table thead th{
+  .sg-head{
     position:sticky; top:0; background:var(--bg); z-index:2;
     font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;
-    color:var(--ink-soft); padding:6px 4px; position:sticky; overflow:visible;
+    color:var(--ink-soft); padding:6px 4px; white-space:normal;
   }
-  .schedule-table thead tr.schedule-group-row th{
+  .sg-resize-handle{
+    position:absolute; top:0; right:0; width:6px; height:100%; cursor:col-resize;
+    user-select:none; touch-action:none; z-index:6;
+  }
+  .sg-resize-handle:hover, .sg-resize-handle.active{ background:var(--gold); opacity:0.5; }
+  .sg-head.sg-group{
     background:var(--surface); font-size:10px; color:var(--ink-faint); border-bottom:none;
   }
-  .schedule-table td.schedule-date-cell, .schedule-table th.schedule-date-col{
+  .sg-selectcell, .sg-head.sg-selecthead{
     position:sticky; left:0; z-index:1; background:var(--surface);
-    min-width:70px;
   }
-  .schedule-table thead th.schedule-date-col{ z-index:3; }
-  .schedule-date-cell{ display:flex; align-items:center; gap:6px; padding:4px 6px !important; }
+  .sg-head.sg-selecthead{ z-index:3; }
+  .sg-selectcell{ display:flex; align-items:center; justify-content:center; padding:4px 2px; }
+  .sg-datecell, .sg-head.sg-datehead{
+    position:sticky; z-index:1; background:var(--surface);
+  }
+  .sg-head.sg-datehead{ z-index:3; }
+  .sg-datecell{ display:flex; align-items:center; gap:6px; padding:4px 6px; white-space:normal; }
   .schedule-color-dot{ width:11px; height:11px; border-radius:50%; flex-shrink:0; border:1px solid rgba(0,0,0,0.15); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .schedule-table input, .schedule-table select, .schedule-table textarea{
+  .sg-cell input, .sg-cell select, .sg-cell textarea{
     font-family:'Inter',sans-serif; font-size:11.5px;
     border:1px solid transparent; border-radius:3px; padding:3px 4px;
     background:transparent; color:var(--ink); width:100%; box-sizing:border-box; white-space:normal;
   }
-  .schedule-table textarea{ resize:vertical; min-height:32px; }
-  .schedule-table input:hover, .schedule-table select:hover, .schedule-table textarea:hover,
-  .schedule-table input:focus, .schedule-table select:focus, .schedule-table textarea:focus{
+  .sg-cell textarea{ resize:vertical; min-height:32px; }
+  .sg-cell input:hover, .sg-cell select:hover, .sg-cell textarea:hover,
+  .sg-cell input:focus, .sg-cell select:focus, .sg-cell textarea:focus{
     border-color:var(--border); background:#fff; outline:none;
   }
-  .schedule-table input[type=date]{ min-width:0; }
-  .schedule-col-resize{
-    position:absolute; top:0; right:0; width:6px; height:100%; cursor:col-resize;
-    user-select:none; touch-action:none; z-index:5;
-  }
-  .schedule-col-resize:hover, .schedule-col-resize.active{ background:var(--gold); opacity:0.5; }
-  .schedule-table thead th{ position:relative; }
+  .sg-cell input[type=date]{ min-width:0; }
   .schedule-remove-row{
     border:none; background:transparent; color:var(--ink-faint); cursor:pointer; font-size:13px;
   }
@@ -877,7 +881,6 @@
           <button onclick="addScheduleRow()">+ Add date</button>
           <button onclick="saveScheduleToFile()">💾 Save schedule</button>
           <button onclick="document.getElementById('scheduleLoadInput').click()">📂 Load schedule</button>
-          <button onclick="resetScheduleColumnWidths()" title="Clear any saved column widths and go back to the default sizes">↺ Reset column widths</button>
           <input type="file" id="scheduleLoadInput" accept="application/json" style="display:none">
           <button class="schedule-close-btn" onclick="toggleSchedulePanel()" title="Close">✕</button>
         </div>
@@ -891,7 +894,7 @@
         <button onclick="clearScheduleSelection()">Clear selection</button>
       </div>
       <div class="schedule-table-wrap">
-        <table class="schedule-table" id="scheduleTable"></table>
+        <div class="schedule-grid" id="scheduleTable"></div>
       </div>
     </div>
   </div>
@@ -2807,32 +2810,37 @@ function loadSchedule(){
 function saveSchedule(){
   try{ localStorage.setItem('liturgySchedule', JSON.stringify(scheduleData)); }catch(e){}
 }
-function loadScheduleColumnWidths(){
+const SCHEDULE_COLUMN_WIDTHS = {
+  __select:34, __date:118, scripture:177, collect:134, hymn1:90, hymn2:340,
+  prayerVerse:191, assuranceVerse:205, lectionaryReader:90,
+  opening:190, thanksgiving:187, petitions:174, hymn4:238,
+  sermonSeries:157, sermonText:225, preacher:150, offering:157,
+  hymn5:195, benediction:190, notes:264
+};
+function loadScheduleColumnWidthOverrides(){
   try{
-    const raw = localStorage.getItem('scheduleColumnWidths');
+    const raw = localStorage.getItem('scheduleColumnWidthOverrides');
     if(raw) return JSON.parse(raw);
   }catch(e){}
   return {};
 }
-function saveScheduleColumnWidths(widths){
-  try{ localStorage.setItem('scheduleColumnWidths', JSON.stringify(widths)); }catch(e){}
+function saveScheduleColumnWidthOverrides(overrides){
+  try{ localStorage.setItem('scheduleColumnWidthOverrides', JSON.stringify(overrides)); }catch(e){}
 }
-function resetScheduleColumnWidths(){
-  try{ localStorage.removeItem('scheduleColumnWidths'); }catch(e){}
-  renderScheduleTable();
+function computeScheduleColumnWidths(){
+  return { ...SCHEDULE_COLUMN_WIDTHS, ...loadScheduleColumnWidthOverrides() };
+}
+function getScheduleColKeys(){
+  return ['__select', '__date', ...SCHEDULE_COLUMNS.map(c => c.key)];
 }
 let scheduleColResize = null;
 function startScheduleColResize(e, key){
   e.preventDefault();
-  const th = e.target.closest('th');
-  const table = document.getElementById('scheduleTable');
-  const colIndex = Array.from(th.parentElement.children).indexOf(th);
-  const col = table.querySelectorAll('colgroup col')[colIndex];
-  scheduleColResize = {
-    key, col,
-    startX: e.clientX,
-    startWidth: th.offsetWidth
-  };
+  const grid = document.getElementById('scheduleTable');
+  const keys = getScheduleColKeys();
+  const idx = keys.indexOf(key);
+  const currentWidths = grid.style.gridTemplateColumns.split(' ').map(v => parseInt(v, 10));
+  scheduleColResize = { key, idx, startX: e.clientX, startWidth: currentWidths[idx], widths: currentWidths };
   e.target.classList.add('active');
   document.addEventListener('mousemove', onScheduleColResizeMove);
   document.addEventListener('mouseup', onScheduleColResizeEnd);
@@ -2841,14 +2849,15 @@ function onScheduleColResizeMove(e){
   if(!scheduleColResize) return;
   const delta = e.clientX - scheduleColResize.startX;
   const newWidth = Math.max(50, scheduleColResize.startWidth + delta);
-  scheduleColResize.col.style.width = newWidth + 'px';
+  scheduleColResize.widths[scheduleColResize.idx] = newWidth;
+  document.getElementById('scheduleTable').style.gridTemplateColumns = scheduleColResize.widths.map(w => w + 'px').join(' ');
 }
 function onScheduleColResizeEnd(){
   if(!scheduleColResize) return;
-  const widths = loadScheduleColumnWidths();
-  widths[scheduleColResize.key] = parseInt(scheduleColResize.col.style.width, 10);
-  saveScheduleColumnWidths(widths);
-  document.querySelectorAll('.schedule-col-resize.active').forEach(el => el.classList.remove('active'));
+  const overrides = loadScheduleColumnWidthOverrides();
+  overrides[scheduleColResize.key] = scheduleColResize.widths[scheduleColResize.idx];
+  saveScheduleColumnWidthOverrides(overrides);
+  document.querySelectorAll('.sg-resize-handle.active').forEach(el => el.classList.remove('active'));
   scheduleColResize = null;
   document.removeEventListener('mousemove', onScheduleColResizeMove);
   document.removeEventListener('mouseup', onScheduleColResizeEnd);
@@ -2902,7 +2911,7 @@ function scheduleColorDotHtml(dateKey){
   return `<span class="schedule-color-dot" style="background:${hexMap[info.color]||'#ccc'}" title="${info.color} (${escapeAttr(info.label)})"></span>`;
 }
 function renderScheduleTable(){
-  const table = document.getElementById('scheduleTable');
+  const grid = document.getElementById('scheduleTable');
   const groups = [];
   SCHEDULE_COLUMNS.forEach(c => { if(!groups.length || groups[groups.length-1].name !== c.group) groups.push({ name:c.group, count:1 }); else groups[groups.length-1].count++; });
 
@@ -2911,19 +2920,20 @@ function renderScheduleTable(){
   const dates = Object.keys(scheduleData).filter(d => showPast || d >= todayStr).sort();
   const allSelected = dates.length > 0 && dates.every(d => scheduleSelectedDates.has(d));
 
-  const widths = loadScheduleColumnWidths();
-  const colgroup = '<colgroup>' +
-    `<col style="width:${widths['__date']||150}px">` +
-    SCHEDULE_COLUMNS.map(c => `<col style="width:${widths[c.key]||150}px">`).join('') +
-    '</colgroup>';
+  const widths = computeScheduleColumnWidths();
+  grid.style.gridTemplateColumns = widths['__select'] + 'px ' + widths['__date'] + 'px ' + SCHEDULE_COLUMNS.map(c => widths[c.key] + 'px').join(' ');
 
-  let thead = '<thead><tr class="schedule-group-row"><th class="schedule-date-col"></th>' +
-    groups.map(g => `<th colspan="${g.count}">${escapeHTML(g.name)}</th>`).join('') + '</tr><tr>' +
-    `<th class="schedule-date-col">` +
-      `<input type="checkbox" class="schedule-row-checkbox" ${allSelected?'checked':''} onchange="toggleScheduleSelectAll(this.checked)" title="Select all"> Date` +
-      `<span class="schedule-col-resize" onmousedown="startScheduleColResize(event,'__date')"></span>` +
-    `</th>` +
-    SCHEDULE_COLUMNS.map(c => `<th>${escapeHTML(c.label)}<span class="schedule-col-resize" onmousedown="startScheduleColResize(event,'${c.key}')"></span></th>`).join('') + '</tr></thead>';
+  let head = `<div class="sg-head sg-group sg-selecthead" style="grid-column:span 2;"></div>` +
+    groups.map(g => `<div class="sg-head sg-group" style="grid-column:span ${g.count};">${escapeHTML(g.name)}</div>`).join('') +
+    `<div class="sg-head sg-selecthead">` +
+      `<input type="checkbox" class="schedule-row-checkbox" ${allSelected?'checked':''} onchange="toggleScheduleSelectAll(this.checked)" title="Select all">` +
+      `<span class="sg-resize-handle" onmousedown="startScheduleColResize(event,'__select')"></span>` +
+    `</div>` +
+    `<div class="sg-head sg-datehead" style="left:${widths['__select']}px;">` +
+      `Date` +
+      `<span class="sg-resize-handle" onmousedown="startScheduleColResize(event,'__date')"></span>` +
+    `</div>` +
+    SCHEDULE_COLUMNS.map(c => `<div class="sg-head">${escapeHTML(c.label)}<span class="sg-resize-handle" onmousedown="startScheduleColResize(event,'${c.key}')"></span></div>`).join('');
 
   const ministerOptions = name => `<option value="">—</option>` + ministerRoster.map(m => `<option value="${escapeAttr(m)}" ${name===m?'selected':''}>${escapeHTML(m)}</option>`).join('');
   const seriesOptions = name => `<option value="">—</option>` + sermonSeriesRoster.map(s => `<option value="${escapeAttr(s)}" ${name===s?'selected':''}>${escapeHTML(s)}</option>`).join('') + `<option value="__add__">+ Add new series…</option>`;
@@ -2946,21 +2956,21 @@ function renderScheduleTable(){
         const hymnDrop = isHymnCol ? ` ondragover="event.preventDefault()" ondrop="handleScheduleHymnDrop(event,'${dateKey}','${c.key}')"` : '';
         inputHtml = `<input type="text" value="${escapeAttr(val)}" onchange="updateScheduleField('${dateKey}','${c.key}',this.value)"${hymnFocus}${hymnDrop}>`;
       }
-      const cellStyle = (c.key === 'preacher' && preacherColor) ? ` style="background:${preacherColor}22"` : '';
-      return `<td${cellStyle}>${inputHtml}</td>`;
+      const bg = (c.key === 'preacher' && preacherColor) ? ` style="background:${preacherColor}22;"` : '';
+      return `<div class="sg-cell"${bg}>${inputHtml}</div>`;
     }).join('');
-    return `<tr>
-      <td class="schedule-date-cell">
+    return `<div class="sg-cell sg-selectcell">
         <input type="checkbox" class="schedule-row-checkbox" ${scheduleSelectedDates.has(dateKey)?'checked':''} onchange="toggleScheduleRowSelect('${dateKey}',this.checked)">
+      </div>
+      <div class="sg-cell sg-datecell" style="left:${widths['__select']}px;">
         ${scheduleColorDotHtml(dateKey)}
         <input type="date" value="${dateKey}" onchange="updateScheduleDate('${dateKey}',this.value)">
         <button class="schedule-remove-row" onclick="removeScheduleRow('${dateKey}')" title="Remove this row">✕</button>
-      </td>
-      ${cells}
-    </tr>`;
+      </div>
+      ${cells}`;
   }).join('');
 
-  table.innerHTML = colgroup + thead + '<tbody>' + (rows || `<tr><td colspan="${SCHEDULE_COLUMNS.length+1}" style="padding:16px;color:var(--ink-faint);">No dates scheduled yet — click "+ Add date" to start.</td></tr>`) + '</tbody>';
+  grid.innerHTML = head + (rows || `<div class="sg-cell" style="grid-column:1 / -1;padding:16px;color:var(--ink-faint);">No dates scheduled yet — click "+ Add date" to start.</div>`);
 
   document.getElementById('batchPreacherSelect').innerHTML = `<option value="">— Don't change —</option>` + ministerRoster.map(m => `<option value="${escapeAttr(m)}">${escapeHTML(m)}</option>`).join('');
   document.getElementById('batchSeriesSelect').innerHTML = `<option value="">— Don't change —</option>` + sermonSeriesRoster.map(s => `<option value="${escapeAttr(s)}">${escapeHTML(s)}</option>`).join('');
