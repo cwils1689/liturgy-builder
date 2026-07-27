@@ -195,6 +195,7 @@
     font-size:11.5px; color:var(--ink-faint); margin-top:6px; flex-wrap:wrap;
   }
   .esv-settings label{ font-weight:600; }
+  .settings-hint{ font-weight:400; color:var(--ink-faint); font-size:10.5px; }
   .esv-settings input{
     font-family:'Inter',sans-serif; font-size:11.5px;
     border:1px solid var(--border); border-radius:4px;
@@ -969,7 +970,7 @@
       <input type="date" id="serviceDate" style="display:none">
       <button id="currentDateDisplay" class="current-date-display" onclick="toggleServicesPanel()" title="Click to choose or create a service date">📃 Select a Service</button>
       <span id="mainColorDot"></span>
-      <button class="resync-btn" onclick="resyncCurrentDate()" title="Re-pull the RCL, BCP, and Schedule data for this date — refreshes those specific fields (even if you've edited them) but leaves everything else in the liturgy untouched">🔄 Re-sync</button>
+      <button class="resync-btn" onclick="resyncCurrentDate()" title="Re-pull the RCL, BCP, and Schedule data for this date — refreshes those specific fields (even if you've edited them) but leaves everything else in the liturgy untouched">🔄 Refresh Data</button>
     </div>
     <div id="syncStatus" class="sync-status"></div>
     <div id="settingsMenu" class="settings-menu">
@@ -983,7 +984,7 @@
         <button onclick="addMinisterFromInput()">Add</button>
       </div>
       <div class="esv-settings">
-        <label for="esvApiKey">ESV API Key</label>
+        <label for="esvApiKey">ESV API Key <span class="settings-hint">(shared with everyone signed in)</span></label>
         <input type="password" id="esvApiKey" placeholder="paste your key from api.esv.org">
         <button onclick="saveEsvKey()">Save</button>
         <a href="https://api.esv.org/" target="_blank" rel="noopener">Get a free key →</a>
@@ -2364,6 +2365,13 @@ async function pullSharedDataOnSignIn(){
     sermonSeriesRoster = cloud.sermonSeriesRoster;
     try{ localStorage.setItem('sermonSeriesRoster', JSON.stringify(sermonSeriesRoster)); }catch(e){}
   }
+  if(cloud.esvApiKey){
+    try{ localStorage.setItem('esvApiKey', cloud.esvApiKey); }catch(e){}
+    const input = document.getElementById('esvApiKey');
+    const status = document.getElementById('esvKeyStatus');
+    if(input) input.value = cloud.esvApiKey;
+    if(status){ status.textContent = 'Saved ✓'; status.className = 'saved'; }
+  }
   render();
   refreshServicesPanelIfOpen();
   const scheduleOverlay = document.getElementById('scheduleOverlay');
@@ -2509,6 +2517,7 @@ function loadEsvKey(){
 function saveEsvKey(){
   const val = document.getElementById('esvApiKey').value.trim();
   try{ localStorage.setItem('esvApiKey', val); }catch(e){}
+  pushSharedDataToSupabase('esvApiKey', val);
   const status = document.getElementById('esvKeyStatus');
   status.textContent = val ? 'Saved ✓' : '';
   status.className = val ? 'saved' : '';
@@ -3911,6 +3920,7 @@ function markBackupDone(){
   hideBackupNudge();
 }
 function checkBackupNudge(){
+  if(currentUser) return;
   let last = 0;
   try{ last = parseInt(localStorage.getItem('lastBackupExport') || '0', 10); }catch(e){}
   let snoozedUntil = 0;
@@ -3968,8 +3978,7 @@ renderMinisterChips();
 loadStateFromTemplate(DEFAULT_TEMPLATE);
 render();
 checkForAutosaveRestore();
-restoreSupabaseSession();
-checkBackupNudge();
+restoreSupabaseSession().then(checkBackupNudge);
 </script>
 </body>
 </html>
