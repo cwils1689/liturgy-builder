@@ -68,7 +68,7 @@
   }
   .hamburger-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
   .sync-status-btn{
-    position:absolute; top:0; left:42px;
+    position:absolute; top:0; right:0;
     height:34px;
     border:1px solid var(--border); background:transparent; color:var(--ink-faint);
     border-radius:6px; font-size:11.5px; font-family:'Inter',sans-serif; font-weight:600;
@@ -961,7 +961,7 @@
 
   <header class="masthead">
     <button id="settingsToggle" class="hamburger-btn" onclick="toggleSettingsMenu()" title="Settings (ESV key, ministers)">☰</button>
-    <button id="syncStatusIndicator" class="sync-status-btn" onclick="handleSyncStatusClick()" title="Cloud sync status">☁️ Not synced</button>
+    <button id="syncStatusIndicator" class="sync-status-btn" onclick="handleSyncStatusClick()" title="Cloud sync status">☁️ Login to Sync</button>
     <div class="eyebrow">Pillar Reformed Church</div>
     <h1 contenteditable="true" id="churchTitle">The Lord's Service</h1>
     <div class="service-meta">
@@ -2234,6 +2234,7 @@ async function handleSignIn(){
     hideAuthOverlay();
     updateSyncStatusIndicator();
     refreshServicesPanelIfOpen();
+    pullSharedDataOnSignIn();
   }catch(e){
     errEl.textContent = 'Could not reach the sign-in service. Check your connection and try again.';
   }
@@ -2257,7 +2258,7 @@ function updateSyncStatusIndicator(){
     el.textContent = '☁️ ' + currentUser.email;
     el.classList.add('synced');
   } else {
-    el.textContent = '☁️ Not synced';
+    el.textContent = '☁️ Login to Sync';
     el.classList.remove('synced');
   }
 }
@@ -2269,6 +2270,7 @@ async function restoreSupabaseSession(){
       currentUser = data.session.user;
       updateSyncStatusIndicator();
       refreshServicesPanelIfOpen();
+      pullSharedDataOnSignIn();
     }
   }catch(e){
     console.error('Supabase session check failed; continuing local-only.', e);
@@ -2309,6 +2311,63 @@ async function fetchAllServiceSnapshotsFromSupabase(){
     console.error('Could not fetch the service list from the cloud; showing local services only.', e);
     return {};
   }
+}
+
+/* ---------------------------------------------------------------------
+   Phase 2 cloud sync — the Planner (Schedule) and the shared roster
+   data (ministers, minister colors, sermon series). Same additive,
+   fails-safe-to-local pattern as the liturgy archive: one small
+   key/value table in Supabase holds each of these as a single JSON
+   document, keyed by name. Personal preferences (the ESV key, column
+   widths) deliberately stay local-only — those aren't shared data.
+--------------------------------------------------------------------- */
+async function pushSharedDataToSupabase(key, data){
+  if(!sbClient || !currentUser) return;
+  try{
+    await sbClient.from('shared_data').upsert({
+      key, data, updated_at: new Date().toISOString()
+    }, { onConflict: 'key' });
+  }catch(e){
+    console.error('Could not sync "' + key + '" to the cloud; still saved locally.', e);
+  }
+}
+async function fetchAllSharedDataFromSupabase(){
+  if(!sbClient || !currentUser) return {};
+  try{
+    const { data, error } = await sbClient.from('shared_data').select('key, data');
+    if(error || !data) return {};
+    const result = {};
+    data.forEach(row => { result[row.key] = row.data; });
+    return result;
+  }catch(e){
+    console.error('Could not fetch shared data from the cloud; using local copies.', e);
+    return {};
+  }
+}
+async function pullSharedDataOnSignIn(){
+  const cloud = await fetchAllSharedDataFromSupabase();
+  if(!Object.keys(cloud).length) return;
+  if(cloud.schedule){
+    scheduleData = cloud.schedule;
+    try{ localStorage.setItem('liturgySchedule', JSON.stringify(scheduleData)); }catch(e){}
+  }
+  if(cloud.ministerRoster){
+    ministerRoster = cloud.ministerRoster;
+    try{ localStorage.setItem('ministerRoster', JSON.stringify(ministerRoster)); }catch(e){}
+    renderMinisterChips();
+  }
+  if(cloud.ministerColors){
+    ministerColors = cloud.ministerColors;
+    try{ localStorage.setItem('ministerColors', JSON.stringify(ministerColors)); }catch(e){}
+  }
+  if(cloud.sermonSeriesRoster){
+    sermonSeriesRoster = cloud.sermonSeriesRoster;
+    try{ localStorage.setItem('sermonSeriesRoster', JSON.stringify(sermonSeriesRoster)); }catch(e){}
+  }
+  render();
+  refreshServicesPanelIfOpen();
+  const scheduleOverlay = document.getElementById('scheduleOverlay');
+  if(scheduleOverlay && scheduleOverlay.classList.contains('open')) renderScheduleTable();
 }
 
 function refreshServicesPanelIfOpen(){
@@ -2580,6 +2639,7 @@ function loadMinisterRoster(){
 }
 function saveMinisterRoster(){
   try{ localStorage.setItem('ministerRoster', JSON.stringify(ministerRoster)); }catch(e){}
+  pushSharedDataToSupabase('ministerRoster', ministerRoster);
 }
 let ministerColors = {};
 function loadMinisterColors(){
@@ -2591,6 +2651,7 @@ function loadMinisterColors(){
 }
 function saveMinisterColors(){
   try{ localStorage.setItem('ministerColors', JSON.stringify(ministerColors)); }catch(e){}
+  pushSharedDataToSupabase('ministerColors', ministerColors);
 }
 function setMinisterColor(name, hex){
   ministerColors[name] = hex;
@@ -2675,6 +2736,7 @@ function loadSermonSeriesRoster(){
 }
 function saveSermonSeriesRoster(){
   try{ localStorage.setItem('sermonSeriesRoster', JSON.stringify(sermonSeriesRoster)); }catch(e){}
+  pushSharedDataToSupabase('sermonSeriesRoster', sermonSeriesRoster);
 }
 function addSeries(name){
   name = (name || '').trim();
@@ -3278,6 +3340,7 @@ function loadSchedule(){
 }
 function saveSchedule(){
   try{ localStorage.setItem('liturgySchedule', JSON.stringify(scheduleData)); }catch(e){}
+  pushSharedDataToSupabase('schedule', scheduleData);
 }
 const SCHEDULE_COLUMN_WIDTHS = {
   __select:34, __date:118, scripture:177, collect:134, hymn1:90, hymn2:340,
@@ -3425,6 +3488,15 @@ function toggleSchedulePanel(){
   if(opening){
     renderScheduleTable();
     updatePanelLayout();
+    if(currentUser){
+      fetchAllSharedDataFromSupabase().then(cloud => {
+        if(cloud.schedule){
+          scheduleData = cloud.schedule;
+          try{ localStorage.setItem('liturgySchedule', JSON.stringify(scheduleData)); }catch(e){}
+          renderScheduleTable();
+        }
+      });
+    }
   }
 }
 function updateScheduleField(dateKey, field, value){
