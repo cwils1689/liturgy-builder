@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
     --bg: #ECEFEA;
@@ -66,6 +67,42 @@
     cursor:pointer;
   }
   .hamburger-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .sync-status-btn{
+    position:absolute; top:0; left:42px;
+    height:34px;
+    border:1px solid var(--border); background:transparent; color:var(--ink-faint);
+    border-radius:6px; font-size:11.5px; font-family:'Inter',sans-serif; font-weight:600;
+    padding:0 10px; cursor:pointer; white-space:nowrap;
+  }
+  .sync-status-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .sync-status-btn.synced{ border-color:#3f6b4a; color:#3f6b4a; }
+  .auth-overlay{
+    display:none;
+    position:fixed; inset:0; z-index:2500;
+    background:rgba(27,42,69,0.55);
+    align-items:center; justify-content:center;
+  }
+  .auth-overlay.open{ display:flex; }
+  .auth-box{
+    background:var(--surface); border-radius:10px; padding:24px;
+    width:100%; max-width:340px; box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .auth-box h3{ font-family:'Spectral',serif; font-size:17px; margin:0; color:var(--ink); }
+  .auth-hint{ font-size:12px; color:var(--ink-soft); line-height:1.5; margin:0; }
+  .auth-box input{
+    font-family:'Inter',sans-serif; font-size:13px;
+    border:1px solid var(--border); border-radius:5px; padding:8px 10px; color:var(--ink);
+  }
+  .auth-error{ font-size:11.5px; color:#b3261e; min-height:1em; }
+  .auth-box button.primary{
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    border:none; background:var(--gold); color:#fff; border-radius:5px; padding:9px; cursor:pointer;
+  }
+  .auth-skip{
+    font-family:'Inter',sans-serif; font-size:11.5px;
+    border:none; background:transparent; color:var(--ink-faint); text-decoration:underline; cursor:pointer;
+  }
   .settings-menu{
     display:none;
     position:absolute;
@@ -468,15 +505,21 @@
   .services-list-wrap{ flex:1; overflow-y:auto; padding:8px 12px 16px; }
   .service-item{
     border:1px solid var(--border); border-radius:6px; padding:8px 10px; margin-bottom:6px;
-    background:var(--bg); cursor:pointer;
+    background:var(--bg); display:flex; align-items:flex-start; gap:6px;
   }
   .service-item:hover{ border-color:var(--ink-soft); }
   .service-item.active{ border-color:var(--gold); background:#fff8e8; }
+  .service-item-row{ flex:1; min-width:0; cursor:pointer; }
   .service-item-date{
     font-size:12px; font-weight:700; color:var(--ink);
     display:flex; align-items:center; gap:6px;
   }
   .service-item-title{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .service-item-delete{
+    flex-shrink:0; border:none; background:transparent; color:var(--ink-faint);
+    cursor:pointer; font-size:13px; padding:2px 4px;
+  }
+  .service-item-delete:hover{ color:#8a3a3a; }
 
   .hymnal-panel{
     position:fixed; top:0; right:0; height:100vh; width:360px; max-width:90vw;
@@ -886,6 +929,8 @@
     .hamburger-btn{ display:none; }
     .settings-menu{ display:none !important; }
     .modal-overlay{ display:none !important; }
+    .auth-overlay{ display:none !important; }
+    .sync-status-btn{ display:none !important; }
     .score-lightbox{ display:none !important; }
     .floating-toolbar{ display:none !important; }
     .hymnal-panel{ display:none !important; }
@@ -916,6 +961,7 @@
 
   <header class="masthead">
     <button id="settingsToggle" class="hamburger-btn" onclick="toggleSettingsMenu()" title="Settings (ESV key, ministers)">☰</button>
+    <button id="syncStatusIndicator" class="sync-status-btn" onclick="handleSyncStatusClick()" title="Cloud sync status">☁️ Not synced</button>
     <div class="eyebrow">Pillar Reformed Church</div>
     <h1 contenteditable="true" id="churchTitle">The Lord's Service</h1>
     <div class="service-meta">
@@ -950,8 +996,8 @@
     <button class="primary" onclick="window.print()">🖨 Export / Print to PDF</button>
     <button onclick="saveToFile()">💾 Save Liturgy File</button>
     <button onclick="document.getElementById('loadInput').click()">📂 Load Liturgy File</button>
-    <button onclick="toggleHymnalPanel()">🎵 Hymnal</button>
     <button onclick="toggleSchedulePanel()">📅 Planner</button>
+    <button onclick="toggleHymnalPanel()">🎵 Hymnal</button>
     <button class="danger" onclick="resetTemplate()">↺ Reset to Default Template</button>
     <input type="file" id="loadInput" accept="application/json">
   </div>
@@ -972,14 +1018,14 @@
   <div id="scheduleOverlay" class="schedule-overlay">
     <div class="schedule-panel">
       <div class="schedule-header">
-        <h3>Liturgy Schedule</h3>
+        <h3>Liturgy Planner</h3>
         <div class="schedule-header-actions">
           <label style="font-size:11.5px; color:var(--ink-soft); display:flex; align-items:center; gap:4px; margin-right:4px;">
             <input type="checkbox" id="scheduleShowPast" onchange="renderScheduleTable()"> Show past dates
           </label>
           <button onclick="addScheduleRow()">+ Add date</button>
-          <button onclick="saveScheduleToFile()">💾 Save schedule</button>
-          <button onclick="document.getElementById('scheduleLoadInput').click()">📂 Load schedule</button>
+          <button onclick="saveScheduleToFile()">💾 Save Plan</button>
+          <button onclick="document.getElementById('scheduleLoadInput').click()">📂 Load Plan</button>
           <input type="file" id="scheduleLoadInput" accept="application/json" style="display:none">
           <button class="schedule-close-btn" onclick="toggleSchedulePanel()" title="Close">✕</button>
         </div>
@@ -1048,6 +1094,18 @@
   <div id="scoreLightbox" class="score-lightbox" onclick="closeScoreLightboxFromBackdrop(event)">
     <button class="score-lightbox-close" onclick="closeScoreLightbox()" title="Close">✕</button>
     <div class="score-lightbox-content" id="scoreLightboxContent"></div>
+  </div>
+
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-box">
+      <h3>Sign in for shared editing</h3>
+      <p class="auth-hint">Sign in to sync services with anyone else on your team. You can skip this and keep working locally, same as before.</p>
+      <input type="email" id="authEmail" placeholder="Email" autocomplete="username">
+      <input type="password" id="authPassword" placeholder="Password" autocomplete="current-password">
+      <div id="authError" class="auth-error"></div>
+      <button class="primary" onclick="handleSignIn()">Sign In</button>
+      <button class="auth-skip" onclick="skipCloudSync()">Continue without cloud sync</button>
+    </div>
   </div>
 
   <div id="modalOverlay" class="modal-overlay">
@@ -2080,8 +2138,9 @@ function saveCurrentLiturgyToArchive(dateStr){
     localStorage.setItem('liturgyArchive', JSON.stringify(archive));
     localStorage.setItem('currentAutosave', JSON.stringify(snapshot));
   }catch(e){}
+  pushLiturgyToSupabase(dateStr, snapshot);
 }
-function onDateChange(){
+async function onDateChange(){
   const dateStr = document.getElementById('serviceDate').value;
   if(!dateStr) return;
 
@@ -2089,9 +2148,23 @@ function onDateChange(){
     saveCurrentLiturgyToArchive(currentLoadedDate);
   }
 
-  const archive = loadLiturgyArchive();
-  if(archive[dateStr] && archive[dateStr].movements){
-    const snap = archive[dateStr];
+  let snap = null;
+  if(currentUser){
+    snap = await fetchLiturgyFromSupabase(dateStr);
+    if(snap){
+      try{
+        const archive = loadLiturgyArchive();
+        archive[dateStr] = snap;
+        localStorage.setItem('liturgyArchive', JSON.stringify(archive));
+      }catch(e){}
+    }
+  }
+  if(!snap){
+    const archive = loadLiturgyArchive();
+    if(archive[dateStr] && archive[dateStr].movements) snap = archive[dateStr];
+  }
+
+  if(snap && snap.movements){
     document.getElementById('churchTitle').innerText = snap.churchTitle || "The Lord's Service";
     document.getElementById('serviceTitle').value = snap.serviceTitle || '';
     state = snap.movements.map(m => ({
@@ -2127,6 +2200,117 @@ function onDateChange(){
   refreshServicesPanelIfOpen();
   updateCurrentDateDisplay();
 }
+/* ---------------------------------------------------------------------
+   Supabase cloud sync — optional, additive layer for sharing services
+   across devices/people. If you never sign in, the app behaves exactly
+   as it always has, purely local. Signing in adds a shared copy of
+   each service in a "liturgies" table, keyed by date, that any signed-in
+   teammate's browser can read and write.
+--------------------------------------------------------------------- */
+const SUPABASE_URL = 'https://ibgyjhvraezysnkbgzab.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImliZ3lqaHZyYWV6eXNua2JnemFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxNDU4OTAsImV4cCI6MjEwMDcyMTg5MH0.uGNB8362J7Wd0HHqH-lVeXTDI1fdETH1xQnKmuMsUmk';
+let sbClient = null;
+try{
+  if(window.supabase) sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}catch(e){ console.error('Supabase client failed to initialize; app will run local-only.', e); }
+
+let currentUser = null;
+
+function showAuthOverlay(){ document.getElementById('authOverlay').classList.add('open'); }
+function hideAuthOverlay(){ document.getElementById('authOverlay').classList.remove('open'); }
+function skipCloudSync(){ hideAuthOverlay(); }
+
+async function handleSignIn(){
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const errEl = document.getElementById('authError');
+  errEl.textContent = '';
+  if(!sbClient){ errEl.textContent = 'Cloud sync is not available right now.'; return; }
+  if(!email || !password){ errEl.textContent = 'Enter both email and password.'; return; }
+  try{
+    const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+    if(error){ errEl.textContent = error.message; return; }
+    currentUser = data.user;
+    hideAuthOverlay();
+    updateSyncStatusIndicator();
+    refreshServicesPanelIfOpen();
+  }catch(e){
+    errEl.textContent = 'Could not reach the sign-in service. Check your connection and try again.';
+  }
+}
+async function handleSyncStatusClick(){
+  if(currentUser){
+    const ok = await customConfirm(`Signed in as ${currentUser.email}. Sign out?`);
+    if(!ok) return;
+    try{ if(sbClient) await sbClient.auth.signOut(); }catch(e){}
+    currentUser = null;
+    updateSyncStatusIndicator();
+    refreshServicesPanelIfOpen();
+  } else {
+    showAuthOverlay();
+  }
+}
+function updateSyncStatusIndicator(){
+  const el = document.getElementById('syncStatusIndicator');
+  if(!el) return;
+  if(currentUser){
+    el.textContent = '☁️ ' + currentUser.email;
+    el.classList.add('synced');
+  } else {
+    el.textContent = '☁️ Not synced';
+    el.classList.remove('synced');
+  }
+}
+async function restoreSupabaseSession(){
+  if(!sbClient) return;
+  try{
+    const { data } = await sbClient.auth.getSession();
+    if(data && data.session){
+      currentUser = data.session.user;
+      updateSyncStatusIndicator();
+      refreshServicesPanelIfOpen();
+    }
+  }catch(e){
+    console.error('Supabase session check failed; continuing local-only.', e);
+  }
+}
+async function pushLiturgyToSupabase(dateStr, snapshot){
+  if(!sbClient || !currentUser || !dateStr) return;
+  try{
+    await sbClient.from('liturgies').upsert({
+      service_date: dateStr,
+      data: snapshot,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'service_date' });
+  }catch(e){
+    console.error('Could not sync this service to the cloud; it is still saved locally.', e);
+  }
+}
+async function fetchLiturgyFromSupabase(dateStr){
+  if(!sbClient || !currentUser || !dateStr) return null;
+  try{
+    const { data, error } = await sbClient.from('liturgies').select('data').eq('service_date', dateStr).maybeSingle();
+    if(error || !data) return null;
+    return data.data;
+  }catch(e){
+    console.error('Could not fetch this service from the cloud; using the local copy instead.', e);
+    return null;
+  }
+}
+async function fetchAllServiceSnapshotsFromSupabase(){
+  if(!sbClient || !currentUser) return {};
+  try{
+    const { data, error } = await sbClient.from('liturgies').select('service_date, data');
+    if(error || !data) return {};
+    const result = {};
+    data.forEach(row => { result[row.service_date] = row.data; });
+    return result;
+  }catch(e){
+    console.error('Could not fetch the service list from the cloud; showing local services only.', e);
+    return {};
+  }
+}
+
 function refreshServicesPanelIfOpen(){
   const panel = document.getElementById('servicesPanel');
   if(panel && panel.classList.contains('open')) renderServicesList();
@@ -3178,6 +3362,16 @@ function formatServiceDateLabel(dateStr){
 }
 function renderServicesList(){
   const archive = loadLiturgyArchive();
+  renderServicesListFromData(archive);
+  if(currentUser){
+    fetchAllServiceSnapshotsFromSupabase().then(cloudData => {
+      if(Object.keys(cloudData).length){
+        renderServicesListFromData({ ...archive, ...cloudData });
+      }
+    });
+  }
+}
+function renderServicesListFromData(archive){
   const dates = Object.keys(archive).sort();
   const currentDate = document.getElementById('serviceDate').value;
   const countEl = document.getElementById('servicesCount');
@@ -3190,11 +3384,26 @@ function renderServicesList(){
   listEl.innerHTML = dates.map(d => {
     const sermonTitle = findSermonTitleInSnapshot(archive[d]);
     const isActive = d === currentDate;
-    return `<div class="service-item${isActive ? ' active' : ''}" onclick="openServiceFromPanel('${d}')">
-      <div class="service-item-date">${scheduleColorDotHtml(d)}${escapeHTML(formatServiceDateLabel(d))}</div>
-      ${sermonTitle ? `<div class="service-item-title">${escapeHTML(sermonTitle)}</div>` : ''}
+    return `<div class="service-item${isActive ? ' active' : ''}">
+      <div class="service-item-row" onclick="openServiceFromPanel('${d}')">
+        <div class="service-item-date">${scheduleColorDotHtml(d)}${escapeHTML(formatServiceDateLabel(d))}</div>
+        ${sermonTitle ? `<div class="service-item-title">${escapeHTML(sermonTitle)}</div>` : ''}
+      </div>
+      <button class="service-item-delete" onclick="event.stopPropagation(); deleteServiceFromPanel('${d}')" title="Delete this service">✕</button>
     </div>`;
   }).join('');
+}
+async function deleteServiceFromPanel(dateStr){
+  const label = formatServiceDateLabel(dateStr);
+  const ok = await customConfirm(`Delete the service for ${label}? This can't be undone.`);
+  if(!ok) return;
+  const archive = loadLiturgyArchive();
+  delete archive[dateStr];
+  try{ localStorage.setItem('liturgyArchive', JSON.stringify(archive)); }catch(e){}
+  if(sbClient && currentUser){
+    try{ await sbClient.from('liturgies').delete().eq('service_date', dateStr); }catch(e){ console.error('Could not delete the cloud copy of this service.', e); }
+  }
+  renderServicesList();
 }
 function openServiceFromPanel(dateStr){
   document.getElementById('serviceDate').value = dateStr;
@@ -3557,6 +3766,7 @@ function performAutosave(){
     archive[dateStr] = snapshot;
     localStorage.setItem('liturgyArchive', JSON.stringify(archive));
   }catch(e){}
+  pushLiturgyToSupabase(dateStr, snapshot);
 }
 setInterval(performAutosave, 8000);
 window.addEventListener('beforeunload', performAutosave);
@@ -3686,6 +3896,7 @@ renderMinisterChips();
 loadStateFromTemplate(DEFAULT_TEMPLATE);
 render();
 checkForAutosaveRestore();
+restoreSupabaseSession();
 checkBackupNudge();
 </script>
 </body>
