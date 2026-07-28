@@ -1095,6 +1095,9 @@
       <input type="date" id="servicesPanelDate">
       <button class="services-new-btn" onclick="createNewServiceFromPanel()">+ New Service</button>
     </div>
+    <label class="services-show-past" style="font-size:11.5px; color:var(--ink-soft); display:flex; align-items:center; gap:4px; padding:0 14px 8px;">
+      <input type="checkbox" id="servicesShowPast" onchange="renderServicesList()"> Show past services
+    </label>
     <div class="services-list-count" id="servicesCount"></div>
     <div class="services-list-wrap" id="servicesList"></div>
   </div>
@@ -4044,13 +4047,6 @@ function toggleServicesPanel(){
     renderServicesList();
   }
 }
-function findSermonTitleInSnapshot(snap){
-  if(!snap || !snap.movements) return '';
-  const cons = snap.movements.find(m => m.key === 'consecration');
-  if(!cons) return '';
-  const sermon = cons.elements.find(el => el.type === 'sermon');
-  return (sermon && sermon.sermonTitle) || '';
-}
 function formatServiceDateLabel(dateStr){
   const [y, m, d] = dateStr.split('-').map(Number);
   const date = new Date(y, m - 1, d);
@@ -4068,7 +4064,9 @@ function renderServicesList(){
   }
 }
 function renderServicesListFromData(archive){
-  const dates = Object.keys(archive).sort();
+  const todayStr = new Date().toISOString().slice(0,10);
+  const showPast = document.getElementById('servicesShowPast')?.checked;
+  const dates = Object.keys(archive).filter(d => showPast || d >= todayStr).sort();
   const currentDate = document.getElementById('serviceDate').value;
   const countEl = document.getElementById('servicesCount');
   const listEl = document.getElementById('servicesList');
@@ -4078,12 +4076,12 @@ function renderServicesListFromData(archive){
     return;
   }
   listEl.innerHTML = dates.map(d => {
-    const sermonTitle = findSermonTitleInSnapshot(archive[d]);
+    const title = archive[d].serviceTitle || '';
     const isActive = d === currentDate;
     return `<div class="service-item${isActive ? ' active' : ''}">
       <div class="service-item-row" onclick="openServiceFromPanel('${d}')">
         <div class="service-item-date">${scheduleColorDotHtml(d)}${escapeHTML(formatServiceDateLabel(d))}</div>
-        ${sermonTitle ? `<div class="service-item-title">${escapeHTML(sermonTitle)}</div>` : ''}
+        ${title ? `<div class="service-item-title">${escapeHTML(title)}</div>` : ''}
       </div>
       <button class="service-item-delete" onclick="event.stopPropagation(); deleteServiceFromPanel('${d}')" title="Delete this service">✕</button>
     </div>`;
@@ -4503,6 +4501,14 @@ window.addEventListener('beforeunload', function(){
   performAutosave();
   try{ localStorage.setItem('lastSessionClean', '1'); }catch(e){}
 });
+// Standard browser "Leave site? Changes you made may not be saved" prompt —
+// covers back-navigation, tab close, and refresh alike. Browsers show their
+// own fixed wording regardless of what's set here; this just has to signal
+// that a confirmation is wanted.
+window.addEventListener('beforeunload', function(e){
+  e.preventDefault();
+  e.returnValue = '';
+});
 
 async function checkForAutosaveRestore(){
   // Only the previous session's *unclean* exit (crash, force-quit, killed tab)
@@ -4643,20 +4649,6 @@ loadStateFromTemplate(DEFAULT_TEMPLATE);
 render();
 checkForAutosaveRestore();
 restoreSupabaseSession().then(checkBackupNudge);
-
-// This is a single-page app with nowhere real for "back" to go, so an
-// accidental edge-swipe-back gesture (common on mobile) would otherwise
-// leave the app entirely, potentially losing whatever wasn't autosaved
-// yet. Keep an extra history entry underneath the app at all times —
-// on 'back', the browser lands on that entry instead of leaving, and
-// this immediately re-adds another one, so the app can never actually
-// be swiped away from.
-try{
-  history.pushState(null, '', location.href);
-  window.addEventListener('popstate', function(){
-    history.pushState(null, '', location.href);
-  });
-}catch(e){}
 </script>
 </body>
 </html>
