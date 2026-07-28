@@ -383,7 +383,7 @@
   .element-title:focus{ outline:none; border-bottom:1px solid var(--m-color); }
   .element-card-header{ margin-top:10px; }
   .element-card-header .element-title{
-    font-size:17px; font-weight:700; text-align:center;
+    font-size:14.5px; font-weight:700; text-align:center;
     text-transform:uppercase; letter-spacing:0.04em;
     padding:8px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border);
   }
@@ -666,7 +666,7 @@
     flex-shrink:0; line-height:1.5;
   }
   .schedule-table-wrap{ flex:1; overflow:auto; padding:0; }
-  .schedule-grid{ display:grid; font-family:'Inter',sans-serif; font-size:12px; }
+  .schedule-grid{ display:grid; width:max-content; font-family:'Inter',sans-serif; font-size:12px; }
   .sg-cell, .sg-head{
     border:1px solid var(--border); padding:4px; overflow:hidden; box-sizing:border-box;
     white-space:nowrap;
@@ -796,6 +796,50 @@
   .floating-toolbar button:hover{ background:rgba(255,255,255,0.18); }
   .floating-toolbar .rt-highlight-btn{ background:rgba(255,245,157,0.25); }
   .floating-toolbar .rt-highlight-btn:hover{ background:rgba(255,245,157,0.4); }
+  .series-picker-trigger{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:5px 8px; cursor:pointer; text-align:left;
+    display:flex; align-items:center; justify-content:space-between; gap:6px;
+    width:100%; max-width:none; margin-bottom:6px; box-sizing:border-box;
+  }
+  .series-picker-trigger:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .series-picker-trigger-cell{ margin-bottom:0; font-size:11.5px; font-weight:400; padding:3px 6px; border-color:transparent; background:transparent; }
+  .series-picker-trigger-cell:hover{ border-color:var(--border); background:#fff; }
+  .series-picker-caret{ opacity:0.6; font-size:10px; }
+  .series-picker-popover{
+    display:none; position:fixed; z-index:2000;
+    background:#fff; border:1px solid var(--border); border-radius:8px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2); min-width:220px; max-width:280px;
+    max-height:320px; overflow-y:auto; padding:4px;
+  }
+  .series-picker-row{
+    display:flex; align-items:center; justify-content:space-between; gap:6px;
+    padding:6px 8px; border-radius:5px; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink);
+  }
+  .series-picker-row:hover{ background:var(--bg); }
+  .series-picker-row-active{ background:var(--gold-light,#faf3dd); font-weight:600; }
+  .series-picker-name{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .series-picker-clear{ color:var(--ink-faint); font-style:italic; }
+  .series-picker-edit{
+    border:none; background:transparent; color:var(--ink-faint); cursor:pointer;
+    font-size:12px; padding:2px 4px; border-radius:4px; flex-shrink:0;
+  }
+  .series-picker-edit:hover{ background:var(--border); color:var(--ink); }
+  .series-picker-add{
+    display:flex; gap:4px; padding:6px 6px 4px; border-top:1px solid var(--border); margin-top:4px;
+  }
+  .series-picker-add input{
+    flex:1; font-family:'Inter',sans-serif; font-size:12px;
+    border:1px solid var(--border); border-radius:4px; padding:5px 6px; min-width:0;
+  }
+  .series-picker-add button{
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:5px 9px; cursor:pointer;
+  }
+  .series-picker-add button:hover{ border-color:var(--ink-soft); color:var(--ink); }
   .rt-print{ display:none; }
   .rt-print mark{ background:#fff59d !important; padding:0 1px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .rt-print ol, .rt-print ul, .print-response ol, .print-response ul{ margin:4px 0; padding-left:22px; }
@@ -1127,6 +1171,8 @@
     <button type="button" onmousedown="event.preventDefault()" onclick="applyFloatingFormat('==','==')" title="Highlight" class="rt-highlight-btn">H</button>
   </div>
 
+  <div id="seriesPickerPopover" class="series-picker-popover"></div>
+
   <div id="scoreLightbox" class="score-lightbox" onclick="closeScoreLightboxFromBackdrop(event)">
     <button class="score-lightbox-close" onclick="closeScoreLightbox()" title="Close">✕</button>
     <div class="score-lightbox-content" id="scoreLightboxContent"></div>
@@ -1391,12 +1437,7 @@ function renderElement(el, movement){
     body = `
       <input class="reference-input" placeholder="Sermon title" value="${escapeAttr(el.sermonTitle)}" oninput="updateField('${el.id}','sermonTitle',this.value)">
       <input class="reference-input" placeholder="Sermon text (e.g. Jonah 1:4-10)" value="${escapeAttr(el.passageReference)}" oninput="updateField('${el.id}','passageReference',this.value)">
-      <select class="minister-select" style="max-width:none; width:100%; margin-bottom:6px;" title="Sermon series" onchange="handleSeriesChange('${el.id}',this)">
-        <option value="" ${!el.series?'selected':''}>— Sermon Series —</option>
-        ${sermonSeriesRoster.map(name => `<option value="${escapeAttr(name)}" ${el.series===name?'selected':''}>${escapeHTML(name)}</option>`).join('')}
-        <option value="__add__">+ Add new series…</option>
-      </select>
-      ${el.series ? `<span class="minister-tag">Series: ${escapeHTML(el.series)}</span>` : ''}
+      <button type="button" class="series-picker-trigger" title="Sermon series" onclick="openSeriesPicker(this, '${escapeAttr(el.series||'')}', function(name){ updateField('${el.id}','series',name); render(); })">${el.series ? escapeHTML(el.series) : '— Sermon Series —'} <span class="series-picker-caret">▾</span></button>
       <label class="alt-toggle">
         <input type="checkbox" ${el.hasManuscript?'checked':''} onchange="updateField('${el.id}','hasManuscript',this.checked)">
         Include a manuscript text box
@@ -1763,11 +1804,39 @@ function hideFloatingToolbar(){
   activeTextarea = null;
   activeRichEditor = null;
 }
+function wrapSelectionInMark(){
+  const sel = window.getSelection();
+  if(!sel.rangeCount || sel.isCollapsed) return;
+  const range = sel.getRangeAt(0);
+  let ancestor = range.commonAncestorContainer;
+  if(ancestor.nodeType === Node.TEXT_NODE) ancestor = ancestor.parentNode;
+  const existingMark = ancestor.closest ? ancestor.closest('mark') : null;
+  if(existingMark && existingMark.contains(range.startContainer) && existingMark.contains(range.endContainer)){
+    // selection already inside a highlight — toggle it off
+    const parent = existingMark.parentNode;
+    while(existingMark.firstChild) parent.insertBefore(existingMark.firstChild, existingMark);
+    parent.removeChild(existingMark);
+    return;
+  }
+  const mark = document.createElement('mark');
+  try{
+    range.surroundContents(mark);
+  }catch(e){
+    // selection spans multiple elements — extract then wrap instead
+    const contents = range.extractContents();
+    mark.appendChild(contents);
+    range.insertNode(mark);
+  }
+  sel.removeAllRanges();
+  const newRange = document.createRange();
+  newRange.selectNodeContents(mark);
+  sel.addRange(newRange);
+}
 function applyFloatingFormat(before, after){
   if(activeRichEditor){
     const commandMap = { '**':'bold', '*':'italic', '__':'underline', '~~':'strikeThrough' };
     if(before === '=='){
-      document.execCommand('hiliteColor', false, '#fff59d');
+      wrapSelectionInMark();
     } else {
       document.execCommand(commandMap[before]);
     }
@@ -2790,21 +2859,149 @@ function addSeries(name){
   if(!name || sermonSeriesRoster.includes(name)) return;
   sermonSeriesRoster.push(name);
   saveSermonSeriesRoster();
-  render();
 }
-async function handleSeriesChange(id, selectEl){
-  const value = selectEl.value;
-  if(value === '__add__'){
-    const name = await customPrompt('Add a new sermon series:');
-    if(name && name.trim()){
-      addSeries(name.trim());
-      updateField(id, 'series', name.trim());
-    } else {
-      render();
+
+/* ---------------------------------------------------------------------
+   Sermon Series picker — a small popover that opens right where the
+   series is chosen (the Planner cell, or a sermon element's series
+   field) instead of a plain <select>. From here you can pick an
+   existing series, add a new one, or rename one in place. A rename
+   cascades everywhere that name is actually used — the Planner, the
+   liturgy currently open, every liturgy archived locally in this
+   browser, and (if signed in) every liturgy archived in the cloud —
+   not just the one field you clicked into.
+--------------------------------------------------------------------- */
+let seriesPickerApply = null; // callback the open picker calls with the chosen name
+
+function openSeriesPicker(triggerEl, currentValue, applyFn){
+  seriesPickerApply = applyFn;
+  const pop = document.getElementById('seriesPickerPopover');
+  renderSeriesPickerList(currentValue || '');
+  pop.style.display = 'block';
+  const rect = triggerEl.getBoundingClientRect();
+  const popRect = pop.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 4;
+  if(left + popRect.width > window.innerWidth - 8) left = window.innerWidth - popRect.width - 8;
+  if(top + popRect.height > window.innerHeight - 8) top = rect.top - popRect.height - 4;
+  pop.style.left = Math.max(8, left) + 'px';
+  pop.style.top = Math.max(8, top) + 'px';
+  setTimeout(() => document.addEventListener('mousedown', seriesPickerOutsideClick), 0);
+}
+function closeSeriesPicker(){
+  const pop = document.getElementById('seriesPickerPopover');
+  pop.style.display = 'none';
+  seriesPickerApply = null;
+  document.removeEventListener('mousedown', seriesPickerOutsideClick);
+}
+function seriesPickerOutsideClick(e){
+  const pop = document.getElementById('seriesPickerPopover');
+  if(!pop.contains(e.target)) closeSeriesPicker();
+}
+function renderSeriesPickerList(currentValue){
+  const pop = document.getElementById('seriesPickerPopover');
+  const rows = sermonSeriesRoster.map(name => `
+    <div class="series-picker-row${name===currentValue?' series-picker-row-active':''}">
+      <span class="series-picker-name" onclick="chooseSeriesFromPicker('${escapeAttr(name).replace(/'/g,"\\'")}')">${escapeHTML(name)}</span>
+      <button class="series-picker-edit" title="Rename &quot;${escapeAttr(name)}&quot; everywhere" onclick="event.stopPropagation(); renameSeriesEverywhere('${escapeAttr(name).replace(/'/g,"\\'")}')">✎</button>
+    </div>
+  `).join('');
+  pop.innerHTML = `
+    <div class="series-picker-row series-picker-clear" onclick="chooseSeriesFromPicker('')">— None —</div>
+    ${rows}
+    <div class="series-picker-add">
+      <input type="text" id="seriesPickerAddInput" placeholder="+ Add new series…" onkeydown="if(event.key==='Enter') addSeriesFromPicker()">
+      <button onclick="addSeriesFromPicker()">Add</button>
+    </div>
+  `;
+}
+function chooseSeriesFromPicker(name){
+  if(seriesPickerApply) seriesPickerApply(name);
+  closeSeriesPicker();
+}
+function addSeriesFromPicker(){
+  const input = document.getElementById('seriesPickerAddInput');
+  const name = (input.value || '').trim();
+  if(!name) return;
+  addSeries(name);
+  chooseSeriesFromPicker(name);
+}
+function renameSeriesInSnapshot(snapshot, oldName, trimmed){
+  if(!snapshot || !snapshot.movements) return false;
+  let changed = false;
+  for(const m of snapshot.movements){
+    if(!m.elements) continue;
+    for(const el of m.elements){
+      if(el.type === 'sermon' && el.series === oldName){
+        el.series = trimmed;
+        changed = true;
+      }
     }
+  }
+  return changed;
+}
+async function renameSeriesEverywhere(oldName){
+  const newName = await customPrompt('Rename this sermon series everywhere it appears:', oldName);
+  if(!newName || !newName.trim()) return;
+  const trimmed = newName.trim();
+  if(trimmed === oldName) return;
+  if(sermonSeriesRoster.includes(trimmed)){
+    alert(`"${trimmed}" is already a series in the list.`);
     return;
   }
-  updateField(id, 'series', value);
+  const ok = await customConfirm(`Rename "${oldName}" to "${trimmed}"? This updates the Planner and every past service that used "${oldName}" — including services stored in the cloud, if you're signed in.`);
+  if(!ok) return;
+  closeSeriesPicker();
+
+  sermonSeriesRoster = sermonSeriesRoster.map(n => n === oldName ? trimmed : n);
+  saveSermonSeriesRoster();
+
+  const touchedDates = new Set();
+
+  // 1. Planner — already fully loaded in memory
+  for(const dateKey in scheduleData){
+    if(scheduleData[dateKey].sermonSeries === oldName){
+      scheduleData[dateKey].sermonSeries = trimmed;
+      touchedDates.add(dateKey);
+    }
+  }
+  saveSchedule();
+
+  // 2. The liturgy currently open in the Builder
+  for(const m of state){
+    for(const el of m.elements){
+      if(el.type === 'sermon' && el.series === oldName) el.series = trimmed;
+    }
+  }
+
+  // 3. Every liturgy archived locally in this browser
+  const archive = loadLiturgyArchive();
+  for(const dateStr in archive){
+    if(renameSeriesInSnapshot(archive[dateStr], oldName, trimmed)) touchedDates.add(dateStr);
+  }
+
+  // 4. Every liturgy archived in the cloud, if signed in — merging by
+  //    whichever copy (local vs cloud) is more recent per date, so this
+  //    doesn't clobber an edit made on another device since it last synced.
+  if(sbClient && currentUser){
+    const cloudSnapshots = await fetchAllServiceSnapshotsFromSupabase();
+    for(const dateStr in cloudSnapshots){
+      const cloudSnap = cloudSnapshots[dateStr];
+      const localSnap = archive[dateStr];
+      const useCloud = !localSnap || (cloudSnap.savedAt || 0) > (localSnap.savedAt || 0);
+      const target = useCloud ? cloudSnap : localSnap;
+      if(renameSeriesInSnapshot(target, oldName, trimmed)){
+        archive[dateStr] = target;
+        await pushLiturgyToSupabase(dateStr, target);
+        touchedDates.add(dateStr);
+      }
+    }
+  }
+  try{ localStorage.setItem('liturgyArchive', JSON.stringify(archive)); }catch(e){}
+
+  render();
+  if(document.getElementById('scheduleOverlay')?.classList.contains('open')) renderScheduleTable();
+  alert(`Renamed "${oldName}" to "${trimmed}" — updated ${touchedDates.size} past service(s) plus the Planner.`);
 }
 
 /* ---------------------------------------------------------------------
@@ -3664,7 +3861,6 @@ function renderScheduleTable(){
     visibleCols.map(c => `<div class="sg-head">${escapeHTML(c.label)}<span class="sg-resize-handle" onmousedown="startScheduleColResize(event,'${c.key}')"></span></div>`).join('');
 
   const ministerOptions = name => `<option value="">—</option>` + ministerRoster.map(m => `<option value="${escapeAttr(m)}" ${name===m?'selected':''}>${escapeHTML(m)}</option>`).join('');
-  const seriesOptions = name => `<option value="">—</option>` + sermonSeriesRoster.map(s => `<option value="${escapeAttr(s)}" ${name===s?'selected':''}>${escapeHTML(s)}</option>`).join('') + `<option value="__add__">+ Add new series…</option>`;
 
   let rows = dates.map(dateKey => {
     const entry = scheduleData[dateKey] || {};
@@ -3675,7 +3871,7 @@ function renderScheduleTable(){
       if(c.kind === 'minister'){
         inputHtml = `<select onchange="updateScheduleField('${dateKey}','${c.key}',this.value)">${ministerOptions(val)}</select>`;
       } else if(c.kind === 'series'){
-        inputHtml = `<select onchange="handleScheduleSeriesChange('${dateKey}',this)">${seriesOptions(val)}</select>`;
+        inputHtml = `<button type="button" class="series-picker-trigger series-picker-trigger-cell" onclick="openSeriesPicker(this, '${escapeAttr(val)}', function(name){ updateScheduleField('${dateKey}','sermonSeries',name); renderScheduleTable(); })">${val ? escapeHTML(val) : '—'} <span class="series-picker-caret">▾</span></button>`;
       } else if(c.wide){
         inputHtml = `<textarea onchange="updateScheduleField('${dateKey}','${c.key}',this.value)">${escapeHTML(val)}</textarea>`;
       } else {
@@ -3711,22 +3907,6 @@ function handleScheduleHymnDrop(e, dateKey, key){
   const song = findHymnByNum(data.slice(5));
   if(!song) return;
   updateScheduleField(dateKey, key, song.num + ' - ' + song.title);
-  renderScheduleTable();
-}
-async function handleScheduleSeriesChange(dateKey, selectEl){
-  const value = selectEl.value;
-  if(value === '__add__'){
-    const name = await customPrompt('Add a new sermon series:');
-    if(name && name.trim()){
-      addSeries(name.trim());
-      updateScheduleField(dateKey, 'sermonSeries', name.trim());
-    } else {
-      renderScheduleTable();
-      return;
-    }
-  } else {
-    updateScheduleField(dateKey, 'sermonSeries', value);
-  }
   renderScheduleTable();
 }
 let scheduleSelectedDates = new Set();
