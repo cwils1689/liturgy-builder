@@ -384,7 +384,7 @@
   .element-card-header{ margin-top:10px; }
   .element-card-header .element-title{
     font-size:14.5px; font-weight:700; text-align:center;
-    text-transform:uppercase; letter-spacing:0.04em;
+    letter-spacing:0.04em;
     padding:8px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border);
   }
   .type-select{
@@ -2212,7 +2212,15 @@ function htmlToDocxParagraphs(html){
       }
     } else {
       const text = decode(tok);
-      if(text) cur.push({ text, flags: curFlags() });
+      if(text){
+        const lines = text.split('\n');
+        lines.forEach((line, i) => {
+          if(i > 0) flush(); // a literal newline renders as a visual line break via this app's
+                             // white-space:pre-wrap/pre-line CSS, independent of any HTML tag —
+                             // treat it the same as <br>/block-tag boundaries above
+          if(line) cur.push({ text: line, flags: curFlags() });
+        });
+      }
     }
   }
   if(cur.length) flush();
@@ -2274,7 +2282,7 @@ function docxElementTitle(title, minister){
   return docxPara(runs, { spacingBefore:160, spacingAfter:40 });
 }
 function docxHeaderElement(title){
-  return docxPara(docxRun((title||'').toUpperCase(), { bold:true, size:22, font:DOCX_SERIF }), { align:'center', border:'topbottom', spacingBefore:160, spacingAfter:160 });
+  return docxPara(docxRun(title||'', { bold:true, size:22, font:DOCX_SERIF }), { align:'center', border:'topbottom', spacingBefore:160, spacingAfter:160 });
 }
 function buildLiturgyDocxBody(){
   const church = document.getElementById('churchTitle').innerText || '';
