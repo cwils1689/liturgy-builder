@@ -1,0 +1,2849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liturgy Builder — Pillar Reformed Church</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAOv0lEQVR42pVaW2xUxRufmXPbPXvpbku7vYRWAqgQxURFa4OErD6QKMREnpBSoA0oJMQYNfBiNOHiNY3xLiEBNMZoJPKiRlKD/WtFEREJiYoULba03e5uu3v2dq7/h287nT231vPQnM6ec+b7Zn7fN7/vN4Oz2SyiF8HItBBCGGNosCwLbqCF/lu9Jxhb1V8ty0IYIVzzBdM0qx8mxIILI4wwtiw020X13douMMaWhSyEMTIRRtZsjxhXe4R7hBDP2oQMy2Y37QBaqp+Y7dIyTMQaSjCyLNoBtLPPI4QwfGb2D0LIsgyEwKOaJ6tdVG+qzlFnqDEEeVw1jjHOzH3asjDTjjFGloVq3yKE0FfoKNB/6dv0C86pQLNOVJ9zWEgoWubsYGx1ekL7xhij2p4IJsR7RLzHBYNttrFnDaP2OUeTsIPh8s5/uWrH1cVWOsxeHdl8cA4ra2Q1BtjfaMx5XTaY2jpgu8eOGLUNrZcnbKOzI2cvxBXlC4kHn2eoiV5R5NOXE9K2GfCDkG2QauBem458rHf1xP8LNMR9zCWEuPrAOyExF+DV5G2apglmuI4cTUocx/lEvxM8PrFHlxGfsITXeS/80UsQ+HA4bJrImL3AJ+iG4zhCiCAIGGNFUQzD8E8GPu6xXjkjxAvGOJPJ2GKOfYfn+XQ6NTj4v2i0LhaLhcPhcDgcDAZFUUQIaZpWLBbz+fz4+Hg+n08mk8FgkM0EFIqsQayJrgFqc9IVI3MQcn6FvmyaZiAQuHDhYk/PNmgMBAKiKLIOlEqlmZkZ+On7779fsWJFuVxmLWADwAcSPrnVfzJxOp12zQysYxMTE5cuXXr77bfPnDnDcRzghI7Nli1btm/fvnTp0lgsRqHlBIYr6J2cxfV1J8bmHMhkMja3nNlXEARZljVN27Bhw+nTpyVJMgyD5/lSqbRz58733ntP07RKpaJpmk9OtEHcaZBzEpwtC3XA5oZlWZqmNTQ0DA0NJZNJyDbgw9mzZ2+++WZFUQRBmHe6/THtjyJXZ2oWMq+QxxhDnikUCrfccktra6uqqoQQwzA6Ojra29tVVRUEAWLGMAzTNE3TpKkd/jUMQ9d1g7noY66Z3rkasEsKJQSmafIII2TNv9xijA3DiEQiiUTi+vXr8Lm2trZwOKwoCkJIlmVJksBKFidgFiGEMlNKW3RdV1VV0zTDMDiO84K+a3zSex5hhJELXXHyKsiqdXV19FsNDQ08z5umKcvy+fPn//7770QiEQqFZFnmOM40zcrsVSwWFUUpFouGYRBCgsFgJBJpampqa2tramoSRTGXy6mqyvO8LdvOm4h4bGFX+uq6pnAcF4lE6LjGYjGYmWAweOTIkePHj8PzkiQRQmCM6YS4dt/a2nrrrbc+/PDDmzZtam1tzWazrpTBNSyrDrj+7MoUwO5AIEB/CoVCECEzMzMvv/xyd3f3qVOn3n//fQgScNg0zbVr1z733HOweqiqOj09ffXq1cHBwS+++GJ0dHR0dHRgYKC/v/+FF17YunUr68O8aapaUrpSX2feqHIPfo59UGcsy5Ikac2aNQ888MBdd93V29vLcZxlWTAPmzdvTiaTiqIA7yCErF+/fvfu3X/88cf+/ftPnToVCoVGRka2b98+MTHxzDPPZDIZllax5tnyr2VZCyop2XtIl9AC6zENynw+n0qlHnvssXvvvbdSqYD1CKH29vZyuVwsFiEScrlcOp3OZDJLliw5efLk1q1bC4WCLMuiKO7bt29gYCAajRqGjpBfbUTHnTizp2tZxC5qXhQXho3juK6uLpq4JElKJBLAVWH4OY7jeZ7neUVRFEV5/fXXly9fXiqVYG77+/sZCLmzoxqa7VWIuBZfdNSr5RzPu5ZsS5Ysgc4Mw5BlORwOG4ZBJ51+k+O4SqUSi8X6+vqqeCDk7NmzIyMjgYAMyotzQbApA8S/7vQvLGA2bEzWMIx4PE77CIVCoVCI0mzbuBBCSqXSunXrBEHQNI3n+enp6ZGREVEUKKv1z6fEVhPNu7azLbYZoAiE4IYngcD6EDhN09rb2xOJhK7r4FuhULCB01UuqbIE11Lfq3T0qjxtP7GOiaIIGclrKYB1kE4axjgSidiIt01TcpkBZ3nqogIxkepVW9LSlnUA1lc6P2wXVMDTdR0KjMbGxptuuqlSqXhB39ZInOhnSQv86686sSULfZ6FGbTQFd2mNXAcNzU1NT4+LgiCaZpdXV1tbW1OB7w0HuIUWxYuogAfdL5CKx4IdKrsOiGh63ooFPrll1+y2SykhD179sDrTpOcWEUIEbDAFc2uCoet5IXpYvMvW/KDA84KHe6BhxuG8dZbb3EcVywWn3zyyWQymcvlbOTUR27hWZrgX3a4Vs9OQGOMAdDwryRJwIjYBzDGPM9Ho1HDMHbv3j04OIgQ2rFjx8GDB6enp2nQO/mzs91dVmEph81oFh6soezDrLgC2T0ajUL0g7flcjmTyXz99df9/f1DQ0OLFy9+6qmndu7cWS6X51VibPPgqUp4leTs85C5nZQLnoGa88cff7znnntCoRBdm03TVBRlfHw8lUohhCKRyLFjx5LJpK7rmqZpmmbDj495nsqc6+IAf2HU4YIq3hE5pmHo9MVyufzzzz8HAgFJkmB9UFW1XC5TBSCfz3d3d69ateqRRx7ZuHFjIpHIZrOuiHen0z4iq6sKUqlUbA5AHDMwxYZhQn5UVXXt2rVHjx4VBAGCAd5SFCWVSl2+fPnbb789ffr02NjY2NjYV1999dJLL+3bt2/btm3goXM9du4SES8e4YUodtRZZxiMciyNaWlpWbp0aTQaDQaDgiCAQpNIJO68887e3t4TJ06cO3fu6aefBg+vXbu2a9eunp4e0zRh+fMXOOYc8JFAbO2s+ENjrlbERmwaBT1C0zRd12HFJYTIslwoFNLpdDqdjsVir7zyyrFjx6AqkmX5448/7u3tDQQC844pxpjYpC9XHkHbDcMoFAr0/Vwu51yeLMuA4AbqDzcAM8MwwuHwX3/91dfXB6UFx3Gapk1MTGzevPnw4cOVSkXX9WAwePLkyaNHj8bjcTbkXJU84tyM8Cde4AA8k8lknHInxljXNciVhmFARFK6LwjC3r17h4aGQqEQvEsIEUUxk8ns2bNn9erVqqrCk6+++mo6nRZF0RUgczPgBIzXhAD1BRUIGm/cuFEsFmtDDWPMGYbJcVxHR8dDDz20bdu2UqkEz9fX1z/77LPffffd448/Dvokyz4kSerp6aEM6tq1a4ODg+Fw2Gs9Bdt4n20520LIcVyhUJiamoL+CCFXr16dmJhoamoCzCCEeJ7kcrkNGzbcf//9ra2tixYt0nU9m82Gw2FZlvfv3//aa6+JoggjzXoOlU1XV5ckSZqmAQH56aefHn30UdM0XbUWdzrtdWmaFggE/v3339HRUcgPoihms9lvvvkmGo1WKpVZtdBSVTUejy9fvlwQhGw2q2lac3NzKpXatGnTiy++SAjp6OhYsWKFbeowxqqqtrS0NDc30/rzn3/+mXeThvfbl6Wcm5BYLCaK4ptvvgmegLLJ8/yBAwc6OztXrVoFSQYehpANhULlcvnKlSufffbZu+++Ozk5GQqFisViZ2dnfX19Op22FXSmaQaDQVb50zTNhxoDLnjn9owNVCDcnjt37o033vjkk09EUdR1nRYu169fTyaTu3bt6uzsjMViHMcpipJOp8fGxq5cufLbb79dvHixWCzyPA9sAmP84IMPeknNlmWxaScejzuJnW3E3Yta+BxoCr///vv69esnJycplqBKBNnHsqx0On3o0CF/BOq6DpbxPH/fffeVSiUbrGe3s9KpVIraunLlSmcosvuZc3Taaz9d1/WGhoa+vr5oNNrW1haPx+vq6mRZhiADy1RVVVW1UqkUCoWZmRmM8UcffTQwMCBJUqlUuuOOO0C6Ahm4ubm5qalJ0zTb9rhpmqIo/vnnn1NTU6IoAlCTyWS5XGZLQhvtJ4TwTh23NqPr8Xj84MGD0AcV+9kSgoKeKlm//vrrl19+CWBraWnZu3cvCOiwFObzeWc6h2X4888/B9AqirJx48bbb789m82yVbiTXfM+G9fwXU3TgPfaVB2nXAwO19XVDQ8PQ6rFGJ8/f35sbAyyvk0OYyv6RCLxww8/nDhxIhAIFAqFRYsWHThwgN0vdK1P7Nqo69YsVE88z1NtkA45qb1gFDVNu3TpElgmSdKNGzc+/PDDhoaGQCBAUUcvwzAEQUgkEhcvXtyyZQsw7UAgcPz48WXLlhWLRa/aoIZOs5WevwpgG3sWxDzPy7LM8/yhQ4eGh4dlWQZKJ0nS888/r2laX19fY2MjBTTdix8bGzty5Mjhw4fT6TQE7jvvvNPV1ZXNZm2E1LXiXdAupX8ig2DK5/MXLlz44IMPPv30U1f/GxsbV69evXLlyubm5kAgUKlUJicnL1++fObMGaAny5Yt6+7ufuKJJ2Kx2PT0tFN4dd2Qx9ls1nWzdoEOQFzW19fv2LEDdmgWL14ci8UikQjwsHK5XCgUCoVCKpUCQ9krHA7fdtttd99997p169asWdPU1JTL5aCqnBcIVdSAA17bUu6z5ghfQRCGh4fT6XRbW1s0GoU8CwAwDAOQXZi9gG/CNll9fX0sFgsEAoZhKIqiqqoT9GwJ5jy74OfAvOUyXVMgfEFhppyCDS2oDWiFQAt8qHUor/av5d0PVFEIeYkwXlWp7XNsFeZMdq7S2kIyh9eQzVEJdhRdFXBXIdq5genDeL3OYrjee8lYXrtM1X1iLzrElg7ziheuLa47QF4HfLx25yldteluwIWIZZk+B0T8N2y8Tnv5H9abd52pfd6kx0tdTi1ayHI9ZbyQvfKF6Nj+e4xeWyTObyDkfoSH91JtFzJUC8lX/rPhhRx2NGkycx6pgaMGNSdinQfXfPZjFnJG3KkS+GceVop1PbIBr2KMLMu0rNkjZz5nbfyR/V9nwNVW/9NRHp1ihMyak7s+iwiwHWdMz3s60TU3OA8gs4nYOZls7qr1nCOE/B+MQDaxZzCahQAAAABJRU5ErkJggg==">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --bg: #ECEFEA;
+    --surface: #FFFFFF;
+    --ink: #1B2A45;
+    --ink-soft: #55637A;
+    --ink-faint: #8A93A3;
+    --border: #DADFD6;
+    --gold: #A9812F;
+    --call: #A9812F;
+    --confession: #5B6B7A;
+    --consecration: #7A2E3B;
+    --communion: #5C2A52;
+    --commission: #3F6B4A;
+    --welcome: #3D6E74;
+    --radius: 6px;
+    --shadow: 0 1px 2px rgba(27,42,69,0.06), 0 1px 8px rgba(27,42,69,0.05);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    transition:padding-right .22s ease, padding-left .22s ease;
+  }
+  body.hymnal-open{ padding-right:360px; }
+  body.services-open{ padding-left:300px; }
+  @media (max-width: 680px){
+    body.hymnal-open{ padding-right:0; }
+    body.services-open{ padding-left:0; }
+  }
+  .app{
+    max-width:900px;
+    margin:0 auto;
+    padding:32px 24px 120px;
+  }
+  header.masthead{
+    position:relative;
+    text-align:center;
+    margin-bottom:28px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--border);
+  }
+  .hamburger-btn{
+    position:absolute;
+    top:0; left:0;
+    width:34px; height:34px;
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--ink-soft);
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+  }
+  .hamburger-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .sync-status-btn{
+    position:absolute; top:0; right:0;
+    height:34px;
+    border:1px solid var(--border); background:transparent; color:var(--ink-faint);
+    border-radius:6px; font-size:11.5px; font-family:'Inter',sans-serif; font-weight:600;
+    padding:0 10px; cursor:pointer; white-space:nowrap;
+  }
+  .sync-status-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .sync-status-btn.synced{ border-color:#3f6b4a; color:#3f6b4a; }
+  .auth-overlay{
+    display:none;
+    position:fixed; inset:0; z-index:2500;
+    background:rgba(27,42,69,0.55);
+    align-items:center; justify-content:center;
+  }
+  .auth-overlay.open{ display:flex; }
+  .auth-box{
+    background:var(--surface); border-radius:10px; padding:24px;
+    width:100%; max-width:340px; box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .auth-box h3{ font-family:'Spectral',serif; font-size:17px; margin:0; color:var(--ink); }
+  .auth-hint{ font-size:12px; color:var(--ink-soft); line-height:1.5; margin:0; }
+  .auth-box input{
+    font-family:'Inter',sans-serif; font-size:13px;
+    border:1px solid var(--border); border-radius:5px; padding:8px 10px; color:var(--ink);
+  }
+  .auth-error{ font-size:11.5px; color:#b3261e; min-height:1em; }
+  .auth-box button.primary{
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    border:none; background:var(--gold); color:#fff; border-radius:5px; padding:9px; cursor:pointer;
+  }
+  .auth-skip{
+    font-family:'Inter',sans-serif; font-size:11.5px;
+    border:none; background:transparent; color:var(--ink-faint); text-decoration:underline; cursor:pointer;
+  }
+  .settings-menu{
+    display:none;
+    position:absolute;
+    top:38px; left:0;
+    width:280px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:14px;
+    text-align:left;
+    z-index:50;
+  }
+  .settings-menu.open{ display:block; }
+  .settings-menu .esv-settings, .settings-menu .minister-settings{
+    justify-content:flex-start;
+    margin-top:0;
+  }
+  .settings-menu .esv-settings{ padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--border); }
+  .settings-menu .esv-settings input, .settings-menu .minister-settings input{ width:auto; flex:1; }
+  header.masthead .eyebrow{
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    font-weight:600;
+  }
+  header.masthead h1{
+    font-family:'Spectral',serif;
+    font-weight:600;
+    font-size:32px;
+    margin:6px 0 14px;
+  }
+  .service-meta{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .service-meta input{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:7px 10px;
+    background:var(--surface);
+    color:var(--ink);
+  }
+  .service-meta input#serviceTitle{ min-width:220px; font-style:italic; }
+  #mainColorDot{ display:inline-flex; align-items:center; }
+  .resync-btn{
+    font-family:'Inter',sans-serif; font-size:11px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:5px; padding:5px 9px; cursor:pointer;
+  }
+  .resync-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .current-date-display{
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink);
+    border-radius:5px; padding:6px 10px; cursor:pointer;
+  }
+  .current-date-display:hover{ border-color:var(--gold); color:var(--gold); }
+  .panel-settings{
+    display:flex; gap:8px; padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--border);
+  }
+  .panel-settings button{
+    flex:1; font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:5px; padding:8px; cursor:pointer;
+  }
+  .panel-settings button:hover{ border-color:var(--ink-soft); color:var(--ink); }
+
+  .sync-status{
+    text-align:center;
+    font-size:11.5px;
+    margin-top:8px;
+    color:var(--ink-faint);
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .sync-status .dot{ width:7px; height:7px; border-radius:50%; background:var(--ink-faint); flex-shrink:0; }
+  .sync-status.is-synced .dot{ background:#3F6B4A; }
+  .sync-status.is-synced{ color:#3F6B4A; }
+  .sync-status.is-checking .dot{ background:var(--gold); }
+  .sync-status.is-offline .dot{ background:#7A2E3B; }
+  .sync-status.is-offline{ color:#7A2E3B; }
+  .sync-status a{ color:inherit; text-decoration:underline; }
+
+  .esv-settings{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-size:11.5px; color:var(--ink-faint); margin-top:6px; flex-wrap:wrap;
+  }
+  .esv-settings label{ font-weight:600; }
+  .settings-hint{ font-weight:400; color:var(--ink-faint); font-size:10.5px; }
+  .esv-settings input{
+    font-family:'Inter',sans-serif; font-size:11.5px;
+    border:1px solid var(--border); border-radius:4px;
+    padding:5px 8px; width:180px; background:#fff; color:var(--ink);
+  }
+  .esv-settings button{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:5px 10px; cursor:pointer;
+  }
+  .esv-settings button:hover{ border-color:var(--ink-soft); }
+  .esv-settings a{ color:var(--ink-faint); text-decoration:underline; }
+  #esvKeyStatus{ font-weight:600; }
+  #esvKeyStatus.saved{ color:#3F6B4A; }
+
+  .minister-settings{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-size:11.5px; color:var(--ink-faint); margin-top:6px; flex-wrap:wrap;
+  }
+  .minister-settings label{ font-weight:600; }
+  .minister-settings input{
+    font-family:'Inter',sans-serif; font-size:11.5px;
+    border:1px solid var(--border); border-radius:4px;
+    padding:5px 8px; width:120px; background:#fff; color:var(--ink);
+  }
+  .minister-settings button{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:5px 10px; cursor:pointer;
+  }
+  .minister-settings button:hover{ border-color:var(--ink-soft); }
+  .minister-chips{ display:flex; gap:5px; flex-wrap:wrap; }
+  .minister-chip{
+    display:flex; align-items:center; gap:4px;
+    background:var(--bg); border:1px solid var(--border); border-radius:12px;
+    padding:3px 4px 3px 10px; font-size:11px; color:var(--ink);
+  }
+  .minister-chip button{
+    border:none; background:transparent; color:var(--ink-faint);
+    cursor:pointer; font-size:12px; padding:0 4px; border-radius:50%; line-height:1;
+  }
+  .minister-chip button:hover{ color:#8a3a3a; }
+  .minister-color-swatch{
+    width:16px; height:16px; padding:0; border:1px solid var(--border);
+    border-radius:50%; cursor:pointer; -webkit-appearance:none; appearance:none;
+    overflow:hidden;
+  }
+  .minister-color-swatch::-webkit-color-swatch-wrapper{ padding:0; }
+  .minister-color-swatch::-webkit-color-swatch{ border:none; border-radius:50%; }
+
+  .modal-overlay{
+    display:none;
+    position:fixed; inset:0; background:rgba(27,42,69,0.45);
+    z-index:1000; align-items:center; justify-content:center;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal-box{
+    background:#fff; border-radius:8px; padding:20px 22px;
+    max-width:340px; width:90%; box-shadow:0 8px 30px rgba(0,0,0,0.2);
+  }
+  .modal-box p{ margin:0 0 12px; font-size:14px; color:var(--ink); line-height:1.5; }
+  .modal-box input{
+    width:100%; font-family:'Inter',sans-serif; font-size:14px;
+    border:1px solid var(--border); border-radius:4px; padding:8px 10px;
+    margin-bottom:14px; box-sizing:border-box; color:var(--ink);
+  }
+  .modal-buttons{ display:flex; justify-content:flex-end; gap:8px; }
+  .modal-buttons button{
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    border-radius:4px; padding:7px 14px; cursor:pointer;
+  }
+  .modal-btn-cancel{ border:1px solid var(--border); background:#fff; color:var(--ink-soft); }
+  .modal-btn-ok{ border:1px solid var(--ink); background:var(--ink); color:#fff; }
+
+  .toolbar{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-bottom:32px;
+  }
+  .toolbar button{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--ink);
+    border-radius:var(--radius);
+    padding:9px 14px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    transition:border-color .15s, color .15s;
+  }
+  .toolbar button:hover{ border-color:var(--ink-soft); }
+  .toolbar button.primary{
+    background:var(--ink);
+    color:#fff;
+    border-color:var(--ink);
+  }
+  .toolbar button.primary:hover{ background:#101b30; }
+  .toolbar button.danger{ color:#8a3a3a; }
+
+  .movement{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-left:5px solid var(--m-color, var(--gold));
+    border-radius:var(--radius);
+    margin-bottom:20px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .movement-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:16px 18px 14px;
+    border-bottom:1px solid var(--border);
+  }
+  .movement-head .icon{ width:22px; height:22px; flex-shrink:0; color:var(--m-color); }
+  .movement-head h2{
+    font-family:'Spectral',serif;
+    font-weight:600;
+    font-size:19px;
+    margin:0;
+    flex:1;
+  }
+  .movement-minister-select{
+    font-family:'Inter',sans-serif;
+    font-size:11.5px; font-weight:600;
+    border:1px solid var(--m-color, var(--border));
+    background:#fff; color:var(--m-color, var(--ink-soft));
+    border-radius:5px; padding:5px 8px;
+    max-width:150px; flex-shrink:0;
+  }
+  .movement-head .count{
+    font-size:12px;
+    color:var(--ink-faint);
+    font-weight:500;
+  }
+  .elements{
+    padding:10px 14px 14px;
+    min-height:14px;
+  }
+  .element-card{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:12px 12px 12px 10px;
+    margin-bottom:10px;
+    display:flex;
+    gap:10px;
+  }
+  .element-card.sortable-ghost{ opacity:0.35; }
+  .drag-handle{
+    cursor:grab;
+    color:var(--ink-faint);
+    padding:2px 2px 0 0;
+    user-select:none;
+    line-height:1;
+    font-size:16px;
+    flex-shrink:0;
+  }
+  .element-body{ flex:1; min-width:0; }
+  .element-row1{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-bottom:8px;
+    flex-wrap:wrap;
+  }
+  .element-title{
+    font-family:'Spectral',serif;
+    font-weight:600;
+    font-size:14.5px;
+    border:none;
+    background:transparent;
+    color:var(--ink);
+    flex:1;
+    min-width:120px;
+    padding:2px 0;
+  }
+  .element-title:focus{ outline:none; border-bottom:1px solid var(--m-color); }
+  .element-card-header{ margin-top:10px; }
+  .element-card-header .element-title{
+    font-size:14.5px; font-weight:700; text-align:center;
+    text-transform:uppercase; letter-spacing:0.04em;
+    padding:8px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  }
+  .type-select{
+    font-size:11.5px;
+    font-weight:600;
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--ink-soft);
+    border-radius:4px;
+    padding:4px 6px;
+  }
+  .minister-select{
+    font-size:11.5px;
+    font-weight:500;
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--ink-soft);
+    border-radius:4px;
+    padding:4px 6px;
+    max-width:120px;
+  }
+  .minister-tag{
+    display:none;
+  }
+  .remove-btn{
+    border:none;
+    background:transparent;
+    color:var(--ink-faint);
+    cursor:pointer;
+    font-size:16px;
+    line-height:1;
+    padding:2px 4px;
+  }
+  .remove-btn:hover{ color:#8a3a3a; }
+  .reference-input{
+    width:100%;
+    font-size:12.5px;
+    font-style:italic;
+    color:var(--ink-soft);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:6px 8px;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  .content-area{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    line-height:1.5;
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:8px;
+    resize:none;
+    overflow:hidden;
+    min-height:44px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .content-area::placeholder, .reference-input::placeholder{ color:var(--ink-faint); font-style:italic; }
+  .rich-editor{
+    width:100%; box-sizing:border-box;
+    font-family:'Inter',sans-serif; font-size:13.5px; line-height:1.5;
+    border:1px solid var(--border); border-radius:4px; padding:8px;
+    min-height:44px; background:#fff; color:var(--ink);
+    outline:none; white-space:pre-wrap; margin-bottom:6px;
+  }
+  .rich-editor:focus{ border-color:var(--ink-soft); }
+  .rich-editor:empty:before{ content:attr(data-placeholder); color:var(--ink-faint); font-style:italic; }
+  .rich-editor ol, .rich-editor ul{ margin:4px 0; padding-left:22px; }
+  .rich-editor li{ margin-bottom:2px; }
+  .rich-editor mark{ background:#fff59d; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .rich-editor-tall{ min-height:110px; }
+  .rich-editor-inline{
+    flex:1; min-height:auto; padding:6px 8px; font-size:13px; margin-bottom:0;
+  }
+
+  .add-element{
+    width:100%;
+    background:transparent;
+    border:1.5px dashed var(--border);
+    color:var(--ink-faint);
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    border-radius:var(--radius);
+    padding:9px;
+    cursor:pointer;
+    margin-top:2px;
+  }
+  .add-element:hover{ border-color:var(--m-color); color:var(--m-color); }
+
+  .services-panel{
+    position:fixed; top:0; left:0; height:100vh; width:300px; max-width:85vw;
+    background:var(--surface); border-right:1px solid var(--border);
+    box-shadow:8px 0 24px rgba(0,0,0,0.12);
+    z-index:900;
+    display:flex; flex-direction:column;
+    transform:translateX(-100%);
+    transition:transform .22s ease;
+  }
+  .services-panel.open{ transform:translateX(0); }
+  .services-panel-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 16px 12px; border-bottom:1px solid var(--border); flex-shrink:0;
+  }
+  .services-panel-header h3{
+    font-family:'Spectral',serif; font-size:16px; font-weight:600; margin:0; color:var(--ink);
+  }
+  .services-panel-datepicker{
+    padding:12px 16px; border-bottom:1px solid var(--border);
+    display:flex; flex-direction:column; gap:8px; flex-shrink:0;
+  }
+  .services-panel-datepicker input[type=date]{
+    font-family:'Inter',sans-serif; font-size:13px;
+    border:1px solid var(--border); border-radius:5px; padding:7px 9px; color:var(--ink);
+  }
+  .services-new-btn{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
+    border:1px solid var(--gold); background:var(--gold); color:#fff;
+    border-radius:5px; padding:8px 12px; cursor:pointer;
+  }
+  .services-new-btn:hover{ opacity:0.88; }
+  .services-list-count{ padding:10px 16px 0; font-size:11px; color:var(--ink-faint); flex-shrink:0; }
+  .services-list-wrap{ flex:1; overflow-y:auto; padding:8px 12px 16px; }
+  .service-item{
+    border:1px solid var(--border); border-radius:6px; padding:8px 10px; margin-bottom:6px;
+    background:var(--bg); display:flex; align-items:flex-start; gap:6px;
+  }
+  .service-item:hover{ border-color:var(--ink-soft); }
+  .service-item.active{ border-color:var(--gold); background:#fff8e8; }
+  .service-item-row{ flex:1; min-width:0; cursor:pointer; }
+  .service-item-date{
+    font-size:12px; font-weight:700; color:var(--ink);
+    display:flex; align-items:center; gap:6px;
+  }
+  .service-item-title{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .service-item-delete{
+    flex-shrink:0; border:none; background:transparent; color:var(--ink-faint);
+    cursor:pointer; font-size:13px; padding:2px 4px;
+  }
+  .service-item-delete:hover{ color:#8a3a3a; }
+
+  .hymnal-panel{
+    position:fixed; top:0; right:0; height:100vh; width:360px; max-width:90vw;
+    background:var(--surface); border-left:1px solid var(--border);
+    box-shadow:-8px 0 24px rgba(0,0,0,0.12);
+    z-index:900;
+    display:flex; flex-direction:column;
+    transform:translateX(100%);
+    transition:transform .22s ease;
+  }
+  .hymnal-panel.open{ transform:translateX(0); }
+  .hymnal-panel-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 16px 12px; border-bottom:1px solid var(--border); flex-shrink:0;
+  }
+  .hymnal-panel-header h3{
+    font-family:'Spectral',serif; font-size:16px; font-weight:600; margin:0; color:var(--ink);
+  }
+  .hymnal-close-btn{
+    border:none; background:transparent; color:var(--ink-faint); font-size:16px; cursor:pointer; padding:2px 6px;
+  }
+  .hymnal-close-btn:hover{ color:var(--ink); }
+  .hymnal-search-controls{
+    padding:12px 16px; display:flex; flex-direction:column; gap:7px; border-bottom:1px solid var(--border); flex-shrink:0;
+  }
+  .hymnal-search-controls input{
+    font-family:'Inter',sans-serif; font-size:12.5px;
+    border:1px solid var(--border); border-radius:5px; padding:7px 9px;
+    color:var(--ink); background:#fff;
+  }
+  .hymnal-clear-btn{
+    align-self:flex-start;
+    font-family:'Inter',sans-serif; font-size:11px; font-weight:600;
+    border:none; background:transparent; color:var(--ink-faint); text-decoration:underline; cursor:pointer; padding:0;
+  }
+  .hymnal-lyrics-status{ font-size:10.5px; color:var(--ink-faint); font-style:italic; }
+  .hymnal-lyrics-toggle{
+    font-family:'Inter',sans-serif; font-size:10.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:3px 7px; cursor:pointer; margin-top:4px;
+  }
+  .hymnal-lyrics-toggle:hover{ border-color:var(--gold); color:var(--gold); }
+  .hymnal-lyrics-box{
+    margin-top:6px; padding:8px 9px; background:#fff; border:1px solid var(--border); border-radius:5px;
+    font-size:11.5px; line-height:1.5; white-space:pre-line; color:var(--ink); max-height:220px; overflow-y:auto;
+  }
+  .hymnal-lyrics-box mark{ background:#fff59d; }
+  .hymnal-toggle-row{ display:flex; gap:6px; margin-top:4px; }
+  .hymnal-score-box{ margin-top:6px; }
+  .hymnal-score-box img{
+    width:100%; border:1px solid var(--border); border-radius:5px; margin-bottom:6px; display:block;
+    cursor:zoom-in;
+  }
+  .score-lightbox{
+    display:none;
+    position:fixed; inset:0; z-index:3000;
+    background:rgba(20,20,20,0.86);
+    align-items:center; justify-content:center;
+    padding:36px;
+  }
+  .score-lightbox.open{ display:flex; }
+  .score-lightbox-content{
+    max-width:min(900px, 92vw); max-height:92vh; overflow-y:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .score-lightbox-content img{
+    width:100%; display:block; border-radius:4px; margin-bottom:14px; background:#fff;
+  }
+  .score-lightbox-close{
+    position:fixed; top:20px; right:24px; z-index:3001;
+    width:36px; height:36px; border-radius:50%;
+    border:none; background:rgba(255,255,255,0.15); color:#fff; font-size:16px; cursor:pointer;
+  }
+  .score-lightbox-close:hover{ background:rgba(255,255,255,0.3); }
+  .hymnal-results-count{
+    padding:8px 16px 0; font-size:11px; color:var(--ink-faint); flex-shrink:0;
+  }
+  .hymnal-results{
+    flex:1; overflow-y:auto; padding:8px 16px 16px;
+  }
+  .hymnal-result{
+    border:1px solid var(--border); border-radius:6px; padding:9px 10px; margin-bottom:8px;
+    background:var(--bg); cursor:grab;
+  }
+  .hymnal-result:active{ cursor:grabbing; }
+  .hymnal-result-main{ display:flex; align-items:baseline; gap:6px; margin-bottom:2px; }
+  .hymnal-num{ font-size:11px; font-weight:700; color:var(--gold); flex-shrink:0; }
+  .hymnal-title{ font-family:'Spectral',serif; font-size:13.5px; font-weight:600; color:var(--ink); }
+  .hymnal-result-meta{ font-size:11px; color:var(--ink-soft); margin-bottom:6px; line-height:1.4; }
+  .hymnal-add-select{
+    font-family:'Inter',sans-serif; font-size:11px;
+    border:1px solid var(--border); border-radius:4px; padding:3px 5px;
+    color:var(--ink-soft); background:#fff; width:100%;
+  }
+  .hymnal-panel-hint{
+    padding:10px 16px; font-size:10.5px; color:var(--ink-faint); border-top:1px solid var(--border);
+    line-height:1.4; flex-shrink:0;
+  }
+  .hymnal-drop-active{ outline:2px dashed var(--gold); outline-offset:-2px; }
+
+  .schedule-overlay{
+    display:none;
+    position:fixed; inset:0; background:rgba(27,42,69,0.55);
+    z-index:800; align-items:center; justify-content:center; padding:24px;
+  }
+  .schedule-overlay.open{ display:flex; }
+  .schedule-overlay.make-room{ justify-content:flex-start; padding-right:400px; }
+  .schedule-panel{
+    position:relative;
+    background:var(--surface); border-radius:10px;
+    width:100%; max-width:1400px; height:100%; max-height:900px;
+    display:flex; flex-direction:column; overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    transition:max-width .22s ease;
+  }
+  .schedule-overlay.make-room .schedule-panel{
+    max-width:calc(1400px - 380px);
+  }
+  @media (max-width: 1100px){
+    .schedule-overlay.make-room .schedule-panel{ max-width:100%; }
+  }
+  .schedule-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px; border-bottom:1px solid var(--border); flex-shrink:0;
+  }
+  .schedule-header h3{ font-family:'Spectral',serif; font-size:18px; font-weight:600; margin:0; }
+  .schedule-header-actions{ display:flex; gap:8px; align-items:center; }
+  .schedule-header-actions button{
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:5px; padding:7px 11px; cursor:pointer;
+  }
+  .schedule-header-actions button:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .schedule-close-btn{ font-size:15px !important; padding:7px 10px !important; }
+  .schedule-hint{
+    padding:8px 20px; font-size:11.5px; color:var(--ink-faint); border-bottom:1px solid var(--border);
+    flex-shrink:0; line-height:1.5;
+  }
+  .schedule-table-wrap{ flex:1; overflow:auto; padding:0; }
+  .schedule-grid{ display:grid; width:max-content; font-family:'Inter',sans-serif; font-size:12px; }
+  .sg-cell, .sg-head{
+    border:1px solid var(--border); padding:4px; overflow:hidden; box-sizing:border-box;
+    white-space:nowrap;
+  }
+  .sg-head{
+    position:sticky; top:0; background:var(--bg); z-index:2;
+    font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;
+    color:var(--ink-soft); padding:6px 4px; white-space:normal;
+  }
+  .sg-resize-handle{
+    position:absolute; top:0; right:0; width:6px; height:100%; cursor:col-resize;
+    user-select:none; touch-action:none; z-index:6;
+  }
+  .sg-resize-handle:hover, .sg-resize-handle.active{ background:var(--gold); opacity:0.5; }
+  .sg-head.sg-group{
+    background:var(--surface); font-size:10px; color:var(--ink-faint); border-bottom:none;
+  }
+  .sg-selectcell, .sg-head.sg-selecthead{
+    position:sticky; left:0; z-index:1; background:var(--surface);
+  }
+  .sg-head.sg-selecthead{ z-index:3; }
+  .sg-selectcell{ display:flex; align-items:center; justify-content:center; padding:4px 2px; }
+  .sg-datecell, .sg-head.sg-datehead{
+    position:sticky; z-index:1; background:var(--surface);
+  }
+  .sg-head.sg-datehead{ z-index:3; }
+  .sg-datecell{ display:flex; align-items:center; gap:6px; padding:4px 6px; white-space:normal; }
+  .schedule-color-dot{ width:11px; height:11px; border-radius:50%; flex-shrink:0; border:1px solid rgba(0,0,0,0.15); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .sg-cell input, .sg-cell select, .sg-cell textarea{
+    font-family:'Inter',sans-serif; font-size:11.5px;
+    border:1px solid transparent; border-radius:3px; padding:3px 4px;
+    background:transparent; color:var(--ink); width:100%; box-sizing:border-box; white-space:normal;
+  }
+  .sg-cell textarea{ resize:vertical; min-height:32px; }
+  .sg-cell input:hover, .sg-cell select:hover, .sg-cell textarea:hover,
+  .sg-cell input:focus, .sg-cell select:focus, .sg-cell textarea:focus{
+    border-color:var(--border); background:#fff; outline:none;
+  }
+  .sg-cell input[type=date]{ min-width:0; }
+  .schedule-remove-row{
+    border:none; background:transparent; color:var(--ink-faint); cursor:pointer; font-size:13px;
+  }
+  .schedule-remove-row:hover{ color:#8a3a3a; }
+  .column-picker{
+    display:none;
+    position:absolute; top:46px; right:16px; z-index:1000;
+    width:240px; max-height:400px; overflow-y:auto;
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    box-shadow:0 12px 32px rgba(0,0,0,0.18); padding:12px;
+  }
+  .column-picker.open{ display:block; }
+  .column-picker-header{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:8px; font-size:13px; color:var(--ink);
+  }
+  .column-picker-list{ display:flex; flex-direction:column; gap:6px; }
+  .column-picker-row{
+    display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink-soft); cursor:pointer;
+  }
+  .schedule-batch-bar{
+    display:none; align-items:center; gap:10px;
+    padding:8px 20px; background:var(--bg); border-bottom:1px solid var(--border);
+    font-size:12px; color:var(--ink-soft); flex-shrink:0; flex-wrap:wrap;
+  }
+  .schedule-batch-bar.on{ display:flex; }
+  .schedule-batch-bar label{ display:flex; align-items:center; gap:5px; }
+  .schedule-batch-bar select{
+    font-family:'Inter',sans-serif; font-size:12px; border:1px solid var(--border);
+    border-radius:4px; padding:4px 6px; background:#fff; color:var(--ink);
+  }
+  .schedule-batch-bar button{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:5px 10px; cursor:pointer;
+  }
+  .schedule-batch-bar button:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .schedule-row-checkbox{ width:14px; height:14px; cursor:pointer; }
+
+  .hymn-playback-bar{
+    display:none;
+    position:fixed; bottom:18px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:#fff;
+    border-radius:24px; padding:9px 10px 9px 16px;
+    align-items:center; gap:12px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.3);
+    z-index:1500; font-family:'Inter',sans-serif; font-size:13px;
+  }
+  .hymn-playback-bar.on{ display:flex; }
+  .hymn-playback-bar button{
+    border:none; background:rgba(255,255,255,0.15); color:#fff;
+    border-radius:16px; padding:6px 12px; cursor:pointer; font-size:12px; font-weight:600;
+  }
+  .hymn-playback-bar button:hover{ background:rgba(255,255,255,0.28); }
+  .hymn-speed-control{ font-size:12px; display:flex; align-items:center; gap:5px; }
+  .hymn-speed-control select{
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    border:1px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.1); color:#fff;
+    border-radius:12px; padding:4px 8px; cursor:pointer;
+  }
+  .hymn-speed-control select option{ color:#000; }
+  .hymn-play-btn{
+    flex-shrink:0;
+    width:26px; height:26px;
+    border:1px solid var(--border); background:#fff; color:var(--gold);
+    border-radius:50%; cursor:pointer; font-size:11px; padding:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .hymn-play-btn:hover{ background:var(--gold); color:#fff; border-color:var(--gold); }
+
+  .floating-toolbar{
+    display:none;
+    position:fixed;
+    z-index:2000;
+    gap:2px;
+    background:var(--ink);
+    border-radius:7px;
+    padding:4px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.28);
+  }
+  .floating-toolbar button{
+    width:27px; height:25px;
+    font-family:'Inter',sans-serif; font-size:12.5px;
+    border:none; background:transparent; color:#fff;
+    border-radius:4px; cursor:pointer; padding:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .floating-toolbar button:hover{ background:rgba(255,255,255,0.18); }
+  .floating-toolbar .rt-highlight-btn{ background:rgba(255,245,157,0.25); }
+  .floating-toolbar .rt-highlight-btn:hover{ background:rgba(255,245,157,0.4); }
+  .series-picker-trigger{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:5px 8px; cursor:pointer; text-align:left;
+    display:flex; align-items:center; justify-content:space-between; gap:6px;
+    width:100%; max-width:none; margin-bottom:6px; box-sizing:border-box;
+  }
+  .series-picker-trigger:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .series-picker-trigger-cell{ margin-bottom:0; font-size:11.5px; font-weight:400; padding:3px 6px; border-color:transparent; background:transparent; }
+  .series-picker-trigger-cell:hover{ border-color:var(--border); background:#fff; }
+  .series-picker-caret{ opacity:0.6; font-size:10px; }
+  .series-picker-popover{
+    display:none; position:fixed; z-index:2000;
+    background:#fff; border:1px solid var(--border); border-radius:8px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2); min-width:220px; max-width:280px;
+    max-height:320px; overflow-y:auto; padding:4px;
+  }
+  .series-picker-row{
+    display:flex; align-items:center; justify-content:space-between; gap:6px;
+    padding:6px 8px; border-radius:5px; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink);
+  }
+  .series-picker-row:hover{ background:var(--bg); }
+  .series-picker-row-active{ background:var(--gold-light,#faf3dd); font-weight:600; }
+  .series-picker-name{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .series-picker-clear{ color:var(--ink-faint); font-style:italic; }
+  .series-picker-edit{
+    border:none; background:transparent; color:var(--ink-faint); cursor:pointer;
+    font-size:12px; padding:2px 4px; border-radius:4px; flex-shrink:0;
+  }
+  .series-picker-edit:hover{ background:var(--border); color:var(--ink); }
+  .series-picker-add{
+    display:flex; gap:4px; padding:6px 6px 4px; border-top:1px solid var(--border); margin-top:4px;
+  }
+  .series-picker-add input{
+    flex:1; font-family:'Inter',sans-serif; font-size:12px;
+    border:1px solid var(--border); border-radius:4px; padding:5px 6px; min-width:0;
+  }
+  .series-picker-add button{
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:5px 9px; cursor:pointer;
+  }
+  .series-picker-add button:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .export-menu-popover{
+    display:none; position:fixed; z-index:2000;
+    background:#fff; border:1px solid var(--border); border-radius:8px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2); min-width:210px; padding:4px;
+  }
+  .export-menu-row{
+    display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:5px; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:13px; color:var(--ink); white-space:nowrap;
+  }
+  .export-menu-row:hover{ background:var(--bg); }
+  .rt-print{ display:none; }
+  .rt-print mark{ background:#fff59d !important; padding:0 1px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .rt-print ol, .rt-print ul, .print-response ol, .print-response ul{ margin:4px 0; padding-left:22px; }
+  .rt-print li, .print-response li{ margin-bottom:2px; }
+  .rt-print strong{ font-weight:700 !important; }
+  .rt-print em{ font-style:italic !important; }
+  .rt-print, .print-response{ -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; }
+  .rt-field{ flex:1; min-width:0; }
+  .rt-field textarea{ width:100%; box-sizing:border-box; }
+
+  .response-fields{ display:flex; flex-direction:column; gap:8px; }
+  .response-line{ display:flex; align-items:flex-start; gap:8px; }
+  .response-line label{
+    font-size:11.5px; font-weight:600; color:var(--ink-soft);
+    width:112px; flex-shrink:0; padding-top:6px;
+  }
+  .response-input, .alt-label-input, .version-select{
+    flex:1;
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:6px 8px;
+    background:#fff;
+    color:var(--ink);
+    resize:none;
+    overflow:hidden;
+    min-height:34px;
+    line-height:1.4;
+  }
+  select.version-select{ min-height:auto; resize:none; }
+  .alt-toggle{
+    display:flex; align-items:center; gap:6px;
+    font-size:12px; color:var(--ink-soft); font-weight:600;
+    margin-top:2px; cursor:pointer;
+  }
+  .alt-toggle input{ cursor:pointer; }
+  .alt-fields{
+    display:flex; flex-direction:column; gap:8px;
+    border-left:2px solid var(--border);
+    padding:8px 0 2px 10px;
+    margin-top:2px;
+  }
+  .alt-label-input{ font-style:italic; }
+  .print-response{ display:none; }
+  .print-response p{ margin:2px 0 8px; font-size:13.5px; line-height:1.5; white-space:pre-line; }
+  .print-response .speaker{ font-weight:600; }
+  .print-response .pastor-line{ font-weight:700; }
+  .print-response mark{ background:#fff59d !important; padding:0 1px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .print-response strong{ font-weight:900 !important; }
+  .print-response em{ font-style:italic !important; }
+  .print-response .pastor-line strong{ text-decoration:underline; }
+  .print-response .footnote{ font-size:11.5px; font-style:italic; color:var(--ink-soft); }
+  .hymn-fields{ display:flex; gap:8px; align-items:center; }
+  .hymn-number-input{
+    width:64px; flex-shrink:0;
+    font-family:'Inter',sans-serif; font-size:13px;
+    border:1px solid var(--border); border-radius:4px;
+    padding:6px 8px; background:#fff; color:var(--ink);
+    text-align:center;
+  }
+  .hymn-title-input{
+    flex:1;
+    font-family:'Spectral',serif; font-size:14px; font-style:italic;
+    border:1px solid var(--border); border-radius:4px;
+    padding:6px 8px; background:#fff; color:var(--ink);
+  }
+  .lectionary-row{
+    border-top:1px solid var(--border);
+    padding-top:8px; margin-top:8px;
+  }
+  .lectionary-row:first-child{ border-top:none; padding-top:0; margin-top:0; }
+  .lectionary-label{
+    font-size:11px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;
+    color:var(--m-color); margin-bottom:5px;
+  }
+  .carried-over-tag{
+    font-size:10px; font-weight:600; text-transform:none; letter-spacing:normal;
+    color:#B3261E; background:#FCE8E6; border-radius:3px; padding:1px 6px; margin-left:4px;
+  }
+  .carried-over-text{ color:#B3261E !important; }
+
+  .backup-nudge{
+    display:none;
+    position:fixed; top:0; left:0; right:0; z-index:1200;
+    background:#3D2E12; color:#FFF3D6;
+    padding:9px 16px; font-size:12.5px;
+    align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;
+  }
+  .backup-nudge.on{ display:flex; }
+  .backup-nudge button{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    border:1px solid rgba(255,255,255,0.35); background:rgba(255,255,255,0.1); color:#FFF3D6;
+    border-radius:4px; padding:5px 10px; cursor:pointer;
+  }
+  .backup-nudge button:hover{ background:rgba(255,255,255,0.22); }
+  .ref-row{ display:flex; gap:6px; align-items:center; margin-bottom:6px; }
+  .ref-row .reference-input{ margin-bottom:0; flex:1; }
+  .esv-fetch-btn{
+    flex-shrink:0;
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:4px; padding:6px 9px; cursor:pointer; white-space:nowrap;
+  }
+  .esv-fetch-btn:hover{ border-color:var(--gold); color:var(--gold); }
+  .esv-fetch-btn:disabled{ opacity:0.5; cursor:default; }
+  .locked-note{
+    font-size:11px; color:var(--ink-faint); font-style:italic; margin-top:4px;
+  }
+  .skip-toggle{
+    display:flex; align-items:center; gap:4px;
+    font-size:11px; color:var(--ink-faint); font-weight:500;
+    cursor:pointer; white-space:nowrap;
+    margin-top:-2px;
+  }
+  .skip-toggle input{ cursor:pointer; }
+  .toolbar-bottom{ margin-top:8px; margin-bottom:24px; }
+  .lock-badge{
+    font-size:12px;
+    opacity:0.65;
+    flex-shrink:0;
+    cursor:default;
+  }
+
+  footer.note{
+    text-align:center;
+    color:var(--ink-faint);
+    font-size:12px;
+    margin-top:30px;
+    line-height:1.6;
+  }
+
+  input[type=file]{ display:none; }
+
+  /* ---- Print / PDF styles ---- */
+  @media print{
+    body{ background:#fff; }
+    .toolbar{ display:none; }
+    .app{ max-width:100%; padding:0 8px; }
+    .movement{ box-shadow:none; border:1px solid #ccc; break-inside:avoid; margin-bottom:14px; }
+    .drag-handle, .remove-btn, .add-element, .type-select, .lock-badge, .minister-select{ display:none; }
+    .movement-minister-select{ display:none; }
+    .minister-tag{
+      display:inline-block; font-size:11px; font-style:italic; color:var(--ink-soft);
+      margin-left:6px; font-family:'Inter',sans-serif; font-weight:500;
+    }
+    .minister-tag::before{ content:"— "; }
+    .element-card{ border:none; background:#fff; padding:6px 0; }
+    .element-title, .reference-input, .content-area, .hymn-number-input, .hymn-title-input, .rich-editor{ border:none; background:transparent; padding:0; }
+    .element-card-header .element-title{
+      border-top:1px solid #999 !important; border-bottom:1px solid #999 !important; padding:6px 0 !important;
+    }
+    .content-area{ resize:none; }
+    footer.note{ display:none; }
+    .sync-status{ display:none; }
+    .esv-settings{ display:none; }
+    .minister-settings{ display:none; }
+    .hamburger-btn{ display:none; }
+    .settings-menu{ display:none !important; }
+    .modal-overlay{ display:none !important; }
+    .auth-overlay{ display:none !important; }
+    .sync-status-btn{ display:none !important; }
+    .score-lightbox{ display:none !important; }
+    .floating-toolbar{ display:none !important; }
+    .series-picker-popover{ display:none !important; }
+    .export-menu-popover{ display:none !important; }
+    .hymnal-panel{ display:none !important; }
+    .services-panel{ display:none !important; }
+    .schedule-overlay{ display:none !important; }
+    .schedule-batch-bar{ display:none !important; }
+    .column-picker{ display:none !important; }
+    .resync-btn{ display:none !important; }
+    .current-date-display{ display:none !important; }
+    .rich-editor.carried-over-text{ color:inherit !important; }
+    .backup-nudge{ display:none !important; }
+    .hymn-playback-bar{ display:none !important; }
+    .hymn-play-btn{ display:none !important; }
+    .response-fields{ display:none; }
+    .lectionary-track-row{ display:none; }
+    .print-response{ display:block; }
+    .text-hide-in-print{ display:none !important; }
+    .alt-toggle{ display:none; }
+    .lectionary-label{ color:var(--ink-soft) !important; }
+    .skip-toggle{ display:none; }
+    .esv-fetch-btn{ display:none; }
+    .rt-field{ display:none; }
+    .rt-print{ display:block; white-space:pre-line; line-height:1.5; font-size:13.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="masthead">
+    <button id="settingsToggle" class="hamburger-btn" onclick="toggleSettingsMenu()" title="Settings (ESV key, ministers)">☰</button>
+    <button id="syncStatusIndicator" class="sync-status-btn" onclick="handleSyncStatusClick()" title="Cloud sync status">☁️ Login to Sync</button>
+    <div class="eyebrow">Pillar Reformed Church</div>
+    <h1 contenteditable="true" id="churchTitle">The Lord's Service</h1>
+    <div class="service-meta">
+      <input type="text" id="serviceTitle" placeholder="e.g. Second Sunday after Pentecost">
+      <input type="date" id="serviceDate" style="display:none">
+      <button id="currentDateDisplay" class="current-date-display" onclick="toggleServicesPanel()" title="Click to choose or create a service date">📃 Select a Service</button>
+      <span id="mainColorDot"></span>
+      <button class="resync-btn" onclick="resyncCurrentDate()" title="Re-pull the RCL, BCP, and Schedule data for this date — refreshes those specific fields (even if you've edited them) but leaves everything else in the liturgy untouched">🔄 Refresh Data</button>
+    </div>
+    <div id="syncStatus" class="sync-status"></div>
+    <div id="settingsMenu" class="settings-menu">
+      <div class="panel-settings">
+        <button onclick="toggleServicesPanel()">📃 Services</button>
+      </div>
+      <div class="minister-settings">
+        <label>Ministers</label>
+        <div id="ministerChips" class="minister-chips"></div>
+        <input type="text" id="newMinisterName" placeholder="Add a name">
+        <button onclick="addMinisterFromInput()">Add</button>
+      </div>
+      <div class="esv-settings">
+        <label for="esvApiKey">ESV API Key <span class="settings-hint">(shared with everyone signed in)</span></label>
+        <input type="password" id="esvApiKey" placeholder="paste your key from api.esv.org">
+        <button onclick="saveEsvKey()">Save</button>
+        <a href="https://api.esv.org/" target="_blank" rel="noopener">Get a free key →</a>
+        <span id="esvKeyStatus"></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <button class="primary" onclick="openExportMenu(this)">📤 Export ▾</button>
+    <button onclick="saveToFile()">💾 Save Liturgy File</button>
+    <button onclick="document.getElementById('loadInput').click()">📂 Load Liturgy File</button>
+    <button onclick="toggleSchedulePanel()">📅 Planner</button>
+    <button onclick="toggleHymnalPanel()">🎵 Hymnal</button>
+    <button class="danger" onclick="resetTemplate()">↺ Reset to Default Template</button>
+    <input type="file" id="loadInput" accept="application/json">
+  </div>
+
+  <div id="servicesPanel" class="services-panel">
+    <div class="services-panel-header">
+      <h3>Services</h3>
+      <button class="hymnal-close-btn" onclick="toggleServicesPanel()" title="Close">✕</button>
+    </div>
+    <div class="services-panel-datepicker">
+      <input type="date" id="servicesPanelDate">
+      <button class="services-new-btn" onclick="createNewServiceFromPanel()">+ New Service</button>
+    </div>
+    <label class="services-show-past" style="font-size:11.5px; color:var(--ink-soft); display:flex; align-items:center; gap:4px; padding:0 14px 8px;">
+      <input type="checkbox" id="servicesShowPast" onchange="renderServicesList()"> Show past services
+    </label>
+    <div class="services-list-count" id="servicesCount"></div>
+    <div class="services-list-wrap" id="servicesList"></div>
+  </div>
+
+  <div id="scheduleOverlay" class="schedule-overlay">
+    <div class="schedule-panel">
+      <div class="schedule-header">
+        <h3>Liturgy Planner</h3>
+        <div class="schedule-header-actions">
+          <label style="font-size:11.5px; color:var(--ink-soft); display:flex; align-items:center; gap:4px; margin-right:4px;">
+            <input type="checkbox" id="scheduleShowPast" onchange="renderScheduleTable()"> Show past dates
+          </label>
+          <button onclick="addScheduleRow()">+ Add date</button>
+          <button onclick="saveScheduleToFile()">💾 Save Plan</button>
+          <button onclick="document.getElementById('scheduleLoadInput').click()">📂 Load Plan</button>
+          <button onclick="toggleColumnPicker()">☰ Columns</button>
+          <input type="file" id="scheduleLoadInput" accept="application/json" style="display:none">
+          <button class="schedule-close-btn" onclick="toggleSchedulePanel()" title="Close">✕</button>
+        </div>
+      </div>
+      <div id="columnPicker" class="column-picker">
+        <div class="column-picker-header">
+          <strong>Show/hide columns</strong>
+          <button class="hymnal-close-btn" onclick="toggleColumnPicker()" title="Close">✕</button>
+        </div>
+        <div id="columnPickerList" class="column-picker-list"></div>
+      </div>
+      <div class="schedule-hint">Fill in what you plan ahead of time — picking that date in the builder will fill these into the liturgy automatically (and take priority over the RCL/BCP defaults). Leave a cell blank to let the normal defaults apply.</div>
+      <div id="scheduleBatchBar" class="schedule-batch-bar">
+        <span id="scheduleSelectedCount">0 selected</span>
+        <label>Preacher: <select id="batchPreacherSelect"></select></label>
+        <label>Series: <select id="batchSeriesSelect"></select></label>
+        <button onclick="applyScheduleBatch()">Apply to selected</button>
+        <button onclick="clearScheduleSelection()">Clear selection</button>
+      </div>
+      <div class="schedule-table-wrap">
+        <div class="schedule-grid" id="scheduleTable"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="hymnalPanel" class="hymnal-panel">
+    <div class="hymnal-panel-header">
+      <h3>Treasury of Psalms &amp; Hymns</h3>
+      <button class="hymnal-close-btn" onclick="toggleHymnalPanel()" title="Close">✕</button>
+    </div>
+    <div class="hymnal-search-controls">
+      <input type="text" id="hymnalSearchTitle" placeholder="Search title, tune, or number…" oninput="renderHymnalResults()">
+      <input type="text" id="hymnalSearchTopic" list="hymnalTopicList" placeholder="Filter by topic…" oninput="renderHymnalResults()">
+      <input type="text" id="hymnalSearchScripture" placeholder="Filter by scripture (e.g. Psalm 23)…" oninput="renderHymnalResults()">
+      <input type="text" id="hymnalSearchLyrics" placeholder="Search lyrics for a phrase…" oninput="renderHymnalResults()">
+      <span id="hymnalLyricsStatus" class="hymnal-lyrics-status"></span>
+      <datalist id="hymnalTopicList"></datalist>
+      <button class="hymnal-clear-btn" onclick="clearHymnalSearch()">Clear filters</button>
+    </div>
+    <div id="hymnalResultsCount" class="hymnal-results-count"></div>
+    <div id="hymnalResults" class="hymnal-results"></div>
+    <div class="hymnal-panel-hint">Drag a hymn onto a Hymn element to fill it in, or onto any movement to add it there. On mobile, use "Add to…" instead.</div>
+  </div>
+
+  <div id="backupNudge" class="backup-nudge">
+    <span>It's been a couple weeks since your last backup export — everything lives only in this browser.</span>
+    <button onclick="saveToFile()">💾 Save now</button>
+    <button onclick="snoozeBackupNudge()">Remind me later</button>
+  </div>
+
+  <div id="hymnPlaybackBar" class="hymn-playback-bar">
+    <span id="hymnPlaybackLabel">🎵 Playing…</span>
+    <label class="hymn-speed-control">Speed:
+      <select id="hymnPlaybackSpeed" onchange="changeHymnPlaybackSpeed(this.value)">
+        <option value="0.75">0.75×</option>
+        <option value="1" selected>1×</option>
+        <option value="1.25">1.25×</option>
+        <option value="1.5">1.5×</option>
+        <option value="2">2×</option>
+      </select>
+    </label>
+    <button onclick="stopHymnAudio()">⏹ Stop</button>
+  </div>
+
+  <div id="floatingToolbar" class="floating-toolbar">
+    <button type="button" onmousedown="event.preventDefault()" onclick="applyFloatingFormat('**','**')" title="Bold"><b>B</b></button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="applyFloatingFormat('*','*')" title="Italic"><i>I</i></button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="applyFloatingFormat('__','__')" title="Underline"><u>U</u></button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="applyFloatingFormat('~~','~~')" title="Strikethrough"><s>S</s></button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="applyFloatingFormat('==','==')" title="Highlight" class="rt-highlight-btn">H</button>
+  </div>
+
+  <div id="seriesPickerPopover" class="series-picker-popover"></div>
+
+  <div id="exportMenuPopover" class="export-menu-popover"></div>
+
+  <div id="scoreLightbox" class="score-lightbox" onclick="closeScoreLightboxFromBackdrop(event)">
+    <button class="score-lightbox-close" onclick="closeScoreLightbox()" title="Close">✕</button>
+    <div class="score-lightbox-content" id="scoreLightboxContent"></div>
+  </div>
+
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-box">
+      <h3>Sign in for shared editing</h3>
+      <p class="auth-hint">Sign in to sync services with anyone else on your team. You can skip this and keep working locally, same as before.</p>
+      <input type="email" id="authEmail" placeholder="Email" autocomplete="username">
+      <input type="password" id="authPassword" placeholder="Password" autocomplete="current-password">
+      <div id="authError" class="auth-error"></div>
+      <button class="primary" onclick="handleSignIn()">Sign In</button>
+      <button class="auth-skip" onclick="skipCloudSync()">Continue without cloud sync</button>
+    </div>
+  </div>
+
+  <div id="modalOverlay" class="modal-overlay">
+    <div class="modal-box">
+      <p id="modalMessage"></p>
+      <input type="text" id="modalInput" style="display:none">
+      <div class="modal-buttons">
+        <button id="modalCancel" class="modal-btn-cancel">Cancel</button>
+        <button id="modalOk" class="modal-btn-ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="movements"></div>
+
+  <div class="toolbar toolbar-bottom">
+    <button class="primary" onclick="openExportMenu(this)">📤 Export ▾</button>
+    <button onclick="saveToFile()">💾 Save Liturgy File</button>
+  </div>
+
+  <footer class="note">
+    Drag the ⠿ handle to reorder elements — within a movement, or between movements.<br>
+    Save regularly to a file in your synced Zoho WorkDrive folder to keep a backup across devices.
+  </footer>
+</div>
+
+<script>
+const ICONS = {
+  welcome: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="3" width="12" height="18" rx="1"/><circle cx="13.5" cy="12" r="1"/><path d="M17 3v18"/></svg>',
+  call: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3a5 5 0 0 0-5 5v3.5c0 1-.4 2-1.2 2.8L4 16h16l-1.8-1.7c-.8-.8-1.2-1.8-1.2-2.8V8a5 5 0 0 0-5-5Z"/><path d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg>',
+  confession: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c3 4 5.5 7.4 5.5 10.5a5.5 5.5 0 1 1-11 0C6.5 10.4 9 7 12 3Z"/></svg>',
+  consecration: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22c3 0 5-2 5-4.8 0-2-1.2-3.3-2-4.7.3 1.4-.3 2.3-1 2.5.4-2.2-.6-4.2-2.3-5.7.2 1.6-.4 2.4-1 3-1 1-2.2 2.5-2.2 4.9C8.5 20 9.8 22 12 22Z"/></svg>',
+  communion: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8h12l-1.2 8.2A2 2 0 0 1 14.8 18H9.2a2 2 0 0 1-2-1.8L6 8Z"/><path d="M4 8h16"/><path d="M12 8V5m0 0-1.5 1.5M12 5l1.5 1.5"/></svg>',
+  commission: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12c3-4 6-6 8-6M4 12c3 4 6 6 8 6M4 12h16" /><path d="M15 8l4 4-4 4"/></svg>'
+};
+
+const DEFAULT_TEMPLATE = [
+  { key:'welcome', label:'Welcome & Announcements', color:'var(--welcome)', defaultMinister:'', elements:[
+    { title:'Welcome', type:'text', reference:'', locked:true,
+      content:'To all who are weary and seek rest;\nto all who mourn and long for comfort;\nto all who struggle and desire victory;\nto all who sin and need a Savior;\nto all who are lonely and want fellowship;\nto all who hunger and thirst for righteousness;\nand to whoever will come —\nthis church opens wide her doors and offers her welcome in the name of the Lord Jesus Christ.' },
+    { title:'Announcements', type:'rubric', reference:'', content:'', richEditor:true },
+    { title:'Moment of Silence to Prepare for Worship', type:'rubric', reference:'', content:'' },
+  ]},
+  { key:'call', label:'God Calls Us', color:'var(--call)', defaultMinister:'', elements:[
+    { title:'Call to Worship', type:'text', reference:'', content:'Let us rise and worship the Triune God!' },
+    { title:'Greeting', type:'response', reference:'', locked:true,
+      leaderText:'Grace, mercy, and peace from God the Father, the Son, and the Holy Spirit.\nThe Lord be with you!',
+      peopleText:'And also with you!',
+      allowSeasonal:true, altMode:'add', hasAlt:false, altLabel:'Eastertide', altActive:false,
+      altLeaderText:'Alleluia! Christ is Risen!', altPeopleText:'Christ is risen, indeed! Alleluia!' },
+    { title:'Scripture Reading', type:'scripture', reference:'', content:'', scheduleKey:'scripture' },
+    { title:'Collect', type:'variant-text', reference:'', bcpLinked:true, scheduleKey:'collect',
+      variants:[{ id:'default', label:'Option 1', content:'' }], activeVariantId:'default' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn1' },
+  ]},
+  { key:'confession', label:'God Cleanses Us as We Confess Our Sin', color:'var(--confession)', defaultMinister:'', elements:[
+    { title:'Exhortation', type:'exhortation', reference:'', subtitle:'', content:'' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn2' },
+    { title:'Call to Confession', type:'response', reference:'', locked:true,
+      leaderText:'Come, let us worship and bow down!',
+      peopleText:'And kneel before the Lord our Maker. (Ps. 95:6)' },
+    { title:'Kneeling Instruction', type:'rubric', reference:'', content:'Let all who are able kneel.' },
+    { title:'Scripture Reading', type:'scripture', reference:'', content:'', scheduleKey:'prayerVerse' },
+    { title:'Prayer of Confession', type:'text', reference:'',
+      content:'[Followed by a moment of silent, personal confession.]' },
+    { title:'Call to Assurance', type:'rubric', reference:'', content:'Rise and hear the good news of forgiveness in Christ!' },
+    { title:'Scripture Reading', type:'scripture', reference:'', content:'', scheduleKey:'assuranceVerse' },
+    { title:'Pastoral Application', type:'text', reference:'', content:'' },
+    { title:'Declaration of Pardon', type:'response', reference:'', locked:true,
+      leaderText:'On the basis of this promise of God, and as his minister,\nI declare unto you that your sins are forgiven through Jesus Christ our Lord!',
+      peopleText:'Thanks be to God!' },
+  ]},
+  { key:'consecration', label:'God Consecrates Us by His Powerful Word', color:'var(--consecration)', defaultMinister:'', elements:[
+    { title:'Sursum Corda', type:'response', reference:'', locked:true,
+      leaderText:'Lift up your hearts!', peopleText:'We lift them up to the Lord!' },
+    { title:'The Creed', type:'response', reference:'', locked:true,
+      leaderText:'Having confessed our sin, let us now confess our faith in the words of the Apostles\' Creed.\nChristian, what do you believe?',
+      peopleText:'I believe in God the Father Almighty; Maker of heaven and earth,\nand in Jesus Christ, his only begotten Son, our Lord,\nWho was conceived by the Holy Spirit, and born of the virgin Mary.\nHe suffered under Pontius Pilate, was crucified, died, and was buried.\nHe descended to the dead.\nOn the third day He rose again from the dead;\nHe ascended into Heaven, and sits at the right hand of God the Father Almighty;\nfrom there He will come to judge the living and the dead.\nI believe in the Holy Spirit, the holy catholic* Church, the communion of saints,\nthe forgiveness of sins, the resurrection of the body, and the life everlasting.\nAmen.',
+      hasFootnote:true, footnote:'*catholic means universal, and does not always refer to the Roman Catholic Church.',
+      allowSeasonal:true, altMode:'replace', altLabel:'Advent & Christmastide', altActive:false,
+      altLeaderText:'Having confessed our sin, let us now confess our faith in the words of the Nicene Creed.\nChristian, what do you believe?',
+      altPeopleText:'I believe in one God, the Father Almighty, Maker of heaven and earth\nand of all things visible and invisible;\nand in one Lord Jesus Christ, the only-begotten Son of God,\nbegotten of the Father before all worlds,\nGod of God, Light of Light, very God of very God, begotten, not made,\nbeing of one substance with the Father; by whom all things were made;\nwho, for us men, and for our salvation, came down from Heaven,\nand was incarnate by the Holy Spirit of the virgin, Mary, and was made man;\nand was crucified also for us under Pontius Pilate; He suffered and was buried;\nand the third day he rose again, according to the Scriptures;\nand ascended into Heaven, and sits on the right hand of the Father;\nand He shall come again, with glory, to judge both the living and the dead;\nwhose kingdom shall have no end.\nAnd I believe in the Holy Spirit, the Lord, and Giver of Life,\nwho proceeds from the Father and the Son;\nwho with the Father and the Son together is worshipped and glorified;\nwho spoke by the prophets.\nAnd I believe in one, holy, catholic and apostolic church;\nI acknowledge one baptism for the remission of sins;\nand I look for the resurrection of the dead, and the life of the world to come. Amen',
+      altFootnote:'*catholic means universal, and does not always refer to the Roman Catholic Church.' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn3' },
+    { title:'Lectionary', type:'lectionary', reference:'', includeText:false, hasTracks:false, track:'track1', trackData:null, scheduleKey:'lectionaryReader', readings:[
+      { key:'ot', label:'Old Testament', reference:'', content:'' },
+      { key:'psalm', label:'Psalm', reference:'', content:'' },
+      { key:'nt', label:'New Testament', reference:'', content:'' },
+      { key:'gospel', label:'Gospel', reference:'', content:'' },
+    ]},
+    { title:'Response to the Reading', type:'response', reference:'', locked:true,
+      leaderText:'This is the word of the Lord.', peopleText:'Thanks be to God!' },
+    { title:'Pastoral Prayer', type:'pastoral-prayer', reference:'', scheduleKey:'pastoralPrayer', richEditor:true,
+      sections:[
+        { key:'opening', label:'Opening', reference:'', content:'' },
+        { key:'thanksgiving', label:'Thanksgiving', reference:'', content:'' },
+        { key:'petitions', label:'Petitions', reference:'', content:'' },
+      ] },
+    { title:'The Lord\'s Prayer', type:'response', reference:'', locked:true,
+      leaderText:'...And now, as you taught us, we pray together:',
+      peopleText:'Our Father which art in heaven, hallowed be Thy name.\nThy kingdom come, Thy will be done, on earth as it is in heaven.\nGive us this day our daily bread and forgive us our debts as we forgive our debtors.\nLead us not into temptation but deliver us from evil.\nFor Thine is the kingdom, and the power, and the glory forever.\nAmen!' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn4' },
+    { title:'Sermon', type:'sermon', reference:'', sermonTitle:'', passageReference:'', series:'', hasManuscript:false, manuscript:'', scheduleKey:'sermon' },
+    { title:'Offering Exhortation', type:'text', reference:'', scheduleKey:'offering',
+      content:'What is required of you today? If you are a guest, there is no expectation for you to give this morning.' },
+    { title:'Offertory Sentence', type:'response', reference:'', locked:true,
+      leaderText:'All things come from you, O Lord.', peopleText:'And from your own have we given you. (1 Chr. 29:14)' },
+    { title:'Offertory Prayer', type:'text', reference:'', locked:true,
+      content:'Oh God, receive these gifts given in and through your Son. Make these tithes and offerings profitable for your kingdom. May they be used to support your church, to care for the poor and needy, and to take the gospel to the ends of the earth. Bless it, O God. In Jesus\' name we pray. Amen.' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn5' },
+  ]},
+  { key:'communion', label:'God Communes with Us', color:'var(--communion)', defaultMinister:'', elements:[
+    { title:'Communion Instructions', type:'rubric', reference:'',
+      content:'This sacrament is for all baptized believers in Jesus Christ, who are not under disciplinary action of another local church. If you are not a believer or have not been baptized, we\'re glad you\'re here, and you are welcome to observe, but please allow the elements to pass today and talk to the pastor about how you may partake in the future.\n\nTwo distributions, the bread first and then the wine. Wait and we\'ll partake together.' },
+    { title:'The Bread', type:'scripture', reference:'1 Corinthians 11:23-24', content:'' },
+    { title:'Blessing of the Bread', type:'variant-text',
+      variants:[{ id:'bread-standard', label:'Standard', content:'Father, we thank you for this bread and the body of your Son. As truly as this bread arose from the earth, endured the furnace of affliction, and rose glorified for us to enjoy today, we remember and proclaim the same of our Savior. God, turn our hearts to be satisfied in our crucified and glorified Lord. In this bread, give us Christ. Amen.' }],
+      activeVariantId:'bread-standard' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn6' },
+    { title:'Reception of the Bread', type:'text', reference:'', content:'The bread is communion in the body of Christ. Take and eat.' },
+    { title:'The Wine', type:'scripture', reference:'1 Corinthians 11:25', content:'' },
+    { title:'Blessing of the Wine', type:'variant-text',
+      variants:[{ id:'wine-standard', label:'Standard', content:'O God, you give wine to gladden the heart of man. Grant us gladness of heart as we remember the blood of your Son that made full atonement for our sin. We give thanks and ask your blessing. In this cup, give us Christ.' }],
+      activeVariantId:'wine-standard' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn7' },
+    { title:'Reception of the Wine', type:'text', reference:'', content:'The cup of blessing is communion in the blood of Christ. Let us drink together.' },
+    { title:'Proclamation of Remembrance', type:'response', reference:'', locked:true,
+      leaderText:'For as often as you eat this bread and drink the cup, you proclaim the Lord\'s death until he comes. (1 Cor. 11:26)',
+      peopleText:'We remember his death,\nWe proclaim his resurrection,\nWe await his coming in glory.' },
+    { title:'Eucharistic Blessing', type:'response', reference:'', locked:true,
+      leaderText:'Now may the body and blood of our Lord Jesus Christ strengthen and preserve you all steadfast in the most holy faith until life everlasting!',
+      peopleText:'Amen!' },
+    { title:'Hymn — Doxology', type:'hymn', locked:true, hymnNumber:'1076', hymnTitle:'Doxology' },
+  ]},
+  { key:'commission', label:'God Commissions Us with His Blessing', color:'var(--commission)', defaultMinister:'', elements:[
+    { title:'Charge', type:'text', reference:'', content:'' },
+    { title:'Benediction', type:'scripture', reference:'', content:'', scheduleKey:'benediction' },
+    { title:'Response', type:'response', reference:'', leaderText:'Amen!', peopleText:'Amen!', allowSkipLeader:true },
+    { title:'Dismissal', type:'text', reference:'', content:'Go in peace.' },
+  ]},
+];
+
+let state = null;
+let idCounter = 1;
+function newId(){ return 'el' + (idCounter++); }
+
+function loadStateFromTemplate(template){
+  state = template.map(m => ({
+    key:m.key, label:m.label, color:m.color, defaultMinister:m.defaultMinister || '',
+    elements: m.elements.map(e => ({ id:newId(), ...e }))
+  }));
+}
+
+function render(){
+  const container = document.getElementById('movements');
+  container.innerHTML = '';
+  state.forEach(movement => {
+    const sec = document.createElement('section');
+    sec.className = 'movement';
+    sec.style.setProperty('--m-color', movement.color);
+
+    sec.innerHTML = `
+      <div class="movement-head">
+        <span class="icon">${ICONS[movement.key] || ''}</span>
+        <h2>${movement.label}</h2>
+        <select class="movement-minister-select" title="Default minister for this movement" onchange="handleMovementMinisterChange('${movement.key}',this)">
+          <option value="" ${!movement.defaultMinister?'selected':''}>Default minister…</option>
+          ${ministerRoster.map(name => `<option value="${escapeAttr(name)}" ${movement.defaultMinister===name?'selected':''}>${escapeHTML(name)}</option>`).join('')}
+          <option value="__add__">+ Add new minister…</option>
+        </select>
+      </div>
+      <div class="elements" data-movement="${movement.key}" ondragover="event.preventDefault()" ondrop="handleMovementDrop(event,'${movement.key}')"></div>
+      <div style="padding:0 14px 14px;">
+        <button class="add-element" onclick="addElement('${movement.key}')">+ Add Element</button>
+      </div>
+    `;
+    container.appendChild(sec);
+
+    const list = sec.querySelector('.elements');
+    movement.elements.forEach(el => list.appendChild(renderElement(el, movement)));
+
+    Sortable.create(list, {
+      group: 'liturgy-elements',
+      handle: '.drag-handle',
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      onEnd: syncStateFromDOM
+    });
+  });
+  autoResizeAll();
+}
+
+function renderElement(el, movement){
+  const card = document.createElement('div');
+  card.className = 'element-card' + (el.type === 'header' ? ' element-card-header' : '');
+  card.dataset.id = el.id;
+
+  const defaultMinister = movement ? movement.defaultMinister : '';
+  const effectiveMinister = el.minister || defaultMinister || '';
+  const defaultLabel = defaultMinister ? `Default (${defaultMinister})` : '— Minister —';
+
+  const header = `
+    <div class="element-row1">
+      <input class="element-title" value="${escapeAttr(el.title)}" placeholder="Element title" oninput="updateField('${el.id}','title',this.value)">
+      ${el.locked ? '<span class="lock-badge" title="Standing text — part of every service">🔒</span>' : ''}
+      ${el.type !== 'hymn' && el.type !== 'header' ? `
+      <select class="minister-select" title="Minister leading this element" onchange="handleMinisterChange('${el.id}',this)">
+        <option value="" ${!el.minister?'selected':''}>${escapeHTML(defaultLabel)}</option>
+        ${ministerRoster.map(name => `<option value="${escapeAttr(name)}" ${el.minister===name?'selected':''}>${escapeHTML(name)}</option>`).join('')}
+        <option value="__add__">+ Add new minister…</option>
+      </select>
+      ${effectiveMinister ? `<span class="minister-tag">${escapeHTML(effectiveMinister)}</span>` : ''}` : ''}
+      <select class="type-select" onchange="updateField('${el.id}','type',this.value)">
+        <option value="scripture" ${el.type==='scripture'?'selected':''}>Scripture</option>
+        <option value="text" ${el.type==='text'?'selected':''}>Text / Prayer</option>
+        <option value="response" ${el.type==='response'?'selected':''}>Congregational Response</option>
+        <option value="rubric" ${el.type==='rubric'?'selected':''}>Rubric</option>
+        <option value="header" ${el.type==='header'?'selected':''}>Header</option>
+        <option value="hymn" ${el.type==='hymn'?'selected':''}>Hymn</option>
+        <option value="lectionary" ${el.type==='lectionary'?'selected':''}>Lectionary</option>
+        <option value="pastoral-prayer" ${el.type==='pastoral-prayer'?'selected':''}>Pastoral Prayer (Opening/Thanksgiving/Petitions)</option>
+        <option value="variant-text" ${el.type==='variant-text'?'selected':''}>Prayer (multiple versions)</option>
+        <option value="exhortation" ${el.type==='exhortation'?'selected':''}>Exhortation</option>
+        <option value="sermon" ${el.type==='sermon'?'selected':''}>Sermon</option>
+      </select>
+      ${el.locked ? '' : `<button class="remove-btn" title="Remove" onclick="removeElement('${el.id}')">✕</button>`}
+    </div>
+  `;
+
+  let body;
+  if(el.type === 'header'){
+    body = '';
+  } else if(el.type === 'hymn'){
+    body = `
+      <div class="hymn-fields" ondragover="event.preventDefault();this.classList.add('hymnal-drop-active')" ondragleave="this.classList.remove('hymnal-drop-active')" ondrop="handleHymnCardDrop(event,'${el.id}')">
+        <input class="hymn-number-input" placeholder="No." value="${escapeAttr(el.hymnNumber)}" oninput="updateField('${el.id}','hymnNumber',this.value);syncHymnalSearchFromField(this.value)" onfocus="openHymnalPanel()">
+        <input class="hymn-title-input" placeholder="Hymn title" value="${escapeAttr(el.hymnTitle)}" oninput="updateField('${el.id}','hymnTitle',this.value);syncHymnalSearchFromField(this.value)" onfocus="openHymnalPanel()">
+        ${HYMN_FILE_MAP[el.hymnNumber] ? `<button class="hymn-play-btn" onclick="playHymnAudio('${el.hymnNumber}')" title="Play this hymn">▶</button>` : ''}
+      </div>
+    `;
+  } else if(el.type === 'exhortation'){
+    body = `
+      <input class="reference-input" placeholder="Title of the exhortation" value="${escapeAttr(el.subtitle)}" oninput="updateField('${el.id}','subtitle',this.value)">
+      ${richEditorHtml(el.id, 'content', el.content, 'Exhortation manuscript…', 'rich-editor-tall')}
+    `;
+  } else if(el.type === 'sermon'){
+    body = `
+      <input class="reference-input" placeholder="Sermon title" value="${escapeAttr(el.sermonTitle)}" oninput="updateField('${el.id}','sermonTitle',this.value)">
+      <input class="reference-input" placeholder="Sermon text (e.g. Jonah 1:4-10)" value="${escapeAttr(el.passageReference)}" oninput="updateField('${el.id}','passageReference',this.value)">
+      <button type="button" class="series-picker-trigger" title="Sermon series" onclick="openSeriesPicker(this, '${escapeAttr(el.series||'')}', function(name){ updateField('${el.id}','series',name); render(); })">${el.series ? escapeHTML(el.series) : '— Sermon Series —'} <span class="series-picker-caret">▾</span></button>
+      <label class="alt-toggle">
+        <input type="checkbox" ${el.hasManuscript?'checked':''} onchange="updateField('${el.id}','hasManuscript',this.checked)">
+        Include a manuscript text box
+      </label>
+      ${el.hasManuscript ? richEditorHtml(el.id, 'manuscript', el.manuscript, 'Sermon manuscript…', 'rich-editor-tall') : ''}
+    `;
+  } else if(el.type === 'variant-text'){
+    const activeId = el.activeVariantId || (el.variants[0] && el.variants[0].id);
+    const active = el.variants.find(v => v.id === activeId) || el.variants[0];
+    const options = el.variants.map(v => `<option value="${v.id}" ${v.id===activeId?'selected':''}>${escapeHTML(v.label)}</option>`).join('');
+    body = `
+      <div class="response-fields">
+        <div class="response-line">
+          <label>Version</label>
+          <select class="version-select" onchange="updateField('${el.id}','activeVariantId',this.value)">${options}</select>
+        </div>
+        ${richEditorHtml(el.id, 'variant', active.content, 'Prayer text…')}
+        <button class="add-element" onclick="addVariant('${el.id}')">+ Add &amp; save a new version</button>
+      </div>
+      <div class="print-response"><p>${normalizeInitialRichContent(active.content)}</p></div>
+    `;
+  } else if(el.type === 'response'){
+    const toggleLabel = el.altMode==='replace'
+      ? `Use the ${escapeHTML(el.altLabel)||'seasonal'} version this week (replaces the text above)`
+      : `Add this ${escapeHTML(el.altLabel)||'seasonal'} exchange this week (goes before the text above)`;
+    body = `
+      <div class="response-fields">
+        <div class="response-line">
+          <label>Pastor says</label>
+          ${richEditorHtml(el.id, 'leaderText', el.leaderText, 'e.g. The Lord be with you!', 'rich-editor-inline')}
+        </div>
+        ${el.allowSkipLeader ? `
+        <label class="skip-toggle" title="Leave the Pastor's line out of this week's printed liturgy (e.g. if the passage above already ends in Amen)">
+          <input type="checkbox" ${el.skipLeader?'checked':''} onchange="updateField('${el.id}','skipLeader',this.checked)">
+          Skip the Pastor's line this week
+        </label>` : ''}
+        <div class="response-line">
+          <label>All respond</label>
+          ${richEditorHtml(el.id, 'peopleText', el.peopleText, 'e.g. And also with you!', 'rich-editor-inline')}
+        </div>
+        ${el.hasFootnote ? `
+        <div class="response-line">
+          <label>Footnote (optional)</label>
+          <input class="response-input" style="min-height:auto" placeholder="Explanatory note shown under the text, e.g. *catholic means universal…" value="${escapeAttr(el.footnote)}" oninput="updateField('${el.id}','footnote',this.value)">
+        </div>` : ''}
+        ${el.allowSeasonal ? `
+        <label class="alt-toggle">
+          <input type="checkbox" ${el.hasAlt?'checked':''} onchange="updateField('${el.id}','hasAlt',this.checked)">
+          Has a seasonal variant
+        </label>
+        ${el.hasAlt ? `
+        <div class="alt-fields">
+          <input class="alt-label-input" placeholder="Season name (e.g. Eastertide)" value="${escapeAttr(el.altLabel)}" oninput="updateField('${el.id}','altLabel',this.value)">
+          <div class="response-line">
+            <label>Pastor (alt.)</label>
+            ${richEditorHtml(el.id, 'altLeaderText', el.altLeaderText, '', 'rich-editor-inline')}
+          </div>
+          <div class="response-line">
+            <label>All (alt.)</label>
+            ${richEditorHtml(el.id, 'altPeopleText', el.altPeopleText, '', 'rich-editor-inline')}
+          </div>
+          ${el.hasFootnote ? `
+          <div class="response-line">
+            <label>Footnote (alt.)</label>
+            <input class="response-input" style="min-height:auto" placeholder="Same footnote, if unchanged" value="${escapeAttr(el.altFootnote)}" oninput="updateField('${el.id}','altFootnote',this.value)">
+          </div>` : ''}
+          <label class="alt-toggle">
+            <input type="checkbox" ${el.altActive?'checked':''} onchange="updateField('${el.id}','altActive',this.checked)">
+            ${toggleLabel}
+          </label>
+        </div>` : ''}` : ''}
+      </div>
+      <div class="print-response">${buildResponsePrintHTML(el)}</div>
+    `;
+  } else if(el.type === 'lectionary'){
+    const rows = el.readings.map(r => `
+      <div class="lectionary-row">
+        <div class="lectionary-label">${escapeHTML(r.label)}</div>
+        <div class="ref-row">
+          <input class="reference-input" placeholder="${escapeAttr(r.label)} reference" value="${escapeAttr(r.reference)}" oninput="updateReadingField('${el.id}','${r.key}','reference',this.value)" onblur="autoFetchEsvForReading('${el.id}','${r.key}')">
+          <button class="esv-fetch-btn" onclick="fetchEsvForReading('${el.id}','${r.key}')">📖 Fetch ESV</button>
+        </div>
+        ${richEditorHtml(el.id, 'section:' + r.key, r.content, 'Passage text (optional)', el.includeText ? '' : 'text-hide-in-print')}
+      </div>
+    `).join('');
+    body = `
+      ${el.hasTracks ? `
+      <div class="response-line lectionary-track-row" style="margin-bottom:10px;">
+        <label>Reading Track</label>
+        <select class="version-select" onchange="setLectionaryTrack('${el.id}',this.value)">
+          <option value="track1" ${el.track!=='track2'?'selected':''}>Track 1 — Semicontinuous</option>
+          <option value="track2" ${el.track==='track2'?'selected':''}>Track 2 — Complementary</option>
+        </select>
+      </div>` : ''}
+      ${rows}
+      <label class="alt-toggle">
+        <input type="checkbox" ${el.includeText?'checked':''} onchange="updateField('${el.id}','includeText',this.checked)">
+        Include full text for these readings in the printed liturgy
+      </label>
+    `;
+  } else if(el.type === 'pastoral-prayer'){
+    const rows = el.sections.map(s => `
+      <div class="lectionary-row">
+        <div class="lectionary-label">${escapeHTML(s.label)}${s.carriedOver ? ' <span class="carried-over-tag">carried from last time — review</span>' : ''}</div>
+        <div class="ref-row">
+          <input class="reference-input" placeholder="${escapeAttr(s.label)} scripture reference" value="${escapeAttr(s.reference)}" oninput="updateReadingField('${el.id}','${s.key}','reference',this.value)" onblur="autoFetchEsvForReading('${el.id}','${s.key}')">
+          <button class="esv-fetch-btn" onclick="fetchEsvForReading('${el.id}','${s.key}')">📖 Fetch ESV</button>
+        </div>
+        ${richEditorHtml(el.id, 'section:' + s.key, s.content, `${s.label} content…`, s.carriedOver ? 'carried-over-text' : '')}
+      </div>
+    `).join('');
+    body = rows;
+  } else {
+    body = `
+      ${el.type==='scripture' ? `
+      <div class="ref-row">
+        <input class="reference-input" placeholder="Scripture reference (e.g. Psalm 95:1-7)" value="${escapeAttr(el.reference)}" oninput="updateField('${el.id}','reference',this.value)" onblur="autoFetchEsvForElement('${el.id}')">
+        <button class="esv-fetch-btn" onclick="fetchEsvForElement('${el.id}')">📖 Fetch ESV</button>
+      </div>` : ''}
+      ${richEditorHtml(el.id, 'content', el.content, placeholderFor(el.type))}
+    `;
+  }
+
+  card.innerHTML = `
+    <span class="drag-handle">⠿</span>
+    <div class="element-body">${header}${body}</div>
+  `;
+  return card;
+}
+
+function setLectionaryTrack(id, track){
+  const el = findEl(id);
+  if(!el || !el.trackData) return;
+  el.track = track;
+  const ot = el.readings.find(r => r.key === 'ot');
+  const psalm = el.readings.find(r => r.key === 'psalm');
+  if(ot){ ot.reference = el.trackData.ot[track]; ot.content = ''; }
+  if(psalm){ psalm.reference = el.trackData.psalm[track]; psalm.content = ''; }
+  render();
+}
+
+function updateReadingField(id, key, field, value){
+  const el = findEl(id);
+  if(!el) return;
+  const list = el.readings || el.sections;
+  if(!list) return;
+  const r = list.find(r => r.key === key);
+  if(r) r[field] = value;
+  syncElementBackToSchedule(id);
+}
+
+function placeholderFor(type){
+  if(type==='scripture') return 'Paste or type the passage text here (optional)…';
+  if(type==='rubric') return 'Instruction for congregation/leader (e.g. "If you are able, let us kneel together…")';
+  return 'Prayer, exhortation, or custom text…';
+}
+
+function speakerLine(speaker, text){
+  const cls = speaker === 'Pastor' ? ' class="pastor-line"' : '';
+  return `<p${cls}><span class="speaker">${speaker}:</span> ${normalizeInitialRichContent(text)}</p>`;
+}
+function buildResponsePrintHTML(el){
+  const useAlt = el.allowSeasonal && el.altActive;
+  let html = '';
+  if(useAlt && el.altMode === 'replace'){
+    html += speakerLine('Pastor', el.altLeaderText) + speakerLine('All', el.altPeopleText);
+    const fn = el.altFootnote || el.footnote;
+    if(fn) html += `<p class="footnote">${escapeHTML(fn)}</p>`;
+    return html;
+  }
+  if(useAlt){
+    html += speakerLine('Pastor', el.altLeaderText) + speakerLine('All', el.altPeopleText);
+  }
+  if(!el.skipLeader) html += speakerLine('Pastor', el.leaderText);
+  html += speakerLine('All', el.peopleText);
+  if(el.footnote) html += `<p class="footnote">${escapeHTML(el.footnote)}</p>`;
+  return html;
+}
+
+function findEl(id){
+  for(const m of state) for(const e of m.elements) if(e.id===id) return e;
+  return null;
+}
+
+function updateField(id, field, value){
+  const el = findEl(id);
+  if(!el) return;
+  el[field] = value;
+  syncElementBackToSchedule(id);
+  if(field === 'type' && value === 'lectionary' && !el.readings){
+    el.readings = [
+      { key:'ot', label:'Old Testament', reference:'', content:'' },
+      { key:'psalm', label:'Psalm', reference:'', content:'' },
+      { key:'nt', label:'New Testament', reference:'', content:'' },
+      { key:'gospel', label:'Gospel', reference:'', content:'' },
+    ];
+    el.includeText = false;
+    el.hasTracks = false;
+    el.track = 'track1';
+    el.trackData = null;
+  }
+  if(field === 'type' && value === 'pastoral-prayer' && !el.sections){
+    el.sections = [
+      { key:'opening', label:'Opening', reference:'', content:'' },
+      { key:'thanksgiving', label:'Thanksgiving', reference:'', content:'' },
+      { key:'petitions', label:'Petitions', reference:'', content:'' },
+    ];
+  }
+  if(field === 'type' && value === 'variant-text' && !el.variants){
+    el.variants = [{ id:'v'+Date.now(), label:'Standard', content:'' }];
+    el.activeVariantId = el.variants[0].id;
+  }
+  if(['type','hasAlt','hasManuscript','includeText','activeVariantId','minister'].includes(field)){ render(); return; }
+  if(el.type === 'response') refreshResponsePrint(id);
+}
+
+function updateVariantContent(id, variantId, value){
+  const el = findEl(id);
+  if(!el || !el.variants) return;
+  const v = el.variants.find(v => v.id === variantId);
+  if(v) v.content = value;
+  const target = document.querySelector(`.element-card[data-id="${id}"] .print-response p`);
+  if(target) target.innerHTML = formatMarkup(value);
+  syncElementBackToSchedule(id);
+}
+
+function addVariant(id){
+  const el = findEl(id);
+  if(!el || !el.variants) return;
+  const label = prompt('Who is this version for? (e.g. a minister\'s name)', '');
+  if(label === null) return;
+  const newVariant = { id:'v'+Date.now(), label: label.trim() || 'New Version', content:'' };
+  el.variants.push(newVariant);
+  el.activeVariantId = newVariant.id;
+  render();
+}
+
+function refreshResponsePrint(id){
+  const el = findEl(id);
+  const target = document.querySelector(`.element-card[data-id="${id}"] .print-response`);
+  if(target) target.innerHTML = buildResponsePrintHTML(el);
+}
+
+function removeElement(id){
+  for(const m of state){
+    const idx = m.elements.findIndex(e => e.id===id);
+    if(idx>-1){ m.elements.splice(idx,1); render(); return; }
+  }
+}
+
+function addElement(movementKey){
+  const m = state.find(x => x.key===movementKey);
+  m.elements.push({ id:newId(), title:'New Element', type:'text', reference:'', content:'' });
+  render();
+}
+
+function syncStateFromDOM(){
+  const container = document.getElementById('movements');
+  const lists = container.querySelectorAll('.elements');
+  const newState = [];
+  lists.forEach(list => {
+    const key = list.dataset.movement;
+    const movement = state.find(m => m.key === key);
+    const ids = Array.from(list.children).map(c => c.dataset.id);
+    const elements = ids.map(id => findEl(id));
+    newState.push({ ...movement, elements });
+  });
+  state = newState;
+  render();
+}
+
+/* ---------------------------------------------------------------------
+   Basic text effects (bold/italic/underline/strikethrough/highlight).
+   Kept as plain-text marker syntax inside the textarea itself (like
+   lightweight markdown: **bold**, *italic*, __underline__, ~~strike~~,
+   ==highlight==) rather than full HTML editing — this keeps saved
+   files as simple readable text and avoids any HTML-injection risk.
+   A small toolbar wraps the current selection in the right markers;
+   a hidden companion div renders the real formatted result for
+   print/PDF export, since a textarea can never visually render bold
+   text itself.
+--------------------------------------------------------------------- */
+function formatMarkup(text){
+  let html = escapeHTML(text);
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  html = html.replace(/__(.+?)__/g, '<u>$1</u>');
+  html = html.replace(/~~(.+?)~~/g, '<s>$1</s>');
+  html = html.replace(/==(.+?)==/g, '<mark>$1</mark>');
+  html = applyListFormatting(html);
+  return html;
+}
+function applyListFormatting(html){
+  const lines = html.split('\n');
+  const out = [];
+  let i = 0;
+  const numRe = /^(\d+)[.)]\s+(.*)$/;
+  const bulletRe = /^[-*•]\s+(.*)$/;
+  while(i < lines.length){
+    const numMatch = lines[i].match(numRe);
+    const bulletMatch = lines[i].match(bulletRe);
+    if(numMatch || bulletMatch){
+      const isNum = !!numMatch;
+      const re = isNum ? numRe : bulletRe;
+      const items = [];
+      while(i < lines.length){
+        const m = lines[i].match(re);
+        if(m){
+          items.push(m[isNum ? 2 : 1]);
+          i++;
+        } else if(lines[i].trim() === '' && i + 1 < lines.length && re.test(lines[i + 1])){
+          i++; // single blank line between items — keep the list going
+        } else {
+          break;
+        }
+      }
+      out.push((isNum ? '<ol>' : '<ul>') + items.map(it => `<li>${it}</li>`).join('') + (isNum ? '</ol>' : '</ul>'));
+    } else {
+      out.push(lines[i]);
+      i++;
+    }
+  }
+  return out.join('\n');
+}
+function withRichToolbar(textareaHtml){
+  return `<div class="rt-field">${textareaHtml}</div>`;
+}
+
+/* ---------------------------------------------------------------------
+   Floating selection toolbar. Select text in any field and a small
+   bubble with Bold/Italic/Underline/Strikethrough/Highlight appears
+   right by the selection — no permanent toolbar cluttering every box.
+--------------------------------------------------------------------- */
+let activeTextarea = null;
+let activeRichEditor = null;
+
+function positionFloatingToolbar(x, y){
+  const tb = document.getElementById('floatingToolbar');
+  tb.style.display = 'flex';
+  const rect = tb.getBoundingClientRect();
+  let left = x - rect.width / 2;
+  let top = y - rect.height - 12;
+  left = Math.max(6, Math.min(left, window.innerWidth - rect.width - 6));
+  if(top < 6) top = y + 20;
+  tb.style.left = left + 'px';
+  tb.style.top = top + 'px';
+}
+function showFloatingToolbarFor(ta, x, y){
+  if(ta.selectionStart === ta.selectionEnd){ hideFloatingToolbar(); return; }
+  activeTextarea = ta;
+  activeRichEditor = null;
+  positionFloatingToolbar(x, y);
+}
+function showFloatingToolbarForRichEditor(editor, x, y){
+  const sel = window.getSelection();
+  if(!sel.rangeCount || sel.isCollapsed){ hideFloatingToolbar(); return; }
+  activeRichEditor = editor;
+  activeTextarea = null;
+  positionFloatingToolbar(x, y);
+}
+function hideFloatingToolbar(){
+  const tb = document.getElementById('floatingToolbar');
+  if(tb) tb.style.display = 'none';
+  activeTextarea = null;
+  activeRichEditor = null;
+}
+function wrapSelectionInMark(){
+  const sel = window.getSelection();
+  if(!sel.rangeCount || sel.isCollapsed) return;
+  const range = sel.getRangeAt(0);
+  let ancestor = range.commonAncestorContainer;
+  if(ancestor.nodeType === Node.TEXT_NODE) ancestor = ancestor.parentNode;
+  const existingMark = ancestor.closest ? ancestor.closest('mark') : null;
+  if(existingMark && existingMark.contains(range.startContainer) && existingMark.contains(range.endContainer)){
+    // selection already inside a highlight — toggle it off
+    const parent = existingMark.parentNode;
+    while(existingMark.firstChild) parent.insertBefore(existingMark.firstChild, existingMark);
+    parent.removeChild(existingMark);
+    return;
+  }
+  const mark = document.createElement('mark');
+  try{
+    range.surroundContents(mark);
+  }catch(e){
+    // selection spans multiple elements — extract then wrap instead
+    const contents = range.extractContents();
+    mark.appendChild(contents);
+    range.insertNode(mark);
+  }
+  sel.removeAllRanges();
+  const newRange = document.createRange();
+  newRange.selectNodeContents(mark);
+  sel.addRange(newRange);
+}
+function applyFloatingFormat(before, after){
+  if(activeRichEditor){
+    const commandMap = { '**':'bold', '*':'italic', '__':'underline', '~~':'strikeThrough' };
+    if(before === '=='){
+      wrapSelectionInMark();
+    } else {
+      document.execCommand(commandMap[before]);
+    }
+    persistRichEditorContent(activeRichEditor);
+    hideFloatingToolbar();
+    return;
+  }
+  if(!activeTextarea) return;
+  const ta = activeTextarea;
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const val = ta.value;
+  const selected = val.slice(start, end);
+  ta.value = val.slice(0, start) + before + selected + after + val.slice(end);
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
+  const newStart = start + before.length;
+  ta.focus();
+  ta.setSelectionRange(newStart, newStart + selected.length);
+  hideFloatingToolbar();
+}
+function applyListFormat(type){
+  if(activeRichEditor){
+    document.execCommand(type === 'ol' ? 'insertOrderedList' : 'insertUnorderedList');
+    persistRichEditorContent(activeRichEditor);
+    hideFloatingToolbar();
+    return;
+  }
+  if(!activeTextarea) return;
+  const ta = activeTextarea;
+  const val = ta.value;
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const lineStart = val.lastIndexOf('\n', start - 1) + 1;
+  let lineEnd = val.indexOf('\n', end);
+  if(lineEnd === -1) lineEnd = val.length;
+  const block = val.slice(lineStart, lineEnd);
+  const lines = block.split('\n');
+  const stripPrefix = l => l.replace(/^\s*\d+[.)]\s+/, '').replace(/^\s*[-*•]\s+/, '');
+  let n = 1;
+  const newLines = lines.map(l => {
+    if(!l.trim()) return l;
+    const bare = stripPrefix(l);
+    return type === 'ol' ? `${n++}. ${bare}` : `- ${bare}`;
+  });
+  const newBlock = newLines.join('\n');
+  ta.value = val.slice(0, lineStart) + newBlock + val.slice(lineEnd);
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
+  ta.focus();
+  const newPos = lineStart + newBlock.length;
+  ta.setSelectionRange(newPos, newPos);
+  hideFloatingToolbar();
+}
+document.addEventListener('mouseup', function(e){
+  if(e.target.tagName === 'TEXTAREA'){
+    const ta = e.target;
+    setTimeout(() => showFloatingToolbarFor(ta, e.clientX, e.clientY), 0);
+  } else if(e.target.closest && e.target.closest('.rich-editor')){
+    const editor = e.target.closest('.rich-editor');
+    setTimeout(() => showFloatingToolbarForRichEditor(editor, e.clientX, e.clientY), 0);
+  } else if(!e.target.closest('#floatingToolbar')){
+    hideFloatingToolbar();
+  }
+});
+document.addEventListener('keyup', function(e){
+  if(e.target.tagName === 'TEXTAREA' && e.shiftKey){
+    const ta = e.target;
+    if(ta.selectionStart !== ta.selectionEnd){
+      const rect = ta.getBoundingClientRect();
+      showFloatingToolbarFor(ta, rect.left + rect.width / 2, rect.top + 30);
+    } else {
+      hideFloatingToolbar();
+    }
+  } else if(e.target.closest && e.target.closest('.rich-editor') && e.shiftKey){
+    const editor = e.target.closest('.rich-editor');
+    const sel = window.getSelection();
+    if(sel.rangeCount && !sel.isCollapsed){
+      const rect = editor.getBoundingClientRect();
+      showFloatingToolbarForRichEditor(editor, rect.left + rect.width / 2, rect.top + 30);
+    } else {
+      hideFloatingToolbar();
+    }
+  }
+});
+document.addEventListener('scroll', hideFloatingToolbar, true);
+
+/* ---------------------------------------------------------------------
+   Live rich-text editor (Phase 1: Announcements + Pastoral Prayer only).
+   These fields are real contenteditable regions instead of plain
+   textareas — type **bold** and it becomes bold immediately, type
+   "1. " at the start of a line and it becomes a real numbered list.
+   Content is stored as sanitized HTML directly (no more marker-text
+   parsing at print time for these specific fields) and the same
+   sanitized HTML is what shows in print — one true representation
+   for both editing and output.
+--------------------------------------------------------------------- */
+const RICH_ALLOWED_TAGS = new Set(['B','STRONG','I','EM','U','S','STRIKE','DEL','MARK','OL','UL','LI','BR','DIV','P']);
+function sanitizeRichHTML(html){
+  const container = document.createElement('div');
+  container.innerHTML = html || '';
+  sanitizeRichNode(container);
+  return container.innerHTML;
+}
+function sanitizeRichNode(node){
+  Array.from(node.childNodes).forEach(child => {
+    if(child.nodeType === Node.TEXT_NODE) return;
+    if(child.nodeType !== Node.ELEMENT_NODE){ node.removeChild(child); return; }
+    if(!RICH_ALLOWED_TAGS.has(child.tagName)){
+      while(child.firstChild) node.insertBefore(child.firstChild, child);
+      node.removeChild(child);
+      return;
+    }
+    while(child.attributes.length > 0) child.removeAttribute(child.attributes[0].name);
+    sanitizeRichNode(child);
+  });
+}
+function normalizeInitialRichContent(content){
+  if(!content) return '';
+  if(/<[a-zA-Z]/.test(content)) return sanitizeRichHTML(content);
+  return formatMarkup(content); // one-time migration for any older plain-marker text
+}
+function richEditorHtml(id, target, content, placeholder, extraClass){
+  const initial = normalizeInitialRichContent(content);
+  const cls = extraClass ? `rich-editor ${extraClass}` : 'rich-editor';
+  return `<div class="${cls}" contenteditable="true" data-id="${id}" data-target="${escapeAttr(target || 'content')}" data-placeholder="${escapeAttr(placeholder)}" oninput="handleRichEditorInput(event)" onpaste="handleRichEditorPaste(event)" onblur="handleRichEditorBlur(event)">${initial}</div>`;
+}
+function persistRichEditorContent(div){
+  const id = div.dataset.id;
+  const target = div.dataset.target || 'content';
+  const html = sanitizeRichHTML(div.innerHTML);
+  const el = findEl(id);
+  if(!el) return;
+  if(target.startsWith('section:')){
+    const key = target.slice(8);
+    const list = el.readings || el.sections;
+    const s = list && list.find(s => s.key === key);
+    if(s){
+      s.content = html;
+      if(s.carriedOver) s.carriedOver = false;
+    }
+  } else if(target === 'variant'){
+    const v = el.variants && el.variants.find(v => v.id === el.activeVariantId);
+    if(v) v.content = html;
+    const printP = document.querySelector(`.element-card[data-id="${id}"] .print-response p`);
+    if(printP) printP.innerHTML = html;
+  } else {
+    el[target] = html;
+  }
+  syncElementBackToSchedule(id);
+  if(el.type === 'response') refreshResponsePrint(id);
+}
+const RICH_MARKER_PATTERNS = [
+  { regex: /\*\*([^*]+)\*\*$/, tag: 'strong' },
+  { regex: /__([^_]+)__$/, tag: 'u' },
+  { regex: /~~([^~]+)~~$/, tag: 's' },
+  { regex: /==([^=]+)==$/, tag: 'mark' },
+  { regex: /\*([^*]+)\*$/, tag: 'em' },
+];
+function autoConvertRichMarkers(){
+  const sel = window.getSelection();
+  if(!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  if(!range.collapsed) return;
+  const node = range.startContainer;
+  if(node.nodeType !== Node.TEXT_NODE) return;
+  const textBefore = node.textContent.slice(0, range.startOffset);
+  for(const { regex, tag } of RICH_MARKER_PATTERNS){
+    const m = textBefore.match(regex);
+    if(m){
+      const matchStart = range.startOffset - m[0].length;
+      const newRange = document.createRange();
+      newRange.setStart(node, matchStart);
+      newRange.setEnd(node, range.startOffset);
+      const wrap = document.createElement(tag);
+      wrap.textContent = m[1];
+      newRange.deleteContents();
+      newRange.insertNode(wrap);
+      const after = document.createRange();
+      after.setStartAfter(wrap);
+      after.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(after);
+      return true;
+    }
+  }
+  return false;
+}
+function checkListMarkerConversion(){
+  const sel = window.getSelection();
+  if(!sel.rangeCount) return false;
+  const range = sel.getRangeAt(0);
+  if(!range.collapsed) return false;
+  const node = range.startContainer;
+  if(node.nodeType !== Node.TEXT_NODE) return false;
+  const text = node.textContent.slice(0, range.startOffset);
+  if(/^1\.\s$/.test(text)){
+    node.textContent = node.textContent.slice(range.startOffset);
+    document.execCommand('insertOrderedList');
+    return true;
+  }
+  if(/^[-*]\s$/.test(text)){
+    node.textContent = node.textContent.slice(range.startOffset);
+    document.execCommand('insertUnorderedList');
+    return true;
+  }
+  return false;
+}
+function handleRichEditorInput(e){
+  const div = e.currentTarget;
+  if(!checkListMarkerConversion()) autoConvertRichMarkers();
+  persistRichEditorContent(div);
+}
+function handleRichEditorBlur(e){
+  persistRichEditorContent(e.target);
+}
+function handleRichEditorPaste(e){
+  e.preventDefault();
+  const cd = e.clipboardData || window.clipboardData;
+  const hasHtml = cd.types && Array.from(cd.types).includes('text/html');
+  const raw = hasHtml ? cd.getData('text/html') : cd.getData('text/plain');
+  const clean = hasHtml ? sanitizeRichHTML(raw) : escapeHTML(raw).replace(/\n/g, '<br>');
+  document.execCommand('insertHTML', false, clean);
+  persistRichEditorContent(e.currentTarget);
+}
+
+function escapeHTML(str){
+  return (str||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+}
+function escapeAttr(str){
+  return (str||'').replace(/"/g,'&quot;');
+}
+
+function resetTemplate(){
+  if(!confirm('Reset to the default template? Unsaved changes will be lost.')) return;
+  loadStateFromTemplate(DEFAULT_TEMPLATE);
+  document.getElementById('serviceTitle').value = '';
+  document.getElementById('serviceDate').value = '';
+  render();
+}
+
+function saveToFile(){
+  const payload = {
+    churchTitle: document.getElementById('churchTitle').innerText,
+    serviceTitle: document.getElementById('serviceTitle').value,
+    serviceDate: document.getElementById('serviceDate').value,
+    ministerRoster: ministerRoster,
+    sermonSeriesRoster: sermonSeriesRoster,
+    movements: state
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = payload.serviceDate || new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `liturgy-${dateStr}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  markBackupDone();
+}
+
+/* ---------------------------------------------------------------------
+   Word (.docx) export. A .docx is just a ZIP of XML parts, so this
+   hand-builds the OOXML directly (word/document.xml + the handful of
+   parts Word requires) and zips it with JSZip, which the hymnal
+   importer already loads — no extra dependency needed. Schema element
+   order below (pBdr, spacing, ind, jc in pPr; b, i, strike, color, sz,
+   highlight, u in rPr) is not arbitrary — Word/LibreOffice reject or
+   silently reorder anything out of sequence, so don't rearrange these
+   without re-checking against the OOXML schema.
+--------------------------------------------------------------------- */
+function docxEsc(str){
+  return (str==null?'':String(str)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function docxRun(text, opts){
+  opts = opts || {};
+  let rpr = '';
+  if(opts.font) rpr += `<w:rFonts w:ascii="${opts.font}" w:hAnsi="${opts.font}" w:cs="${opts.font}"/>`;
+  if(opts.bold) rpr += '<w:b/>';
+  if(opts.italic) rpr += '<w:i/>';
+  if(opts.strike) rpr += '<w:strike/>';
+  if(opts.color) rpr += `<w:color w:val="${opts.color}"/>`;
+  if(opts.size) rpr += `<w:sz w:val="${opts.size}"/>`;
+  if(opts.highlight) rpr += '<w:highlight w:val="yellow"/>';
+  if(opts.underline) rpr += '<w:u w:val="single"/>';
+  const rprxml = rpr ? `<w:rPr>${rpr}</w:rPr>` : '';
+  return `<w:r>${rprxml}<w:t xml:space="preserve">${docxEsc(text)}</w:t></w:r>`;
+}
+function docxBreakRun(){ return '<w:r><w:br/></w:r>'; }
+function docxPara(runsXml, opts){
+  opts = opts || {};
+  let ppr = '';
+  if(opts.border === 'topbottom'){
+    ppr += '<w:pBdr><w:top w:val="single" w:sz="6" w:space="4" w:color="999999"/><w:bottom w:val="single" w:sz="6" w:space="4" w:color="999999"/></w:pBdr>';
+  }
+  if(opts.spacingBefore != null || opts.spacingAfter != null){
+    let attrs = '';
+    if(opts.spacingBefore != null) attrs += ` w:before="${opts.spacingBefore}"`;
+    if(opts.spacingAfter != null) attrs += ` w:after="${opts.spacingAfter}"`;
+    ppr += `<w:spacing${attrs}/>`;
+  }
+  if(opts.indent != null) ppr += `<w:ind w:left="${opts.indent}"/>`;
+  if(opts.align) ppr += `<w:jc w:val="${opts.align}"/>`;
+  const pprxml = ppr ? `<w:pPr>${ppr}</w:pPr>` : '';
+  return `<w:p>${pprxml}${runsXml||''}</w:p>`;
+}
+
+// Rich-text HTML (our own sanitized allow-list: b/strong, i/em, u, s/strike/del,
+// mark, ol/ul/li, br, div, p) -> an array of paragraphs, each an array of
+// {text, flags} runs. Block tags (p/div/li) start a new paragraph; br is a
+// soft line break folded into a hard paragraph break here for simplicity.
+function htmlToDocxParagraphs(html){
+  if(!html) return [];
+  const tokens = html.split(/(<[^>]+>)/);
+  const paragraphs = [];
+  let cur = [];
+  const flagStack = [{}];
+  const listStack = []; // [{ type: 'OL'|'UL', n: 0 }]
+  const flush = () => { paragraphs.push(cur); cur = []; };
+  const curFlags = () => Object.assign({}, ...flagStack);
+  const INLINE = { B:'bold', STRONG:'bold', I:'italic', EM:'italic', U:'underline', S:'strike', STRIKE:'strike', DEL:'strike', MARK:'highlight' };
+  const BLOCK = new Set(['P','DIV']);
+  const decode = t => t.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ');
+
+  for(const tok of tokens){
+    if(!tok) continue;
+    if(tok.startsWith('<')){
+      const m = tok.match(/^<\/?([a-zA-Z0-9]+)/);
+      if(!m) continue;
+      const tag = m[1].toUpperCase();
+      const closing = tok.startsWith('</');
+      if(tag === 'BR'){
+        cur.push({ brk:true });
+      } else if(BLOCK.has(tag)){
+        if(closing || cur.length) flush();
+      } else if(tag === 'OL' || tag === 'UL'){
+        if(!closing) listStack.push({ type:tag, n:0 });
+        else listStack.pop();
+      } else if(tag === 'LI'){
+        if(closing){
+          flush();
+        } else {
+          if(cur.length) flush();
+          let prefix = '\u2022 ';
+          if(listStack.length){
+            const top = listStack[listStack.length-1];
+            if(top.type === 'OL'){ top.n++; prefix = top.n + '. '; }
+          }
+          cur.push({ text: prefix, flags: curFlags() });
+        }
+      } else if(INLINE[tag]){
+        const name = INLINE[tag];
+        if(closing){
+          for(let i = flagStack.length-1; i>=0; i--){
+            if(flagStack[i][name]){ delete flagStack[i][name]; break; }
+          }
+        } else {
+          flagStack.push({ [name]: true });
+        }
+      }
+    } else {
+      const text = decode(tok);
+      if(text) cur.push({ text, flags: curFlags() });
+    }
+  }
+  if(cur.length) flush();
+  return paragraphs;
+}
+function docxParagraphsToXml(paragraphs, opts){
+  opts = opts || {};
+  return paragraphs.map(para => {
+    let runsXml = '';
+    para.forEach(run => {
+      if(run.brk){ runsXml += docxBreakRun(); return; }
+      runsXml += docxRun(run.text, run.flags);
+    });
+    return docxPara(runsXml, { align: opts.align, indent: opts.indent, spacingAfter: opts.spacingAfter != null ? opts.spacingAfter : 120 });
+  }).join('');
+}
+function docxRichXml(html, opts){
+  return docxParagraphsToXml(htmlToDocxParagraphs(html), opts);
+}
+// Mirrors buildResponsePrintHTML/speakerLine's exact logic (Pastor bold prefix,
+// skipLeader, seasonal alt replace/add, footnote) so the Word export matches
+// what actually prints for a "response" element.
+function docxSpeakerPara(speaker, text){
+  const paras = htmlToDocxParagraphs(text);
+  const prefixRun = docxRun(speaker + ': ', { bold: true });
+  if(!paras.length) return docxPara(prefixRun, { spacingAfter: 80 });
+  const first = paras[0];
+  let firstRunsXml = prefixRun;
+  first.forEach(run => {
+    if(run.brk){ firstRunsXml += docxBreakRun(); return; }
+    const flags = Object.assign({}, run.flags);
+    if(speaker === 'Pastor') flags.bold = true;
+    firstRunsXml += docxRun(run.text, flags);
+  });
+  let out = docxPara(firstRunsXml, { spacingAfter: 80 });
+  out += docxParagraphsToXml(paras.slice(1));
+  return out;
+}
+function docxResponseXml(el){
+  const useAlt = el.allowSeasonal && el.altActive;
+  let xml = '';
+  if(useAlt && el.altMode === 'replace'){
+    xml += docxSpeakerPara('Pastor', el.altLeaderText) + docxSpeakerPara('All', el.altPeopleText);
+    const fn = el.altFootnote || el.footnote;
+    if(fn) xml += docxPara(docxRun(fn, { italic:true, size:18 }), { spacingAfter:120 });
+    return xml;
+  }
+  if(useAlt) xml += docxSpeakerPara('Pastor', el.altLeaderText) + docxSpeakerPara('All', el.altPeopleText);
+  if(!el.skipLeader) xml += docxSpeakerPara('Pastor', el.leaderText);
+  xml += docxSpeakerPara('All', el.peopleText);
+  if(el.footnote) xml += docxPara(docxRun(el.footnote, { italic:true, size:18 }), { spacingAfter:120 });
+  return xml;
+}
+const DOCX_SERIF = 'Georgia'; // stand-in for the app's 'Spectral' webfont — Georgia is reliably available in Word/Google Docs/Zoho, so titles keep the serif look without depending on a font the reader may not have installed
+function docxElementTitle(title, minister){
+  if(!title) return '';
+  let runs = docxRun(title, { bold:true, size:21, font:DOCX_SERIF });
+  if(minister) runs += docxRun('  — ' + minister, { italic:true, size:18 });
+  return docxPara(runs, { spacingBefore:160, spacingAfter:40 });
+}
+function docxHeaderElement(title){
+  return docxPara(docxRun((title||'').toUpperCase(), { bold:true, size:22, font:DOCX_SERIF }), { align:'center', border:'topbottom', spacingBefore:160, spacingAfter:160 });
+}
+function buildLiturgyDocxBody(){
+  const church = document.getElementById('churchTitle').innerText || '';
+  const eyebrow = document.querySelector('.eyebrow')?.textContent || '';
+  const serviceTitle = document.getElementById('serviceTitle').value || '';
+  const serviceDateRaw = document.getElementById('serviceDate').value || '';
+  let dateStr = '';
+  if(serviceDateRaw){
+    try{
+      dateStr = new Date(serviceDateRaw + 'T00:00:00').toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    }catch(e){ dateStr = serviceDateRaw; }
+  }
+
+  let body = '';
+  if(eyebrow) body += docxPara(docxRun(eyebrow, { italic:true, size:18 }), { align:'center', spacingAfter:20 });
+  body += docxPara(docxRun(church, { bold:true, size:34, font:DOCX_SERIF }), { align:'center', spacingAfter:40 });
+  const sub = [serviceTitle, dateStr].filter(Boolean).join('  |  ');
+  if(sub) body += docxPara(docxRun(sub, { size:22 }), { align:'center', spacingAfter:300 });
+
+  state.forEach(movement => {
+    body += docxPara(docxRun((movement.label||'').toUpperCase(), { bold:true, size:26, font:DOCX_SERIF }), { align:'center', spacingBefore:300, spacingAfter:120 });
+
+    movement.elements.forEach(el => {
+      const effectiveMinister = el.minister || movement.defaultMinister || '';
+
+      if(el.type === 'header'){
+        body += docxHeaderElement(el.title);
+        return;
+      }
+
+      body += docxElementTitle(el.title, effectiveMinister);
+
+      if(el.type === 'hymn'){
+        if(el.hymnNumber || el.hymnTitle){
+          let runs = '';
+          if(el.hymnNumber) runs += docxRun(el.hymnNumber + '  ', {});
+          if(el.hymnTitle) runs += docxRun(el.hymnTitle, { italic:true, font:DOCX_SERIF });
+          body += docxPara(runs, { spacingAfter:120 });
+        }
+      } else if(el.type === 'exhortation'){
+        if(el.subtitle) body += docxPara(docxRun(el.subtitle, { bold:true, size:20 }), { spacingAfter:60 });
+        body += docxRichXml(el.content);
+      } else if(el.type === 'sermon'){
+        if(el.sermonTitle) body += docxPara(docxRun(el.sermonTitle, { bold:true }), { spacingAfter:40 });
+        if(el.passageReference) body += docxPara(docxRun(el.passageReference, { italic:true }), { spacingAfter:40 });
+        if(el.series) body += docxPara(docxRun('Series: ' + el.series, { italic:true, size:18 }), { spacingAfter:120 });
+        if(el.hasManuscript) body += docxRichXml(el.manuscript);
+      } else if(el.type === 'variant-text'){
+        const activeId = el.activeVariantId || (el.variants[0] && el.variants[0].id);
+        const active = el.variants.find(v => v.id === activeId) || el.variants[0];
+        if(active) body += docxRichXml(active.content);
+      } else if(el.type === 'response'){
+        body += docxResponseXml(el);
+      } else if(el.type === 'lectionary'){
+        el.readings.forEach(r => {
+          if(r.reference) body += docxPara(docxRun(r.label + ': ', { bold:true }) + docxRun(r.reference), { spacingAfter:40 });
+          else body += docxPara(docxRun(r.label + ':', { bold:true }), { spacingAfter:40 });
+          if(el.includeText) body += docxRichXml(r.content);
+        });
+      } else if(el.type === 'pastoral-prayer'){
+        el.sections.forEach(s => {
+          const runs = s.reference ? (docxRun(s.label + ': ', { bold:true }) + docxRun(s.reference)) : docxRun(s.label + ':', { bold:true });
+          body += docxPara(runs, { spacingAfter:40 });
+          body += docxRichXml(s.content);
+        });
+      } else {
+        if(el.type === 'scripture' && el.reference) body += docxPara(docxRun(el.reference, { italic:true }), { spacingAfter:40 });
+        body += docxRichXml(el.content);
+      }
+    });
+  });
+  return body;
+}
+async function assembleDocxBlob(bodyXml){
+  const CONTENT_TYPES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+</Types>`;
+  const RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+  const DOC_RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`;
+  const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults>
+  <w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>
+</w:styles>`;
+  const SECT = '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>';
+  const DOCUMENT = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${bodyXml}${SECT}</w:body></w:document>`;
+
+  const zip = new JSZip();
+  zip.file('[Content_Types].xml', CONTENT_TYPES);
+  zip.file('_rels/.rels', RELS);
+  zip.file('word/document.xml', DOCUMENT);
+  zip.file('word/_rels/document.xml.rels', DOC_RELS);
+  zip.file('word/styles.xml', STYLES);
+  return zip.generateAsync({ type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+}
+async function exportLiturgyDocx(){
+  const bodyXml = buildLiturgyDocxBody();
+  const blob = await assembleDocxBlob(bodyXml);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = document.getElementById('serviceDate').value || new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `liturgy-${dateStr}.docx`;
+  a.click();
+  URL.revokeObjectURL(url);
+  markBackupDone();
+}
+
+document.getElementById('loadInput').addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    try{
+      const data = JSON.parse(evt.target.result);
+      document.getElementById('churchTitle').innerText = data.churchTitle || "The Lord's Service";
+      document.getElementById('serviceTitle').value = data.serviceTitle || '';
+      document.getElementById('serviceDate').value = data.serviceDate || '';
+      (data.ministerRoster || []).forEach(name => {
+        if(!ministerRoster.includes(name)) ministerRoster.push(name);
+      });
+      saveMinisterRoster();
+      renderMinisterChips();
+      (data.sermonSeriesRoster || []).forEach(name => {
+        if(!sermonSeriesRoster.includes(name)) sermonSeriesRoster.push(name);
+      });
+      saveSermonSeriesRoster();
+      state = data.movements.map(m => ({
+        ...m,
+        elements: m.elements.map(el => ({ ...el, id: newId() }))
+      }));
+      render();
+    }catch(err){
+      alert('Could not read that file. Please make sure it is a liturgy file saved from this app.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+/* ---------------------------------------------------------------------
+   Liturgical calendar engine — computed entirely offline (no network,
+   no external lectionary data needed) from the date alone:
+   - Easter via the standard Gregorian algorithm
+   - Season / Sunday name (e.g. "Third Sunday after the Epiphany")
+   - RCL Year A/B/C  (anchored: Advent 2025 = Year A, confirmed against
+     the published 2026-2027 RCL calendar)
+   - Whether Eastertide / Advent–Christmastide is in effect, to drive
+     the Greeting and Creed seasonal toggles automatically
+   Note: named special Sundays (Trinity Sunday, Christ the King,
+   Baptism of the Lord, Transfiguration, All Saints) aren't labeled by
+   name — they'll show as their season/number instead. The subtitle
+   field stays a normal text box, so it's always easy to hand-correct.
+--------------------------------------------------------------------- */
+function computeEaster(year){
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19*a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2*e + 2*i - h - k) % 7;
+  const m = Math.floor((a + 11*h + 22*l) / 451);
+  const month = Math.floor((h + l - 7*m + 114) / 31);
+  const day = ((h + l - 7*m + 114) % 31) + 1;
+  return new Date(year, month - 1, day);
+}
+function addDays(date, n){ const d = new Date(date); d.setDate(d.getDate() + n); return d; }
+function daysBetween(a, b){ return Math.round((b - a) / 86400000); }
+function sundayOnOrBefore(date){ return addDays(date, -date.getDay()); }
+function sundayOnOrAfter(date){ return date.getDay() === 0 ? date : addDays(date, 7 - date.getDay()); }
+function closestSunday(date){
+  const before = sundayOnOrBefore(date), after = sundayOnOrAfter(date);
+  return (after - date) < (date - before) ? after : before;
+}
+function adventSunday(year){ return closestSunday(new Date(year, 10, 30)); }
+function ordinal(n){
+  const s = ['th','st','nd','rd'], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+function getLiturgicalInfo(dateStr){
+  if(!dateStr) return null;
+  const [Y, M, D] = dateStr.split('-').map(Number);
+  const date = new Date(Y, M - 1, D);
+  const easter = computeEaster(Y);
+  const ashWed = addDays(easter, -46);
+  const palmSunday = addDays(easter, -7);
+  const pentecost = addDays(easter, 49);
+  const trinitySunday = addDays(pentecost, 7);
+  const epiphany = new Date(Y, 0, 6);
+  const christmasThis = new Date(Y, 11, 25);
+  const adventThis = adventSunday(Y);
+  const lastEpiphanySunday = sundayOnOrBefore(addDays(ashWed, -1));
+  const baptismSunday = sundayOnOrAfter(addDays(epiphany, 1));
+  const reformationSunday = sundayOnOrBefore(new Date(Y, 9, 31));
+  const allSaintsSunday = sundayOnOrAfter(new Date(Y, 10, 1));
+  const christTheKingSunday = addDays(adventThis, -7);
+
+  let label, isEastertide = false, isAdventOrChristmastide = false, yearAnchor, color;
+
+  if(date < epiphany){
+    label = 'Christmastide'; isAdventOrChristmastide = true; yearAnchor = Y - 1; color = 'white';
+  } else if(date < ashWed){
+    const weeks = Math.max(1, Math.round(daysBetween(epiphany, date) / 7) + 1);
+    label = `${ordinal(weeks)} Sunday after the Epiphany`; yearAnchor = Y - 1;
+    color = daysBetween(date, lastEpiphanySunday) === 0 || daysBetween(date, baptismSunday) === 0 ? 'white' : 'green';
+  } else if(date < easter){
+    if(daysBetween(date, palmSunday) === 0){ label = 'Palm Sunday'; color = 'red'; }
+    else { const weeks = Math.max(1, Math.round(daysBetween(ashWed, date) / 7)); label = `${ordinal(weeks)} Sunday in Lent`; color = 'purple'; }
+    yearAnchor = Y - 1;
+  } else if(date < pentecost){
+    const weeks = Math.round(daysBetween(easter, date) / 7) + 1;
+    label = weeks <= 1 ? 'Easter Sunday' : `${ordinal(weeks)} Sunday of Easter`;
+    isEastertide = true; yearAnchor = Y - 1; color = 'white';
+  } else if(daysBetween(date, pentecost) === 0){
+    label = 'Day of Pentecost'; yearAnchor = Y - 1; color = 'red';
+  } else if(date < adventThis){
+    const may11 = new Date(Y, 4, 11);
+    const proper = Math.min(29, Math.max(1, Math.round(daysBetween(may11, date) / 7) + 1));
+    const afterPentecostWeeks = Math.round(daysBetween(pentecost, date) / 7) + 1;
+    label = `${ordinal(afterPentecostWeeks)} Sunday after Pentecost (Proper ${proper})`;
+    yearAnchor = Y - 1;
+    if(daysBetween(date, trinitySunday) === 0) color = 'white';
+    else if(daysBetween(date, reformationSunday) === 0) color = 'red';
+    else if(daysBetween(date, allSaintsSunday) === 0) color = 'white';
+    else if(daysBetween(date, christTheKingSunday) === 0) color = 'white';
+    else color = 'green';
+  } else if(date < christmasThis){
+    const weeks = Math.round(daysBetween(adventThis, date) / 7) + 1;
+    label = `${ordinal(weeks)} Sunday of Advent`; isAdventOrChristmastide = true; yearAnchor = Y; color = 'purple';
+  } else {
+    label = 'Christmastide'; isAdventOrChristmastide = true; yearAnchor = Y; color = 'white';
+  }
+
+  const letters = ['A','B','C'];
+  const rclYear = letters[((yearAnchor - 2025) % 3 + 3) % 3];
+  return { label, rclYear, isEastertide, isAdventOrChristmastide, yearAnchor, color };
+}
+
+let currentLoadedDate = '';
+function saveCurrentLiturgyToArchive(dateStr){
+  if(!dateStr) return;
+  const snapshot = {
+    churchTitle: document.getElementById('churchTitle').innerText,
+    serviceTitle: document.getElementById('serviceTitle').value,
+    serviceDate: dateStr,
+    movements: state,
+    savedAt: Date.now()
+  };
+  try{
+    const archive = loadLiturgyArchive();
+    archive[dateStr] = snapshot;
+    localStorage.setItem('liturgyArchive', JSON.stringify(archive));
+    localStorage.setItem('currentAutosave', JSON.stringify(snapshot));
+  }catch(e){}
+  pushLiturgyToSupabase(dateStr, snapshot);
+}
+async function onDateChange(){
+  const dateStr = document.getElementById('serviceDate').value;
+  if(!dateStr) return;
+
+  if(currentLoadedDate && currentLoadedDate !== dateStr){
+    saveCurrentLiturgyToArchive(currentLoadedDate);
+  }
+
+  let snap = null;
+  if(currentUser){
+    snap = await fetchLiturgyFromSupabase(dateStr);
+    if(snap){
+      try{
+        const archive = loadLiturgyArchive();
+        archive[dateStr] = snap;
+        localStorage.setItem('liturgyArchive', JSON.stringify(archive));
+      }catch(e){}
+    }
+  }
+  if(!snap){
+    const archive = loadLiturgyArchive();
+    if(archive[dateStr] && archive[dateStr].movements) snap = archive[dateStr];
+  }
+
+  if(snap && snap.movements){
+    document.getElementById('churchTitle').innerText = snap.churchTitle || "The Lord's Service";
+    document.getElementById('serviceTitle').value = snap.serviceTitle || '';
+    state = snap.movements.map(m => ({
+      ...m,
+      elements: m.elements.map(el => ({ ...el, id: newId() }))
+    }));
+    currentLoadedDate = dateStr;
+    document.getElementById('mainColorDot').innerHTML = scheduleColorDotHtml(dateStr);
+    render();
+    refreshServicesPanelIfOpen();
+    updateCurrentDateDisplay();
+    return;
+  }
+
+  loadStateFromTemplate(DEFAULT_TEMPLATE);
+  currentLoadedDate = dateStr;
+
+  const info = getLiturgicalInfo(dateStr);
+  if(!info){ render(); refreshServicesPanelIfOpen(); updateCurrentDateDisplay(); return; }
+  document.getElementById('serviceTitle').value = `${info.label} (Year ${info.rclYear})`;
+  document.getElementById('mainColorDot').innerHTML = scheduleColorDotHtml(dateStr);
+  state.forEach(m => m.elements.forEach(e => {
+    if(e.type === 'response' && e.allowSeasonal){
+      e.altActive = e.altMode === 'replace' ? info.isAdventOrChristmastide : info.isEastertide;
+      if(e.altActive) e.hasAlt = true;
+    }
+  }));
+  render();
+  syncLectionary(dateStr);
+  applyScheduleForDate(dateStr);
+  carryForwardPetitions(dateStr);
+  render();
+  refreshServicesPanelIfOpen();
+  updateCurrentDateDisplay();
+}
+/* ---------------------------------------------------------------------
+   Supabase cloud sync — optional, additive layer for sharing services
+   across devices/people. If you never sign in, the app behaves exactly
+   as it always has, purely local. Signing in adds a shared copy of
+   each service in a "liturgies" table, keyed by date, that any signed-in
+   teammate's browser can read and write.
+--------------------------------------------------------------------- */
+const SUPABASE_URL = 'https://ibgyjhvraezysnkbgzab.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImliZ3lqaHZyYWV6eXNua2JnemFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxNDU4OTAsImV4cCI6MjEwMDcyMTg5MH0.uGNB8362J7Wd0HHqH-lVeXTDI1fdETH1xQnKmuMsUmk';
+let sbClient = null;
+try{
+  if(window.supabase) sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}catch(e){ console.error('Supabase client failed to initialize; app will run local-only.', e); }
+
+let currentUser = null;
+
+function showAuthOverlay(){ document.getElementById('authOverlay').classList.add('open'); }
+function hideAuthOverlay(){ document.getElementById('authOverlay').classList.remove('open'); }
+function skipCloudSync(){ hideAuthOverlay(); }
+
+async function handleSignIn(){
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const errEl = document.getElementById('authError');
+  errEl.textContent = '';
+  if(!sbClient){ errEl.textContent = 'Cloud sync is not available right now.'; return; }
+  if(!email || !password){ errEl.textContent = 'Enter both email and password.'; return; }
+  try{
+    const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+    if(error){ errEl.textContent = error.message; return; }
+    currentUser = data.user;
+    hideAuthOverlay();
+    updateSyncStatusIndicator();
+    refreshServicesPanelIfOpen();
+    pullSharedDataOnSignIn();
+  }catch(e){
+    errEl.textContent = 'Could not reach the sign-in service. Check your connection and try again.';
+  }
+}
+async function handleSyncStatusClick(){
+  if(currentUser){
+    const ok = await customConfirm(`Signed in as ${currentUser.email}. Sign out?`);
+    if(!ok) return;
+    try{ if(sbClient) await sbClient.auth.signOut(); }catch(e){}
+    currentUser = null;
+    updateSyncStatusIndicator();
+    refreshServicesPanelIfOpen();
+  } else {
+    showAuthOverlay();
+  }
+}
+function updateSyncStatusIndicator(){
+  const el = document.getElementById('syncStatusIndicator');
+  if(!el) return;
+  if(currentUser){
+    el.textContent = '☁️ ' + currentUser.email;
+    el.classList.add('synced');
+  } else {
+    el.textContent = '☁️ Login to Sync';
+    el.classList.remove('synced');
+  }
+}
+async function restoreSupabaseSession(){
+  if(!sbClient) return;
+  try{
+    const { data } = await sbClient.auth.getSession();
+    if(data && data.session){
+      currentUser = data.session.user;
+      updateSyncStatusIndicator();
+      refreshServicesPanelIfOpen();
+      pullSharedDataOnSignIn();
+    }
+  }catch(e){
+    console.error('Supabase session check failed; continuing local-only.', e);
+  }
+}
+async function pushLiturgyToSupabase(dateStr, snapshot){
+  if(!sbClient || !currentUser || !dateStr) return;
+  try{
+    await sbClient.from('liturgies').upsert({
+      service_date: dateStr,
+      data: snapshot,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'service_date' });
+  }catch(e){
+    console.error('Could not sync this service to the cloud; it is still saved locally.', e);
+  }
+}
+async function fetchLiturgyFromSupabase(dateStr){
+  if(!sbClient || !currentUser || !dateStr) return null;
+  try{
+    const { data, error } = await sbClient.from('liturgies').select('data').eq('service_date', dateStr).maybeSingle();
+    if(error || !data) return null;
+    return data.data;
+  }catch(e){
+    console.error('Could not fetch this service from the cloud; using the local copy instead.', e);
+    return null;
+  }
+}
+async function fetchAllServiceSnapshotsFromSupabase(){
+  if(!sbClient || !currentUser) return {};
+  try{
+    const { data, error } = await sbClient.from('liturgies').select('service_date, data');
+    if(error || !data) return {};
+    const result = {};
+    data.forEach(row => { result[row.service_date] = row.data; });
+    return result;
+  }catch(e){
+    console.error('Could not fetch the service list from the cloud; showing local services only.', e);
+    return {};
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Phase 2 cloud sync — the Planner (Schedule) and the shared roster
+   data (ministers, minister colors, sermon series, ESV API key). Same
+   additive, fails-safe-to-local pattern as the liturgy archive: one
+   small key/value table in Supabase holds each of these as a single
+   JSON document, keyed by name. Column widths and visibility stay
+   local-only (personal, not shared).
+--------------------------------------------------------------------- */
+async function pushSharedDataToSupabase(key, data){
+  if(!sbClient || !currentUser) return false;
+  try{
+    await sbClient.from('shared_data').upsert({
+      key, data, updated_at: new Date().toISOString()
+    }, { onConflict: 'key' });
+    return true;
+  }catch(e){
+    console.error('Could not sync "' + key + '" to the cloud; still saved locally.', e);
+    return false;
+  }
+}
+async function fetchAllSharedDataFromSupabase(){
+  if(!sbClient || !currentUser) return {};
+  try{
+    const { data, error } = await sbClient.from('shared_data').select('key, data');
+    if(error || !data) return {};
+    const result = {};
+    data.forEach(row => { result[row.key] = row.data; });
+    return result;
+  }catch(e){
+    console.error('Could not fetch shared data from the cloud; using local copies.', e);
+    return {};
+  }
+}
+async function pullSharedDataOnSignIn(){
+  const cloud = await fetchAllSharedDataFromSupabase();
+  if(!Object.keys(cloud).length) return;
+  if(cloud.schedule && Object.keys(cloud.schedule).length >= Object.keys(scheduleData).length){
+    scheduleData = cloud.schedule;
+    try{ localStorage.setItem('liturgySchedule', JSON.stringify(scheduleData)); }catch(e){}
+  }
+  if(cloud.ministerRoster && cloud.ministerRoster.length >= ministerRoster.length){
+    ministerRoster = cloud.ministerRoster;
+    try{ localStorage.setItem('ministerRoster', JSON.stringify(ministerRoster)); }catch(e){}
+    renderMinisterChips();
+  }
+  if(cloud.ministerColors && Object.keys(cloud.ministerColors).length >= Object.keys(ministerColors).length){
+    ministerColors = cloud.ministerColors;
+    try{ localStorage.setItem('ministerColors', JSON.stringify(ministerColors)); }catch(e){}
+  }
+  if(cloud.sermonSeriesRoster && cloud.sermonSeriesRoster.length >= sermonSeriesRoster.length){
+    sermonSeriesRoster = cloud.sermonSeriesRoster;
+    try{ localStorage.setItem('sermonSeriesRoster', JSON.stringify(sermonSeriesRoster)); }catch(e){}
+  }
+  if(cloud.esvApiKey){
+    try{ localStorage.setItem('esvApiKey', cloud.esvApiKey); }catch(e){}
+    const input = document.getElementById('esvApiKey');
+    const status = document.getElementById('esvKeyStatus');
+    if(input) input.value = cloud.esvApiKey;
+    if(status){ status.textContent = 'Saved ✓'; status.className = 'saved'; }
+  }
+  render();
+  refreshServicesPanelIfOpen();
+  const scheduleOverlay = document.getElementById('scheduleOverlay');
+  if(scheduleOverlay && scheduleOverlay.classList.contains('open')) renderScheduleTable();
+}
+
+function refreshServicesPanelIfOpen(){
+  const panel = document.getElementById('servicesPanel');
+  if(panel && panel.classList.contains('open')) renderServicesList();
+}
+function updateCurrentDateDisplay(){
+  const dateStr = document.getElementById('serviceDate').value;
+  const btn = document.getElementById('currentDateDisplay');
+  if(!btn) return;
+  btn.textContent = dateStr ? '📃 ' + formatServiceDateLabel(dateStr) : '📃 Select a Service';
+}
+function resyncCurrentDate(){
+  const dateStr = document.getElementById('serviceDate').value;
+  if(!dateStr) return;
+  const info = getLiturgicalInfo(dateStr);
+  if(info){
+    document.getElementById('serviceTitle').value = `${info.label} (Year ${info.rclYear})`;
+    state.forEach(m => m.elements.forEach(e => {
+      if(e.type === 'response' && e.allowSeasonal){
+        e.altActive = e.altMode === 'replace' ? info.isAdventOrChristmastide : info.isEastertide;
+        if(e.altActive) e.hasAlt = true;
+      }
+    }));
+  }
+  render();
+  syncLectionary(dateStr);
+  applyScheduleForDate(dateStr);
+  carryForwardPetitions(dateStr);
+  render();
+}
+document.getElementById('serviceDate').addEventListener('change', onDateChange);
+
+/* ---------------------------------------------------------------------
+   RCL lookup — static, embedded, offline. No network requests, so it
+   can't fail from a browser security block or a source going down.
+   Covers the current two RCL cycles (Year A: Nov 2025-Nov 2026, Year
+   B: Nov 2026-Nov 2027) by exact Sunday/feast date, sourced from the
+   Vanderbilt Divinity Library's published RCL citation lists. Outside
+   that date range, or for a date that isn't a Sunday/feast on the
+   RCL, it says so plainly and links out to look it up.
+--------------------------------------------------------------------- */
+const RCL_DATA = {"2025-11-30":{"name":"First Sunday of Advent","ot":"Isaiah 2:1-5","psalm":"Psalm 122","nt":"Romans 13:11-14","gospel":"Matthew 24:36-44"},"2025-12-07":{"name":"Second Sunday of Advent","ot":"Isaiah 11:1-10","psalm":"Psalm 72:1-7, 18-19","nt":"Romans 15:4-13","gospel":"Matthew 3:1-12"},"2025-12-14":{"name":"Third Sunday of Advent","ot":"Isaiah 35:1-10","psalm":"Psalm 146:5-10 or Luke 1:46b-55","nt":"James 5:7-10","gospel":"Matthew 11:2-11"},"2025-12-21":{"name":"Fourth Sunday of Advent","ot":"Isaiah 7:10-16","psalm":"Psalm 80:1-7, 17-19","nt":"Romans 1:1-7","gospel":"Matthew 1:18-25"},"2025-12-25":{"name":"Nativity of the Lord (Christmas)","ot":"Isaiah 9:2-7","psalm":"Psalm 96","nt":"Titus 2:11-14","gospel":"Luke 2:1-14, (15-20)"},"2025-12-28":{"name":"First Sunday after Christmas Day","ot":"Isaiah 63:7-9","psalm":"Psalm 148","nt":"Hebrews 2:10-18","gospel":"Matthew 2:13-23"},"2026-01-01":{"name":"Holy Name of Jesus","ot":"Numbers 6:22-27","psalm":"Psalm 8","nt":"Galatians 4:4-7 or Philippians 2:5-11","gospel":"Luke 2:15-21"},"2026-01-04":{"name":"Second Sunday after Christmas","ot":"Jeremiah 31:7-14 or Sirach 24:1-12","psalm":"Psalm 147:12-20 or Wisdom of Solomon 10:15-21","nt":"Ephesians 1:3-14","gospel":"John 1:(1-9), 10-18"},"2026-01-06":{"name":"Epiphany of the Lord","ot":"Isaiah 60:1-6","psalm":"Psalm 72:1-7, 10-14","nt":"Ephesians 3:1-12","gospel":"Matthew 2:1-12"},"2026-01-11":{"name":"Baptism of the Lord","ot":"Isaiah 42:1-9","psalm":"Psalm 29","nt":"Acts 10:34-43","gospel":"Matthew 3:13-17"},"2026-01-18":{"name":"Second Sunday after the Epiphany","ot":"Isaiah 49:1-7","psalm":"Psalm 40:1-11","nt":"1 Corinthians 1:1-9","gospel":"John 1:29-42"},"2026-01-25":{"name":"Third Sunday after the Epiphany","ot":"Isaiah 9:1-4","psalm":"Psalm 27:1, 4-9","nt":"1 Corinthians 1:10-18","gospel":"Matthew 4:12-23"},"2026-02-01":{"name":"Fourth Sunday after the Epiphany","ot":"Micah 6:1-8","psalm":"Psalm 15","nt":"1 Corinthians 1:18-31","gospel":"Matthew 5:1-12"},"2026-02-02":{"name":"Presentation of the Lord","ot":"Malachi 3:1-4","psalm":"Psalm 84 or Psalm 24:7-10","nt":"Hebrews 2:14-18","gospel":"Luke 2:22-40"},"2026-02-08":{"name":"Fifth Sunday after the Epiphany","ot":"Isaiah 58:1-9a (9b-12)","psalm":"Psalm 112:1-9 (10)","nt":"1 Corinthians 2:1-12 (13-16)","gospel":"Matthew 5:13-20"},"2026-02-15":{"name":"Transfiguration Sunday","ot":"Exodus 24:12-18","psalm":"Psalm 2 or Psalm 99","nt":"2 Peter 1:16-21","gospel":"Matthew 17:1-9"},"2026-02-18":{"name":"Ash Wednesday","ot":"Joel 2:1-2, 12-17 or Isaiah 58:1-12","psalm":"Psalm 51:1-17","nt":"2 Corinthians 5:20b-6:10","gospel":"Matthew 6:1-6, 16-21"},"2026-02-22":{"name":"First Sunday in Lent","ot":"Genesis 2:15-17; 3:1-7","psalm":"Psalm 32","nt":"Romans 5:12-19","gospel":"Matthew 4:1-11"},"2026-03-01":{"name":"Second Sunday in Lent","ot":"Genesis 12:1-4a","psalm":"Psalm 121","nt":"Romans 4:1-5, 13-17","gospel":"John 3:1-17 or Matthew 17:1-9"},"2026-03-08":{"name":"Third Sunday in Lent","ot":"Exodus 17:1-7","psalm":"Psalm 95","nt":"Romans 5:1-11","gospel":"John 4:5-42"},"2026-03-15":{"name":"Fourth Sunday in Lent","ot":"1 Samuel 16:1-13","psalm":"Psalm 23","nt":"Ephesians 5:8-14","gospel":"John 9:1-41"},"2026-03-22":{"name":"Fifth Sunday in Lent","ot":"Ezekiel 37:1-14","psalm":"Psalm 130","nt":"Romans 8:6-11","gospel":"John 11:1-45"},"2026-03-25":{"name":"Annunciation of the Lord","ot":"Isaiah 7:10-14","psalm":"Psalm 45 or Psalm 40:5-10","nt":"Hebrews 10:4-10","gospel":"Luke 1:26-38"},"2026-03-29":{"name":"Liturgy of the Passion","ot":"Isaiah 50:4-9a","psalm":"Psalm 31:9-16","nt":"Philippians 2:5-11","gospel":"Matthew 26:14-27:66 or Matthew 27:11-54"},"2026-03-30":{"name":"Monday of Holy Week","ot":"Isaiah 42:1-9","psalm":"Psalm 36:5-11","nt":"Hebrews 9:11-15","gospel":"John 12:1-11"},"2026-03-31":{"name":"Tuesday of Holy Week","ot":"Isaiah 49:1-7","psalm":"Psalm 71:1-14","nt":"1 Corinthians 1:18-31","gospel":"John 12:20-36"},"2026-04-01":{"name":"Wednesday of Holy Week","ot":"Isaiah 50:4-9a","psalm":"Psalm 70","nt":"Hebrews 12:1-3","gospel":"John 13:21-32"},"2026-04-02":{"name":"Maundy Thursday","ot":"Exodus 12:1-4, (5-10), 11-14","psalm":"Psalm 116:1-2, 12-19","nt":"1 Corinthians 11:23-26","gospel":"John 13:1-17, 31b-35"},"2026-04-03":{"name":"Good Friday","ot":"Isaiah 52:13-53:12","psalm":"Psalm 22","nt":"Hebrews 10:16-25 or Hebrews 4:14-16; 5:7-9","gospel":"John 18:1-19:42"},"2026-04-05":{"name":"Resurrection of the Lord","ot":"Acts 10:34-43 or Jeremiah 31:1-6","psalm":"Psalm 118:1-2, 14-24","nt":"Colossians 3:1-4 or Acts 10:34-43","gospel":"John 20:1-18 or Matthew 28:1-10"},"2026-04-12":{"name":"Second Sunday of Easter","ot":"Acts 2:14a, 22-32","psalm":"Psalm 16","nt":"1 Peter 1:3-9","gospel":"John 20:19-31"},"2026-04-19":{"name":"Third Sunday of Easter","ot":"Acts 2:14a, 36-41","psalm":"Psalm 116:1-4, 12-19","nt":"1 Peter 1:17-23","gospel":"Luke 24:13-35"},"2026-04-26":{"name":"Fourth Sunday of Easter","ot":"Acts 2:42-47","psalm":"Psalm 23","nt":"1 Peter 2:19-25","gospel":"John 10:1-10"},"2026-05-03":{"name":"Fifth Sunday of Easter","ot":"Acts 7:55-60","psalm":"Psalm 31:1-5, 15-16","nt":"1 Peter 2:2-10","gospel":"John 14:1-14"},"2026-05-10":{"name":"Sixth Sunday of Easter","ot":"Acts 17:22-31","psalm":"Psalm 66:8-20","nt":"1 Peter 3:13-22","gospel":"John 14:15-21"},"2026-05-14":{"name":"Ascension of the Lord","ot":"Acts 1:1-11","psalm":"Psalm 47 or Psalm 93","nt":"Ephesians 1:15-23","gospel":"Luke 24:44-53"},"2026-05-17":{"name":"Seventh Sunday of Easter","ot":"Acts 1:6-14","psalm":"Psalm 68:1-10, 32-35","nt":"1 Peter 4:12-14; 5:6-11","gospel":"John 17:1-11"},"2026-05-24":{"name":"Day of Pentecost","ot":"Acts 2:1-21 or Numbers 11:24-30","psalm":"Psalm 104:24-34, 35b","nt":"1 Corinthians 12:3b-13 or Acts 2:1-21","gospel":"John 20:19-23 or John 7:37-39"},"2026-05-31":{"name":"Trinity Sunday","ot":"Genesis 1:1-2:4a","psalm":"Psalm 8","nt":"2 Corinthians 13:11-13","gospel":"Matthew 28:16-20"},"2026-06-07":{"name":"Proper 5 (10)","ot":{"track1":"Genesis 12:1-9","track2":"Hosea 5:15-6:6"},"psalm":{"track1":"Psalm 33:1-12","track2":"Psalm 50:7-15"},"nt":"Romans 4:13-25","gospel":"Matthew 9:9-13, 18-26"},"2026-06-14":{"name":"Proper 6 (11)","ot":{"track1":"Genesis 18:1-15, (21:1-7)","track2":"Exodus 19:2-8a"},"psalm":{"track1":"Psalm 116:1-2, 12-19","track2":"Psalm 100"},"nt":"Romans 5:1-8","gospel":"Matthew 9:35-10:8, (9-23)"},"2026-06-21":{"name":"Proper 7 (12)","ot":{"track1":"Genesis 21:8-21","track2":"Jeremiah 20:7-13"},"psalm":{"track1":"Psalm 86:1-10, 16-17","track2":"Psalm 69:7-10, (11-15), 16-18"},"nt":"Romans 6:1b-11","gospel":"Matthew 10:24-39"},"2026-06-28":{"name":"Proper 8 (13)","ot":{"track1":"Genesis 22:1-14","track2":"Jeremiah 28:5-9"},"psalm":{"track1":"Psalm 13","track2":"Psalm 89:1-4, 15-18"},"nt":"Romans 6:12-23","gospel":"Matthew 10:40-42"},"2026-07-05":{"name":"Proper 9 (14)","ot":{"track1":"Genesis 24:34-38, 42-49, 58-67","track2":"Zechariah 9:9-12"},"psalm":{"track1":"Psalm 45:10-17 or Song of Solomon 2:8-13","track2":"Psalm 145:8-14"},"nt":"Romans 7:15-25a","gospel":"Matthew 11:16-19, 25-30"},"2026-07-12":{"name":"Proper 10 (15)","ot":{"track1":"Genesis 25:19-34","track2":"Isaiah 55:10-13"},"psalm":{"track1":"Psalm 119:105-112","track2":"Psalm 65:(1-8), 9-13"},"nt":"Romans 8:1-11","gospel":"Matthew 13:1-9, 18-23"},"2026-07-19":{"name":"Proper 11 (16)","ot":{"track1":"Genesis 28:10-19a","track2":"Wisdom of Solomon 12:13, 16-19 or Isaiah 44:6-8"},"psalm":{"track1":"Psalm 139:1-12, 23-24","track2":"Psalm 86:11-17"},"nt":"Romans 8:12-25","gospel":"Matthew 13:24-30, 36-43"},"2026-07-26":{"name":"Proper 12 (17)","ot":{"track1":"Genesis 29:15-28","track2":"1 Kings 3:5-12"},"psalm":{"track1":"Psalm 105:1-11, 45b or Psalm 128","track2":"Psalm 119:129-136"},"nt":"Romans 8:26-39","gospel":"Matthew 13:31-33, 44-52"},"2026-08-02":{"name":"Proper 13 (18)","ot":{"track1":"Genesis 32:22-31","track2":"Isaiah 55:1-5"},"psalm":{"track1":"Psalm 17:1-7, 15","track2":"Psalm 145:8-9, 14-21"},"nt":"Romans 9:1-5","gospel":"Matthew 14:13-21"},"2026-08-09":{"name":"Proper 14 (19)","ot":{"track1":"Genesis 37:1-4, 12-28","track2":"1 Kings 19:9-18"},"psalm":{"track1":"Psalm 105:1-6, 16-22, 45b","track2":"Psalm 85:8-13"},"nt":"Romans 10:5-15","gospel":"Matthew 14:22-33"},"2026-08-16":{"name":"Proper 15 (20)","ot":{"track1":"Genesis 45:1-15","track2":"Isaiah 56:1, 6-8"},"psalm":{"track1":"Psalm 133","track2":"Psalm 67"},"nt":"Romans 11:1-2a, 29-32","gospel":"Matthew 15:(10-20), 21-28"},"2026-08-23":{"name":"Proper 16 (21)","ot":{"track1":"Exodus 1:8-2:10","track2":"Isaiah 51:1-6"},"psalm":{"track1":"Psalm 124","track2":"Psalm 138"},"nt":"Romans 12:1-8","gospel":"Matthew 16:13-20"},"2026-08-30":{"name":"Proper 17 (22)","ot":{"track1":"Exodus 3:1-15","track2":"Jeremiah 15:15-21"},"psalm":{"track1":"Psalm 105:1-6, 23-26, 45b","track2":"Psalm 26:1-8"},"nt":"Romans 12:9-21","gospel":"Matthew 16:21-28"},"2026-09-06":{"name":"Proper 18 (23)","ot":{"track1":"Exodus 12:1-14","track2":"Ezekiel 33:7-11"},"psalm":{"track1":"Psalm 149","track2":"Psalm 119:33-40"},"nt":"Romans 13:8-14","gospel":"Matthew 18:15-20"},"2026-09-13":{"name":"Proper 19 (24)","ot":{"track1":"Exodus 14:19-31","track2":"Genesis 50:15-21"},"psalm":{"track1":"Psalm 114 or Exodus 15:1b-11, 20-21","track2":"Psalm 103:(1-7), 8-13"},"nt":"Romans 14:1-12","gospel":"Matthew 18:21-35"},"2026-09-20":{"name":"Proper 20 (25)","ot":{"track1":"Exodus 16:2-15","track2":"Jonah 3:10-4:11"},"psalm":{"track1":"Psalm 105:1-6, 37-45","track2":"Psalm 145:1-8"},"nt":"Philippians 1:21-30","gospel":"Matthew 20:1-16"},"2026-09-27":{"name":"Proper 21 (26)","ot":{"track1":"Exodus 17:1-7","track2":"Ezekiel 18:1-4, 25-32"},"psalm":{"track1":"Psalm 78:1-4, 12-16","track2":"Psalm 25:1-9"},"nt":"Philippians 2:1-13","gospel":"Matthew 21:23-32"},"2026-10-04":{"name":"Proper 22 (27)","ot":{"track1":"Exodus 20:1-4, 7-9, 12-20","track2":"Isaiah 5:1-7"},"psalm":{"track1":"Psalm 19","track2":"Psalm 80:7-15"},"nt":"Philippians 3:4b-14","gospel":"Matthew 21:33-46"},"2026-10-11":{"name":"Proper 23 (28)","ot":{"track1":"Exodus 32:1-14","track2":"Isaiah 25:1-9"},"psalm":{"track1":"Psalm 106:1-6, 19-23","track2":"Psalm 23"},"nt":"Philippians 4:1-9","gospel":"Matthew 22:1-14"},"2026-10-18":{"name":"Proper 24 (29)","ot":{"track1":"Exodus 33:12-23","track2":"Isaiah 45:1-7"},"psalm":{"track1":"Psalm 99","track2":"Psalm 96:1-9, (10-13)"},"nt":"1 Thessalonians 1:1-10","gospel":"Matthew 22:15-22"},"2026-10-25":{"name":"Proper 25 (30)","ot":{"track1":"Deuteronomy 34:1-12","track2":"Leviticus 19:1-2, 15-18"},"psalm":{"track1":"Psalm 90:1-6, 13-17","track2":"Psalm 1"},"nt":"1 Thessalonians 2:1-8","gospel":"Matthew 22:34-46"},"2026-11-01":{"name":"Proper 26 (31)","ot":{"track1":"Joshua 3:7-17","track2":"Micah 3:5-12"},"psalm":{"track1":"Psalm 107:1-7, 33-37","track2":"Psalm 43"},"nt":"1 Thessalonians 2:9-13","gospel":"Matthew 23:1-12"},"2026-11-08":{"name":"Proper 27 (32)","ot":{"track1":"Joshua 24:1-3a, 14-25","track2":"Wisdom of Solomon 6:12-16 or Amos 5:18-24"},"psalm":{"track1":"Psalm 78:1-7","track2":"Wisdom of Solomon 6:17-20 or Psalm 70"},"nt":"1 Thessalonians 4:13-18","gospel":"Matthew 25:1-13"},"2026-11-15":{"name":"Proper 28 (33)","ot":{"track1":"Judges 4:1-7","track2":"Zephaniah 1:7, 12-18"},"psalm":{"track1":"Psalm 123","track2":"Psalm 90:1-8, (9-11), 12"},"nt":"1 Thessalonians 5:1-11","gospel":"Matthew 25:14-30"},"2026-11-22":{"name":"Reign of Christ","ot":{"track1":"Ezekiel 34:11-16, 20-24","track2":"Ezekiel 34:11-16, 20-24"},"psalm":{"track1":"Psalm 100","track2":"Psalm 95:1-7a"},"nt":"Ephesians 1:15-23","gospel":"Matthew 25:31-46"},"2026-11-29":{"name":"First Sunday of Advent","ot":"Isaiah 64:1-9","psalm":"Psalm 80:1-7, 17-19","nt":"1 Corinthians 1:3-9","gospel":"Mark 13:24-37"},"2026-12-06":{"name":"Second Sunday of Advent","ot":"Isaiah 40:1-11","psalm":"Psalm 85:1-2, 8-13","nt":"2 Peter 3:8-15a","gospel":"Mark 1:1-8"},"2026-12-13":{"name":"Third Sunday of Advent","ot":"Isaiah 61:1-4, 8-11","psalm":"Psalm 126 or Luke 1:46b-55","nt":"1 Thessalonians 5:16-24","gospel":"John 1:6-8, 19-28"},"2026-12-20":{"name":"Fourth Sunday of Advent","ot":"2 Samuel 7:1-11, 16","psalm":"Luke 1:46b-55 or Psalm 89:1-4, 19-26","nt":"Romans 16:25-27","gospel":"Luke 1:26-38"},"2026-12-25":{"name":"Nativity of the Lord (Christmas)","ot":"Isaiah 9:2-7","psalm":"Psalm 96","nt":"Titus 2:11-14","gospel":"Luke 2:1-14, (15-20)"},"2026-12-27":{"name":"First Sunday after Christmas Day","ot":"Isaiah 61:10-62:3","psalm":"Psalm 148","nt":"Galatians 4:4-7","gospel":"Luke 2:22-40"},"2027-01-01":{"name":"Holy Name of Jesus","ot":"Numbers 6:22-27","psalm":"Psalm 8","nt":"Galatians 4:4-7 or Philippians 2:5-11","gospel":"Luke 2:15-21"},"2027-01-03":{"name":"Second Sunday after Christmas","ot":"Jeremiah 31:7-14 or Sirach 24:1-12","psalm":"Psalm 147:12-20 or Wisdom of Solomon 10:15-21","nt":"Ephesians 1:3-14","gospel":"John 1:(1-9), 10-18"},"2027-01-06":{"name":"Epiphany of the Lord","ot":"Isaiah 60:1-6","psalm":"Psalm 72:1-7, 10-14","nt":"Ephesians 3:1-12","gospel":"Matthew 2:1-12"},"2027-01-10":{"name":"Baptism of the Lord","ot":"Genesis 1:1-5","psalm":"Psalm 29","nt":"Acts 19:1-7","gospel":"Mark 1:4-11"},"2027-01-17":{"name":"Second Sunday after the Epiphany","ot":"1 Samuel 3:1-10, (11-20)","psalm":"Psalm 139:1-6, 13-18","nt":"1 Corinthians 6:12-20","gospel":"John 1:43-51"},"2027-01-24":{"name":"Third Sunday after the Epiphany","ot":"Jonah 3:1-5, 10","psalm":"Psalm 62:5-12","nt":"1 Corinthians 7:29-31","gospel":"Mark 1:14-20"},"2027-01-31":{"name":"Fourth Sunday after the Epiphany","ot":"Deuteronomy 18:15-20","psalm":"Psalm 111","nt":"1 Corinthians 8:1-13","gospel":"Mark 1:21-28"},"2027-02-02":{"name":"Presentation of the Lord","ot":"Malachi 3:1-4","psalm":"Psalm 84 or Psalm 24:7-10","nt":"Hebrews 2:14-18","gospel":"Luke 2:22-40"},"2027-02-07":{"name":"Transfiguration Sunday","ot":"2 Kings 2:1-12","psalm":"Psalm 50:1-6","nt":"2 Corinthians 4:3-6","gospel":"Mark 9:2-9"},"2027-02-10":{"name":"Ash Wednesday","ot":"Joel 2:1-2, 12-17 or Isaiah 58:1-12","psalm":"Psalm 51:1-17","nt":"2 Corinthians 5:20b-6:10","gospel":"Matthew 6:1-6, 16-21"},"2027-02-14":{"name":"First Sunday in Lent","ot":"Genesis 9:8-17","psalm":"Psalm 25:1-10","nt":"1 Peter 3:18-22","gospel":"Mark 1:9-15"},"2027-02-21":{"name":"Second Sunday in Lent","ot":"Genesis 17:1-7, 15-16","psalm":"Psalm 22:23-31","nt":"Romans 4:13-25","gospel":"Mark 8:31-38"},"2027-02-28":{"name":"Third Sunday in Lent","ot":"Exodus 20:1-17","psalm":"Psalm 19","nt":"1 Corinthians 1:18-25","gospel":"John 2:13-22"},"2027-03-07":{"name":"Fourth Sunday in Lent","ot":"Numbers 21:4-9","psalm":"Psalm 107:1-3, 17-22","nt":"Ephesians 2:1-10","gospel":"John 3:14-21"},"2027-03-14":{"name":"Fifth Sunday in Lent","ot":"Jeremiah 31:31-34","psalm":"Psalm 51:1-12 or Psalm 119:9-16","nt":"Hebrews 5:5-10","gospel":"John 12:20-33"},"2027-03-21":{"name":"Liturgy of the Passion","ot":"Isaiah 50:4-9a","psalm":"Psalm 31:9-16","nt":"Philippians 2:5-11","gospel":"Mark 14:1-15:47"},"2027-03-22":{"name":"Monday of Holy Week","ot":"Isaiah 42:1-9","psalm":"Psalm 36:5-11","nt":"Hebrews 9:11-15","gospel":"John 12:1-11"},"2027-03-23":{"name":"Tuesday of Holy Week","ot":"Isaiah 49:1-7","psalm":"Psalm 71:1-14","nt":"1 Corinthians 1:18-31","gospel":"John 12:20-36"},"2027-03-24":{"name":"Wednesday of Holy Week","ot":"Isaiah 50:4-9a","psalm":"Psalm 70","nt":"Hebrews 12:1-3","gospel":"John 13:21-32"},"2027-03-25":{"name":"Maundy Thursday","ot":"Exodus 12:1-4, (5-10), 11-14","psalm":"Psalm 116:1-2, 12-19","nt":"1 Corinthians 11:23-26","gospel":"John 13:1-17, 31b-35"},"2027-03-26":{"name":"Good Friday","ot":"Isaiah 52:13-53:12","psalm":"Psalm 22","nt":"Hebrews 10:16-25 or Hebrews 4:14-16; 5:7-9","gospel":"John 18:1-19:42"},"2027-03-28":{"name":"Resurrection of the Lord","ot":"Acts 10:34-43 or Isaiah 25:6-9","psalm":"Psalm 118:1-2, 14-24","nt":"1 Corinthians 15:1-11 or Acts 10:34-43","gospel":"John 20:1-18 or Mark 16:1-8"},"2027-04-04":{"name":"Second Sunday of Easter","ot":"Acts 4:32-35","psalm":"Psalm 133","nt":"1 John 1:1-2:2","gospel":"John 20:19-31"},"2027-04-11":{"name":"Third Sunday of Easter","ot":"Acts 3:12-19","psalm":"Psalm 4","nt":"1 John 3:1-7","gospel":"Luke 24:36b-48"},"2027-04-18":{"name":"Fourth Sunday of Easter","ot":"Acts 4:5-12","psalm":"Psalm 23","nt":"1 John 3:16-24","gospel":"John 10:11-18"},"2027-04-25":{"name":"Fifth Sunday of Easter","ot":"Acts 8:26-40","psalm":"Psalm 22:25-31","nt":"1 John 4:7-21","gospel":"John 15:1-8"},"2027-05-02":{"name":"Sixth Sunday of Easter","ot":"Acts 10:44-48","psalm":"Psalm 98","nt":"1 John 5:1-6","gospel":"John 15:9-17"},"2027-05-06":{"name":"Ascension of the Lord","ot":"Acts 1:1-11","psalm":"Psalm 47 or Psalm 93","nt":"Ephesians 1:15-23","gospel":"Luke 24:44-53"},"2027-05-09":{"name":"Seventh Sunday of Easter","ot":"Acts 1:15-17, 21-26","psalm":"Psalm 1","nt":"1 John 5:9-13","gospel":"John 17:6-19"},"2027-05-16":{"name":"Day of Pentecost","ot":"Acts 2:1-21 or Ezekiel 37:1-14","psalm":"Psalm 104:24-34, 35b","nt":"Romans 8:22-27 or Acts 2:1-21","gospel":"John 15:26-27; 16:4b-15"},"2027-05-23":{"name":"Trinity Sunday","ot":"Isaiah 6:1-8","psalm":"Psalm 29","nt":"Romans 8:12-17","gospel":"John 3:1-17"},"2027-05-30":{"name":"Proper 4 (9)","ot":{"track1":"1 Samuel 3:1-10, (11-20)","track2":"Deuteronomy 5:12-15"},"psalm":{"track1":"Psalm 139:1-6, 13-18","track2":"Psalm 81:1-10"},"nt":"2 Corinthians 4:5-12","gospel":"Mark 2:23-3:6"},"2027-06-06":{"name":"Proper 5 (10)","ot":{"track1":"1 Samuel 8:4-11, (12-15), 16-20, (11:14-15)","track2":"Genesis 3:8-15"},"psalm":{"track1":"Psalm 138","track2":"Psalm 130"},"nt":"2 Corinthians 4:13-5:1","gospel":"Mark 3:20-35"},"2027-06-13":{"name":"Proper 6 (11)","ot":{"track1":"1 Samuel 15:34-16:13","track2":"Ezekiel 17:22-24"},"psalm":{"track1":"Psalm 20","track2":"Psalm 92:1-4, 12-15"},"nt":"2 Corinthians 5:6-10, (11-13), 14-17","gospel":"Mark 4:26-34"},"2027-06-20":{"name":"Proper 7 (12)","ot":{"track1":"1 Samuel 17:(1a, 4-11, 19-23), 32-49","track2":"Job 38:1-11"},"psalm":{"track1":"Psalm 9:9-20","track2":"Psalm 107:1-3, 23-32"},"nt":"2 Corinthians 6:1-13","gospel":"Mark 4:35-41"},"2027-06-27":{"name":"Proper 8 (13)","ot":{"track1":"2 Samuel 1:1, 17-27","track2":"Wisdom of Solomon 1:13-15, 2:23-24 or Lamentations 3:22-33"},"psalm":{"track1":"Psalm 130","track2":"Psalm 30"},"nt":"2 Corinthians 8:7-15","gospel":"Mark 5:21-43"},"2027-07-04":{"name":"Proper 9 (14)","ot":{"track1":"2 Samuel 5:1-5, 9-10","track2":"Ezekiel 2:1-5"},"psalm":{"track1":"Psalm 48","track2":"Psalm 123"},"nt":"2 Corinthians 12:2-10","gospel":"Mark 6:1-13"},"2027-07-11":{"name":"Proper 10 (15)","ot":{"track1":"2 Samuel 6:1-5, 12b-19","track2":"Amos 7:7-15"},"psalm":{"track1":"Psalm 24","track2":"Psalm 85:8-13"},"nt":"Ephesians 1:3-14","gospel":"Mark 6:14-29"},"2027-07-18":{"name":"Proper 11 (16)","ot":{"track1":"2 Samuel 7:1-14a","track2":"Jeremiah 23:1-6"},"psalm":{"track1":"Psalm 89:20-37","track2":"Psalm 23"},"nt":"Ephesians 2:11-22","gospel":"Mark 6:30-34, 53-56"},"2027-07-25":{"name":"Proper 12 (17)","ot":{"track1":"2 Samuel 11:1-15","track2":"2 Kings 4:42-44"},"psalm":{"track1":"Psalm 14","track2":"Psalm 145:10-18"},"nt":"Ephesians 3:14-21","gospel":"John 6:1-21"},"2027-08-01":{"name":"Proper 13 (18)","ot":{"track1":"2 Samuel 11:26-12:13a","track2":"Exodus 16:2-4, 9-15"},"psalm":{"track1":"Psalm 51:1-12","track2":"Psalm 78:23-29"},"nt":"Ephesians 4:1-16","gospel":"John 6:24-35"},"2027-08-08":{"name":"Proper 14 (19)","ot":{"track1":"2 Samuel 18:5-9, 15, 31-33","track2":"1 Kings 19:4-8"},"psalm":{"track1":"Psalm 130","track2":"Psalm 34:1-8"},"nt":"Ephesians 4:25-5:2","gospel":"John 6:35, 41-51"},"2027-08-15":{"name":"Proper 15 (20)","ot":{"track1":"1 Kings 2:10-12; 3:3-14","track2":"Proverbs 9:1-6"},"psalm":{"track1":"Psalm 111","track2":"Psalm 34:9-14"},"nt":"Ephesians 5:15-20","gospel":"John 6:51-58"},"2027-08-22":{"name":"Proper 16 (21)","ot":{"track1":"1 Kings 8:(1,6,10-11), 22-30, 41-43","track2":"Joshua 24:1-2a, 14-18"},"psalm":{"track1":"Psalm 84","track2":"Psalm 34:15-22"},"nt":"Ephesians 6:10-20","gospel":"John 6:56-69"},"2027-08-29":{"name":"Proper 17 (22)","ot":{"track1":"Song of Solomon 2:8-13","track2":"Deuteronomy 4:1-2, 6-9"},"psalm":{"track1":"Psalm 45:1-2, 6-9","track2":"Psalm 15"},"nt":"James 1:17-27","gospel":"Mark 7:1-8, 14-15, 21-23"},"2027-09-05":{"name":"Proper 18 (23)","ot":{"track1":"Proverbs 22:1-2, 8-9, 22-23","track2":"Isaiah 35:4-7a"},"psalm":{"track1":"Psalm 125","track2":"Psalm 146"},"nt":"James 2:1-10, (11-13), 14-17","gospel":"Mark 7:24-37"},"2027-09-12":{"name":"Proper 19 (24)","ot":{"track1":"Proverbs 1:20-33","track2":"Isaiah 50:4-9a"},"psalm":{"track1":"Psalm 19","track2":"Psalm 116:1-9"},"nt":"James 3:1-12","gospel":"Mark 8:27-38"},"2027-09-19":{"name":"Proper 20 (25)","ot":{"track1":"Proverbs 31:10-31","track2":"Wisdom of Solomon 1:16-2:1, 12-22 or Jeremiah 11:18-20"},"psalm":{"track1":"Psalm 1","track2":"Psalm 54"},"nt":"James 3:13-4:3, 7-8a","gospel":"Mark 9:30-37"},"2027-09-26":{"name":"Proper 21 (26)","ot":{"track1":"Esther 7:1-6, 9-10; 9:20-22","track2":"Numbers 11:4-6, 10-16, 24-29"},"psalm":{"track1":"Psalm 124","track2":"Psalm 19:7-14"},"nt":"James 5:13-20","gospel":"Mark 9:38-50"},"2027-10-03":{"name":"Proper 22 (27)","ot":{"track1":"Job 1:1, 2:1-10","track2":"Genesis 2:18-24"},"psalm":{"track1":"Psalm 26","track2":"Psalm 8"},"nt":"Hebrews 1:1-4, 2:5-12","gospel":"Mark 10:2-16"},"2027-10-10":{"name":"Proper 23 (28)","ot":{"track1":"Job 23:1-9, 16-17","track2":"Amos 5:6-7, 10-15"},"psalm":{"track1":"Psalm 22:1-15","track2":"Psalm 90:12-17"},"nt":"Hebrews 4:12-16","gospel":"Mark 10:17-31"},"2027-10-17":{"name":"Proper 24 (29)","ot":{"track1":"Job 38:1-7, (34-41)","track2":"Isaiah 53:4-12"},"psalm":{"track1":"Psalm 104:1-9, 24, 35c","track2":"Psalm 91:9-16"},"nt":"Hebrews 5:1-10","gospel":"Mark 10:35-45"},"2027-10-24":{"name":"Proper 25 (30)","ot":{"track1":"Job 42:1-6, 10-17","track2":"Jeremiah 31:7-9"},"psalm":{"track1":"Psalm 34:1-8, (19-22)","track2":"Psalm 126"},"nt":"Hebrews 7:23-28","gospel":"Mark 10:46-52"},"2027-10-31":{"name":"Proper 26 (31)","ot":{"track1":"Ruth 1:1-18","track2":"Deuteronomy 6:1-9"},"psalm":{"track1":"Psalm 146","track2":"Psalm 119:1-8"},"nt":"Hebrews 9:11-14","gospel":"Mark 12:28-34"},"2027-11-01":{"name":"All Saints Day","ot":"Wisdom of Solomon 3:1-9 or Isaiah 25:6-9","psalm":"Psalm 24","nt":"Revelation 21:1-6a","gospel":"John 11:32-44"},"2027-11-07":{"name":"Proper 27 (32)","ot":{"track1":"Ruth 3:1-5; 4:13-17","track2":"1 Kings 17:8-16"},"psalm":{"track1":"Psalm 127","track2":"Psalm 146"},"nt":"Hebrews 9:24-28","gospel":"Mark 12:38-44"},"2027-11-14":{"name":"Proper 28 (33)","ot":{"track1":"1 Samuel 1:4-20","track2":"Daniel 12:1-3"},"psalm":{"track1":"1 Samuel 2:1-10 (Song of Hannah)","track2":"Psalm 16"},"nt":"Hebrews 10:11-14, (15-18), 19-25","gospel":"Mark 13:1-8"},"2027-11-21":{"name":"Reign of Christ","ot":{"track1":"2 Samuel 23:1-7","track2":"Daniel 7:9-10, 13-14"},"psalm":{"track1":"Psalm 132:1-12, (13-18)","track2":"Psalm 93"},"nt":"Revelation 1:4b-8","gospel":"John 18:33-37"}};
+
+function setSyncStatus(state, message){
+  const box = document.getElementById('syncStatus');
+  box.className = 'sync-status is-' + state;
+  box.innerHTML = `<span class="dot"></span> ${message}`;
+}
+
+function findLectionaryElement(){
+  for(const m of state) for(const e of m.elements) if(e.type === 'lectionary') return e;
+  return null;
+}
+
+function lookupLink(dateStr){
+  const info = getLiturgicalInfo(dateStr);
+  const y = info ? info.yearAnchor : new Date(dateStr).getFullYear();
+  return `https://lectionary.library.vanderbilt.edu/calendar/${y}-${String(y + 1).slice(-2)}/?season=all`;
+}
+
+const BCP_DATA = {"First Sunday of Advent":["Almighty God, give us grace to cast away the works of darkness, and put on the armor of light, now in the time of this mortal life in which your Son Jesus Christ came to visit us in great humility; that in the last day, when he shall come again in his glorious majesty to judge both the living and the dead, we may rise to the life immortal; through him who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Second Sunday of Advent":["Merciful God, who sent your messengers the prophets to preach repentance and prepare the way for our salvation: Give us grace to heed their warnings and forsake our sins, that we may greet with joy the coming of Jesus Christ our Redeemer; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Third Sunday of Advent":["Stir up your power, O Lord, and with great might come among us; and, because we are sorely hindered by our sins, let your bountiful grace and mercy speedily help and deliver us; through Jesus Christ our Lord, to whom, with you and the Holy Spirit, be honor and glory, now and for ever. Amen."],"Fourth Sunday of Advent":["Purify our conscience, Almighty God, by your daily visitation, that your Son Jesus Christ, at his coming, may find in us a mansion prepared for himself; who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Nativity of the Lord (Christmas)":["O God, you make us glad by the yearly festival of the birth of your only Son Jesus Christ: Grant that we, who joyfully receive him as our Redeemer, may with sure confidence behold him when he comes to be our Judge; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen.","O God, you have caused this holy night to shine with the brightness of the true Light: Grant that we, who have known the mystery of that Light on earth, may also enjoy him perfectly in heaven; where with you and the Holy Spirit he lives and reigns, one God, in glory everlasting. Amen.","Almighty God, you have given your only-begotten Son to take our nature upon him, and to be born of a pure virgin: Grant that we, who have been born again and made your children by adoption and grace, may daily be renewed by your Holy Spirit; through our Lord Jesus Christ, to whom with you and the same Spirit be honor and glory, now and for ever. Amen."],"First Sunday after Christmas Day":["Almighty God, you have poured upon us the new light of your incarnate Word: Grant that this light, enkindled in our hearts, may shine forth in our lives; through Jesus Christ our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Holy Name of Jesus":["Eternal Father, you gave to your incarnate Son the holy name of Jesus to be the sign of our salvation: Plant in every heart, we pray, the love of him who is the Savior of the world, our Lord Jesus Christ; who lives and reigns with you and the Holy Spirit, one God, in glory everlasting. Amen."],"Second Sunday after Christmas":["O God, who wonderfully created, and yet more wonderfully restored, the dignity of human nature: Grant that we may share the divine life of him who humbled himself to share our humanity, your Son Jesus Christ; who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen."],"Epiphany of the Lord":["O God, by the leading of a star you manifested your only Son to the Peoples of the earth: Lead us, who know you now by faith, to your presence, where we may see your glory face to face; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Baptism of the Lord":["Father in heaven, who at the baptism of Jesus in the River Jordan proclaimed him your beloved Son and anointed him with the Holy Spirit: Grant that all who are baptized into his Name may keep the covenant they have made, and boldly confess him as Lord and Savior; who with you and the Holy Spirit lives and reigns, one God, in glory everlasting. Amen."],"Second Sunday after the Epiphany":["Almighty God, whose Son our Savior Jesus Christ is the light of the world: Grant that your people, illumined by your Word and Sacraments, may shine with the radiance of Christ's glory, that he may be known, worshiped, and obeyed to the ends of the earth; through Jesus Christ our Lord, who with you and the Holy Spirit lives and reigns, one God, now and for ever. Amen."],"Third Sunday after the Epiphany":["Give us grace, O Lord, to answer readily the call of our Savior Jesus Christ and proclaim to all people the Good News of his salvation, that we and the whole world may perceive the glory of his marvelous works; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Fourth Sunday after the Epiphany":["Almighty and everlasting God, you govern all things both in heaven and on earth: Mercifully hear the supplications of your people, and in our time grant us your peace; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Fifth Sunday after the Epiphany":["Set us free, O God, from the bondage of our sins, and give us the liberty of that abundant life which you have made known to us in your Son our Savior Jesus Christ; who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Transfiguration Sunday":["O God, who before the passion of your only-begotten Son revealed his glory upon the holy mountain: Grant to us that we, beholding by faith the light of his countenance, may be strengthened to bear our cross, and be changed into his likeness from glory to glory; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Ash Wednesday":["Almighty and everlasting God, you hate nothing you have made and forgive the sins of all who are penitent: Create and make in us new and contrite hearts, that we, worthily lamenting our sins and acknowledging our wretchedness, may obtain of you, the God of all mercy, perfect remission and forgiveness; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"First Sunday in Lent":["Almighty God, whose blessed Son was led by the Spirit to be tempted by Satan: Come quickly to help us who are assaulted by many temptations; and, as you know the weaknesses of each of us, let each one find you mighty to save; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Second Sunday in Lent":["O God, whose glory it is always to have mercy: Be gracious to all who have gone astray from your ways, and bring them again with penitent hearts and steadfast faith to embrace and hold fast the unchangeable truth of your Word, Jesus Christ your Son; who with you and the Holy Spirit lives and reigns, one God, for ever and ever. Amen."],"Third Sunday in Lent":["Almighty God, you know that we have no power in ourselves to help ourselves: Keep us both outwardly in our bodies and inwardly in our souls, that we may be defended from all adversities which may happen to the body, and from all evil thoughts which may assault and hurt the soul; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Fourth Sunday in Lent":["Gracious Father, whose blessed Son Jesus Christ came down from heaven to be the true bread which gives life to the world: Evermore give us this bread, that he may live in us, and we in him; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Fifth Sunday in Lent":["Almighty God, you alone can bring into order the unruly wills and affections of sinners: Grant your people grace to love what you command and desire what you promise; that, among the swift and varied changes of the world, our hearts may surely there be fixed where true joys are to be found; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Liturgy of the Passion":["Almighty and everliving God, in your tender love for the human race you sent your Son our Savior Jesus Christ to take upon him our nature, and to suffer death upon the cross, giving us the example of his great humility: Mercifully grant that we may walk in the way of his suffering, and also share in his resurrection; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Monday of Holy Week":["Almighty God, whose dear Son went not up to joy but first he suffered pain, and entered not into glory before he was crucified: Mercifully grant that we, walking in the way of the cross, may find it none other that the way of life and peace; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Tuesday of Holy Week":["O God, by the passion of your blessed Son you made an instrument of shameful death to be for us the means of life: Grant us so to glory in the cross of Christ, that we may gladly suffer shame and loss for the sake of your Son our Savior Jesus Christ; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Wednesday of Holy Week":["Lord God, whose blessed Son our Savior gave his body to be whipped and his face to be spit upon: Give us grace to accept joyfully the sufferings of the present time, confident of the glory that shall be revealed; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Maundy Thursday":["Almighty Father, whose dear Son, on the night before he suffered, instituted the Sacrament of his Body and Blood: Mercifully grant that we may receive it thankfully in remembrance of Jesus Christ our Lord, who in these holy mysteries gives us a pledge of eternal life; and who now lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Good Friday":["Almighty God, we pray you graciously to behold this your family, for whom our Lord Jesus Christ was willing to be betrayed, and given into the hands of sinners, and to suffer death upon the cross; who now lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Resurrection of the Lord":["O God, who for our redemption gave your only-begotten Son to the death of the cross, and by his glorious resurrection delivered us from the power of our enemy: Grant us so to die daily to sin, that we may evermore live with him in the joy of his resurrection; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen.","O God, who made this most holy night to shine with the glory of the Lord's resurrection: Stir up in your Church that Spirit of adoption which is given to us in Baptism, that we, being renewed both in body and mind, may worship you in sincerity and truth; through Jesus Christ our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen.","Almighty God, who through your only-begotten Son Jesus Christ overcame death and opened to us the gate of everlasting life: Grant that we, who celebrate with joy the day of the Lord's resurrection, may be raised from the death of sin by your life-giving Spirit; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Second Sunday of Easter":["Almighty and everlasting God, who in the Paschal mystery established the new covenant of reconciliation: Grant that all who have been reborn into the fellowship of Christ's Body may show forth in their lives what they profess by their faith; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Third Sunday of Easter":["O God, whose blessed Son made himself known to his disciples in the breaking of bread: Open the eyes of our faith, that we may behold him in all his redeeming work; who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Fourth Sunday of Easter":["O God, whose Son Jesus is the good shepherd of your people; Grant that when we hear his voice we may know him who calls us each by name, and follow where he leads; who, with you and the Holy Spirit, lives and reigns, one God, for ever and ever. Amen."],"Fifth Sunday of Easter":["Almighty God, whom truly to know is everlasting life: Grant us so perfectly to know your Son Jesus Christ to be the way, the truth, and the life, that we may steadfastly follow his steps in the way that leads to eternal life; through Jesus Christ your Son our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen."],"Sixth Sunday of Easter":["O God, you have prepared for those who love you such good things as surpass our understanding: Pour into our hearts such love towards you, that we, loving you in all things and above all things, may obtain your promises, which exceed all that we can desire; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Ascension of the Lord":["Almighty God, whose blessed Son our Savior Jesus Christ ascended far above all heavens that he might fill all things: Mercifully give us faith to perceive that, according to his promise, he abides with his Church on earth, even to the end of the ages; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, in glory everlasting. Amen.","Grant, we pray, Almighty God, that as we believe your only-begotten Son our Lord Jesus Christ to have ascended into heaven, so we may also in heart and mind there ascend, and with him continually dwell; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Seventh Sunday of Easter":["O God, the King of glory, you have exalted your only Son Jesus Christ with great triumph to your kingdom in heaven: Do not leave us comfortless, but send us your Holy Spirit to strengthen us, and exalt us to that place where our Savior Christ has gone before; who lives and reigns with you and the Holy Spirit, one God, in glory everlasting. Amen."],"Day of Pentecost":["Almighty God, on this day you opened the way of eternal life to every race and nation by the promised gift of your Holy Spirit: Shed abroad this gift throughout the world by the preaching of the Gospel, that it may reach to the ends of the earth; through Jesus Christ our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen.","O God, who on this day taught the hearts of your faithful people by sending to them the light of your Holy Spirit: Grant us by the same Spirit to have a right judgment in all things, and evermore to rejoice in his holy comfort; through Jesus Christ your Son our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen."],"Trinity Sunday":["Almighty and everlasting God, you have given to us your servants grace, by the confession of a true faith, to acknowledge the glory of the eternal Trinity, and in the power of your divine Majesty to worship the Unity: Keep us steadfast in this faith and worship, and bring us at last to see you in your one and eternal glory, O Father; who with the Son and the Holy Spirit live and reign, one God, for ever and ever. Amen."],"Reign of Christ":["Almighty and everlasting God, whose will it is to restore all things in your well-beloved Son, the King of kings and Lord of lords: Mercifully grant that the peoples of the earth, divided and enslaved by sin, may be freed and brought together under his most gracious rule; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 1":["Remember, O Lord, what you have wrought in us and not what we deserve; and, as you have called us to your service, make us worthy of our calling; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 2":["Almighty and merciful God, in your goodness keep us, we pray, from all things that may hurt us, that we, being ready both in mind and body, may accomplish with free hearts those things which belong to your purpose; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 3":["Grant, O Lord, that the course of this world may be peaceably governed by your providence; and that your Church may joyfully serve you in confidence and serenity; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 4":["O God, your never-failing providence sets in order all things both in heaven and earth: Put away from us, we entreat you, all hurtful things, and give us those things which are profitable for us; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 5":["O God, from whom all good proceeds: Grant that by your inspiration we may think those things that are right, and by your merciful guiding may do them; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 6":["Keep, O Lord, your household the Church in your steadfast faith and love, that through your grace we may proclaim your truth with boldness, and minister your justice with compassion; for the sake of our Savior Jesus Christ, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 7":["O Lord, make us have perpetual love and reverence for your holy Name, for you never fail to help and govern those whom you have set upon the sure foundation of your loving-kindness; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 8":["Almighty God, you have built your Church upon the foundation of the apostles and prophets, Jesus Christ himself being the chief cornerstone: Grant us so to be joined together in unity of spirit by their teaching, that we may be made a holy temple acceptable to you; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 9":["O God, you have taught us to keep all your commandments by loving you and our neighbor: Grant us the grace of your Holy Spirit, that we may be devoted to you with our whole heart, and united to one another with pure affection; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 10":["O Lord, mercifully receive the prayers of your people who call upon you, and grant that they may know and understand what things they ought to do, and also may have grace and power faithfully to accomplish them; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 11":["Almighty God, the fountain of all wisdom, you know our necessities before we ask and our ignorance in asking: Have compassion on our weakness, and mercifully give us those things which for our unworthiness we dare not, and for our blindness we cannot ask; through the worthiness of your Son Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 12":["O God, the protector of all who trust in you, without whom nothing is strong, nothing is holy: Increase and multiply upon us your mercy; that, with you as our ruler and guide, we may so pass through things temporal, that we lose not the things eternal; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 13":["Let your continual mercy, O Lord, cleanse and defend your Church; and, because it cannot continue in safety without your help, protect and govern it always by your goodness; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 14":["Grant to us, Lord, we pray, the spirit to think and do always those things that are right, that we, who cannot exist without you, may by you be enabled to live according to your will; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 15":["Almighty God, you have given your only Son to be for us a sacrifice for sin, and also an example of godly life: Give us grace to receive thankfully the fruits of his redeeming work, and to follow daily in the blessed steps of his most holy life; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 16":["Grant, O merciful God, that your Church, being gathered together in unity by your Holy Spirit, may show forth your power among all peoples, to the glory of your Name; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 17":["Lord of all power and might, the author and giver of all good things: Graft in our hearts the love of your Name; increase in us true religion; nourish us with all goodness; and bring forth in us the fruit of good works; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 18":["Grant us, O Lord, to trust in you with all our hearts; for, as you always resist the proud who confide in their own strength, so you never forsake those who make their boast of your mercy; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 19":["O God, because without you we are not able to please you, mercifully grant that your Holy Spirit may in all things direct and rule our hearts; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 20":["Grant us, Lord, not to be anxious about earthly things, but to love things heavenly; and even now, while we are placed among things that are passing away, to hold fast to those that shall endure; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 21":["O God, you declare your almighty power chiefly in showing mercy and pity: Grant us the fullness of your grace, that we, running to obtain your promises, may become partakers of your heavenly treasure; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 22":["Almighty and everlasting God, you are always more ready to hear than we to pray, and to give more than we either desire or deserve: Pour upon us the abundance of your mercy, forgiving us those things of which our conscience is afraid, and giving us those good things for which we are not worthy to ask, except through the merits and mediation of Jesus Christ our Savior; who lives and reigns with you and the 
