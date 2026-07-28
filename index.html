@@ -381,6 +381,12 @@
     padding:2px 0;
   }
   .element-title:focus{ outline:none; border-bottom:1px solid var(--m-color); }
+  .element-card-header{ margin-top:10px; }
+  .element-card-header .element-title{
+    font-size:17px; font-weight:700; text-align:center;
+    text-transform:uppercase; letter-spacing:0.04em;
+    padding:8px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  }
   .type-select{
     font-size:11.5px;
     font-weight:600;
@@ -629,6 +635,7 @@
   .schedule-overlay.open{ display:flex; }
   .schedule-overlay.make-room{ justify-content:flex-start; padding-right:400px; }
   .schedule-panel{
+    position:relative;
     background:var(--surface); border-radius:10px;
     width:100%; max-width:1400px; height:100%; max-height:900px;
     display:flex; flex-direction:column; overflow:hidden;
@@ -703,6 +710,22 @@
     border:none; background:transparent; color:var(--ink-faint); cursor:pointer; font-size:13px;
   }
   .schedule-remove-row:hover{ color:#8a3a3a; }
+  .column-picker{
+    display:none;
+    position:absolute; top:46px; right:16px; z-index:1000;
+    width:240px; max-height:400px; overflow-y:auto;
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    box-shadow:0 12px 32px rgba(0,0,0,0.18); padding:12px;
+  }
+  .column-picker.open{ display:block; }
+  .column-picker-header{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:8px; font-size:13px; color:var(--ink);
+  }
+  .column-picker-list{ display:flex; flex-direction:column; gap:6px; }
+  .column-picker-row{
+    display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink-soft); cursor:pointer;
+  }
   .schedule-batch-bar{
     display:none; align-items:center; gap:10px;
     padding:8px 20px; background:var(--bg); border-bottom:1px solid var(--border);
@@ -922,6 +945,9 @@
     .minister-tag::before{ content:"— "; }
     .element-card{ border:none; background:#fff; padding:6px 0; }
     .element-title, .reference-input, .content-area, .hymn-number-input, .hymn-title-input, .rich-editor{ border:none; background:transparent; padding:0; }
+    .element-card-header .element-title{
+      border-top:1px solid #999 !important; border-bottom:1px solid #999 !important; padding:6px 0 !important;
+    }
     .content-area{ resize:none; }
     footer.note{ display:none; }
     .sync-status{ display:none; }
@@ -938,6 +964,7 @@
     .services-panel{ display:none !important; }
     .schedule-overlay{ display:none !important; }
     .schedule-batch-bar{ display:none !important; }
+    .column-picker{ display:none !important; }
     .resync-btn{ display:none !important; }
     .current-date-display{ display:none !important; }
     .rich-editor.carried-over-text{ color:inherit !important; }
@@ -1027,9 +1054,17 @@
           <button onclick="addScheduleRow()">+ Add date</button>
           <button onclick="saveScheduleToFile()">💾 Save Plan</button>
           <button onclick="document.getElementById('scheduleLoadInput').click()">📂 Load Plan</button>
+          <button onclick="toggleColumnPicker()">☰ Columns</button>
           <input type="file" id="scheduleLoadInput" accept="application/json" style="display:none">
           <button class="schedule-close-btn" onclick="toggleSchedulePanel()" title="Close">✕</button>
         </div>
+      </div>
+      <div id="columnPicker" class="column-picker">
+        <div class="column-picker-header">
+          <strong>Show/hide columns</strong>
+          <button class="hymnal-close-btn" onclick="toggleColumnPicker()" title="Close">✕</button>
+        </div>
+        <div id="columnPickerList" class="column-picker-list"></div>
       </div>
       <div class="schedule-hint">Fill in what you plan ahead of time — picking that date in the builder will fill these into the liturgy automatically (and take priority over the RCL/BCP defaults). Leave a cell blank to let the normal defaults apply.</div>
       <div id="scheduleBatchBar" class="schedule-batch-bar">
@@ -1190,7 +1225,7 @@ const DEFAULT_TEMPLATE = [
       altLeaderText:'Having confessed our sin, let us now confess our faith in the words of the Nicene Creed.\nChristian, what do you believe?',
       altPeopleText:'I believe in one God, the Father Almighty, Maker of heaven and earth\nand of all things visible and invisible;\nand in one Lord Jesus Christ, the only-begotten Son of God,\nbegotten of the Father before all worlds,\nGod of God, Light of Light, very God of very God, begotten, not made,\nbeing of one substance with the Father; by whom all things were made;\nwho, for us men, and for our salvation, came down from Heaven,\nand was incarnate by the Holy Spirit of the virgin, Mary, and was made man;\nand was crucified also for us under Pontius Pilate; He suffered and was buried;\nand the third day he rose again, according to the Scriptures;\nand ascended into Heaven, and sits on the right hand of the Father;\nand He shall come again, with glory, to judge both the living and the dead;\nwhose kingdom shall have no end.\nAnd I believe in the Holy Spirit, the Lord, and Giver of Life,\nwho proceeds from the Father and the Son;\nwho with the Father and the Son together is worshipped and glorified;\nwho spoke by the prophets.\nAnd I believe in one, holy, catholic and apostolic church;\nI acknowledge one baptism for the remission of sins;\nand I look for the resurrection of the dead, and the life of the world to come. Amen',
       altFootnote:'*catholic means universal, and does not always refer to the Roman Catholic Church.' },
-    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn3' },
     { title:'Lectionary', type:'lectionary', reference:'', includeText:false, hasTracks:false, track:'track1', trackData:null, scheduleKey:'lectionaryReader', readings:[
       { key:'ot', label:'Old Testament', reference:'', content:'' },
       { key:'psalm', label:'Psalm', reference:'', content:'' },
@@ -1225,13 +1260,13 @@ const DEFAULT_TEMPLATE = [
     { title:'Blessing of the Bread', type:'variant-text',
       variants:[{ id:'bread-standard', label:'Standard', content:'Father, we thank you for this bread and the body of your Son. As truly as this bread arose from the earth, endured the furnace of affliction, and rose glorified for us to enjoy today, we remember and proclaim the same of our Savior. God, turn our hearts to be satisfied in our crucified and glorified Lord. In this bread, give us Christ. Amen.' }],
       activeVariantId:'bread-standard' },
-    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn6' },
     { title:'Reception of the Bread', type:'text', reference:'', content:'The bread is communion in the body of Christ. Take and eat.' },
     { title:'The Wine', type:'scripture', reference:'1 Corinthians 11:25', content:'' },
     { title:'Blessing of the Wine', type:'variant-text',
       variants:[{ id:'wine-standard', label:'Standard', content:'O God, you give wine to gladden the heart of man. Grant us gladness of heart as we remember the blood of your Son that made full atonement for our sin. We give thanks and ask your blessing. In this cup, give us Christ.' }],
       activeVariantId:'wine-standard' },
-    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'' },
+    { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn7' },
     { title:'Reception of the Wine', type:'text', reference:'', content:'The cup of blessing is communion in the blood of Christ. Let us drink together.' },
     { title:'Proclamation of Remembrance', type:'response', reference:'', locked:true,
       leaderText:'For as often as you eat this bread and drink the cup, you proclaim the Lord\'s death until he comes. (1 Cor. 11:26)',
@@ -1301,7 +1336,7 @@ function render(){
 
 function renderElement(el, movement){
   const card = document.createElement('div');
-  card.className = 'element-card';
+  card.className = 'element-card' + (el.type === 'header' ? ' element-card-header' : '');
   card.dataset.id = el.id;
 
   const defaultMinister = movement ? movement.defaultMinister : '';
@@ -1312,7 +1347,7 @@ function renderElement(el, movement){
     <div class="element-row1">
       <input class="element-title" value="${escapeAttr(el.title)}" placeholder="Element title" oninput="updateField('${el.id}','title',this.value)">
       ${el.locked ? '<span class="lock-badge" title="Standing text — part of every service">🔒</span>' : ''}
-      ${el.type !== 'hymn' ? `
+      ${el.type !== 'hymn' && el.type !== 'header' ? `
       <select class="minister-select" title="Minister leading this element" onchange="handleMinisterChange('${el.id}',this)">
         <option value="" ${!el.minister?'selected':''}>${escapeHTML(defaultLabel)}</option>
         ${ministerRoster.map(name => `<option value="${escapeAttr(name)}" ${el.minister===name?'selected':''}>${escapeHTML(name)}</option>`).join('')}
@@ -1324,6 +1359,7 @@ function renderElement(el, movement){
         <option value="text" ${el.type==='text'?'selected':''}>Text / Prayer</option>
         <option value="response" ${el.type==='response'?'selected':''}>Congregational Response</option>
         <option value="rubric" ${el.type==='rubric'?'selected':''}>Rubric</option>
+        <option value="header" ${el.type==='header'?'selected':''}>Header</option>
         <option value="hymn" ${el.type==='hymn'?'selected':''}>Hymn</option>
         <option value="lectionary" ${el.type==='lectionary'?'selected':''}>Lectionary</option>
         <option value="pastoral-prayer" ${el.type==='pastoral-prayer'?'selected':''}>Pastoral Prayer (Opening/Thanksgiving/Petitions)</option>
@@ -1336,7 +1372,9 @@ function renderElement(el, movement){
   `;
 
   let body;
-  if(el.type === 'hymn'){
+  if(el.type === 'header'){
+    body = '';
+  } else if(el.type === 'hymn'){
     body = `
       <div class="hymn-fields" ondragover="event.preventDefault();this.classList.add('hymnal-drop-active')" ondragleave="this.classList.remove('hymnal-drop-active')" ondrop="handleHymnCardDrop(event,'${el.id}')">
         <input class="hymn-number-input" placeholder="No." value="${escapeAttr(el.hymnNumber)}" oninput="updateField('${el.id}','hymnNumber',this.value)" onfocus="openHymnalPanel()">
@@ -2348,20 +2386,20 @@ async function fetchAllSharedDataFromSupabase(){
 async function pullSharedDataOnSignIn(){
   const cloud = await fetchAllSharedDataFromSupabase();
   if(!Object.keys(cloud).length) return;
-  if(cloud.schedule){
+  if(cloud.schedule && Object.keys(cloud.schedule).length >= Object.keys(scheduleData).length){
     scheduleData = cloud.schedule;
     try{ localStorage.setItem('liturgySchedule', JSON.stringify(scheduleData)); }catch(e){}
   }
-  if(cloud.ministerRoster){
+  if(cloud.ministerRoster && cloud.ministerRoster.length >= ministerRoster.length){
     ministerRoster = cloud.ministerRoster;
     try{ localStorage.setItem('ministerRoster', JSON.stringify(ministerRoster)); }catch(e){}
     renderMinisterChips();
   }
-  if(cloud.ministerColors){
+  if(cloud.ministerColors && Object.keys(cloud.ministerColors).length >= Object.keys(ministerColors).length){
     ministerColors = cloud.ministerColors;
     try{ localStorage.setItem('ministerColors', JSON.stringify(ministerColors)); }catch(e){}
   }
-  if(cloud.sermonSeriesRoster){
+  if(cloud.sermonSeriesRoster && cloud.sermonSeriesRoster.length >= sermonSeriesRoster.length){
     sermonSeriesRoster = cloud.sermonSeriesRoster;
     try{ localStorage.setItem('sermonSeriesRoster', JSON.stringify(sermonSeriesRoster)); }catch(e){}
   }
@@ -2929,18 +2967,21 @@ let hymnalRenderedCount = 0;
 const HYMNAL_PAGE_SIZE = 80;
 
 let hymnLastUsedMap = {};
+function normalizeForSearch(str){
+  return (str || '').toLowerCase().replace(/[^\w\s]/g, '').trim();
+}
 function renderHymnalResults(){
   hymnLastUsedMap = getHymnLastUsedMap();
-  const titleQ = document.getElementById('hymnalSearchTitle').value.toLowerCase().trim();
+  const titleQ = normalizeForSearch(document.getElementById('hymnalSearchTitle').value);
   const topicQ = document.getElementById('hymnalSearchTopic').value.toLowerCase().trim();
   const scrQ = document.getElementById('hymnalSearchScripture').value.toLowerCase().trim();
   const lyricsQ = document.getElementById('hymnalSearchLyrics').value.toLowerCase().trim();
   let results = HYMNAL_DATA;
   if(titleQ){
     results = results.filter(s =>
-      s.title.toLowerCase().includes(titleQ) ||
-      s.altTitle.toLowerCase().includes(titleQ) ||
-      s.tune.toLowerCase().includes(titleQ) ||
+      normalizeForSearch(s.title).includes(titleQ) ||
+      normalizeForSearch(s.altTitle).includes(titleQ) ||
+      normalizeForSearch(s.tune).includes(titleQ) ||
       s.num === titleQ
     );
   }
@@ -3315,6 +3356,7 @@ const SCHEDULE_COLUMNS = [
   { key:'hymn2', label:'Hymn 2', group:'Confession' },
   { key:'prayerVerse', label:'Prayer Verse', group:'Confession' },
   { key:'assuranceVerse', label:'Assurance Verse', group:'Confession' },
+  { key:'hymn3', label:'Hymn 3', group:'Consecration' },
   { key:'lectionaryReader', label:'Lectionary Reader', group:'Consecration', kind:'minister' },
   { key:'opening', label:'Opening', group:'Consecration' },
   { key:'thanksgiving', label:'Thanksgiving', group:'Consecration' },
@@ -3325,6 +3367,8 @@ const SCHEDULE_COLUMNS = [
   { key:'preacher', label:'Preacher', group:'Consecration', kind:'minister' },
   { key:'offering', label:'Offering', group:'Consecration' },
   { key:'hymn5', label:'Hymn 5 (Offering)', group:'Consecration' },
+  { key:'hymn6', label:'Hymn 6 (Communion)', group:'Communion' },
+  { key:'hymn7', label:'Hymn 7 (Communion)', group:'Communion' },
   { key:'benediction', label:'Benediction', group:'Commission' },
   { key:'notes', label:'Notes', group:'Misc', wide:true },
 ];
@@ -3353,10 +3397,10 @@ function saveSchedule(){
 }
 const SCHEDULE_COLUMN_WIDTHS = {
   __select:34, __date:118, scripture:177, collect:134, hymn1:90, hymn2:340,
-  prayerVerse:191, assuranceVerse:205, lectionaryReader:90,
+  prayerVerse:191, assuranceVerse:205, hymn3:150, lectionaryReader:90,
   opening:190, thanksgiving:187, petitions:174, hymn4:238,
   sermonSeries:157, sermonText:225, preacher:150, offering:157,
-  hymn5:195, benediction:190, notes:264
+  hymn5:195, hymn6:150, hymn7:150, benediction:190, notes:264
 };
 function loadScheduleColumnWidthOverrides(){
   try{
@@ -3371,8 +3415,44 @@ function saveScheduleColumnWidthOverrides(overrides){
 function computeScheduleColumnWidths(){
   return { ...SCHEDULE_COLUMN_WIDTHS, ...loadScheduleColumnWidthOverrides() };
 }
+function loadHiddenScheduleColumns(){
+  try{
+    const raw = localStorage.getItem('scheduleHiddenColumns');
+    if(raw) return new Set(JSON.parse(raw));
+  }catch(e){}
+  return new Set();
+}
+function saveHiddenScheduleColumns(hiddenSet){
+  try{ localStorage.setItem('scheduleHiddenColumns', JSON.stringify([...hiddenSet])); }catch(e){}
+}
+function getVisibleScheduleColumns(){
+  const hidden = loadHiddenScheduleColumns();
+  return SCHEDULE_COLUMNS.filter(c => !hidden.has(c.key));
+}
+function toggleScheduleColumnVisibility(key, visible){
+  const hidden = loadHiddenScheduleColumns();
+  if(visible) hidden.delete(key); else hidden.add(key);
+  saveHiddenScheduleColumns(hidden);
+  renderScheduleTable();
+}
+function renderColumnPicker(){
+  const hidden = loadHiddenScheduleColumns();
+  const list = document.getElementById('columnPickerList');
+  list.innerHTML = SCHEDULE_COLUMNS.map(c => `
+    <label class="column-picker-row">
+      <input type="checkbox" ${hidden.has(c.key) ? '' : 'checked'} onchange="toggleScheduleColumnVisibility('${c.key}', this.checked)">
+      ${escapeHTML(c.label)}
+    </label>
+  `).join('');
+}
+function toggleColumnPicker(){
+  const panel = document.getElementById('columnPicker');
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open');
+  if(opening) renderColumnPicker();
+}
 function getScheduleColKeys(){
-  return ['__select', '__date', ...SCHEDULE_COLUMNS.map(c => c.key)];
+  return ['__select', '__date', ...getVisibleScheduleColumns().map(c => c.key)];
 }
 let scheduleColResize = null;
 function startScheduleColResize(e, key){
@@ -3499,7 +3579,7 @@ function toggleSchedulePanel(){
     updatePanelLayout();
     if(currentUser){
       fetchAllSharedDataFromSupabase().then(cloud => {
-        if(cloud.schedule){
+        if(cloud.schedule && Object.keys(cloud.schedule).length >= Object.keys(scheduleData).length){
           scheduleData = cloud.schedule;
           try{ localStorage.setItem('liturgySchedule', JSON.stringify(scheduleData)); }catch(e){}
           renderScheduleTable();
@@ -3512,6 +3592,16 @@ function updateScheduleField(dateKey, field, value){
   if(!scheduleData[dateKey]) scheduleData[dateKey] = {};
   scheduleData[dateKey][field] = value;
   saveSchedule();
+
+  const pastoralPrayerFields = { opening:'opening', thanksgiving:'thanksgiving', petitions:'petitions' };
+  if(pastoralPrayerFields[field] && dateKey === document.getElementById('serviceDate')?.value){
+    const pp = findByScheduleKey('pastoralPrayer');
+    const section = pp && pp.sections && pp.sections.find(s => s.key === pastoralPrayerFields[field]);
+    if(section){
+      section.reference = value;
+      render();
+    }
+  }
 }
 function updateScheduleDate(oldKey, newKey){
   if(!newKey || oldKey === newKey) return;
@@ -3549,8 +3639,9 @@ function scheduleColorDotHtml(dateKey){
 }
 function renderScheduleTable(){
   const grid = document.getElementById('scheduleTable');
+  const visibleCols = getVisibleScheduleColumns();
   const groups = [];
-  SCHEDULE_COLUMNS.forEach(c => { if(!groups.length || groups[groups.length-1].name !== c.group) groups.push({ name:c.group, count:1 }); else groups[groups.length-1].count++; });
+  visibleCols.forEach(c => { if(!groups.length || groups[groups.length-1].name !== c.group) groups.push({ name:c.group, count:1 }); else groups[groups.length-1].count++; });
 
   const todayStr = new Date().toISOString().slice(0,10);
   const showPast = document.getElementById('scheduleShowPast')?.checked;
@@ -3558,7 +3649,7 @@ function renderScheduleTable(){
   const allSelected = dates.length > 0 && dates.every(d => scheduleSelectedDates.has(d));
 
   const widths = computeScheduleColumnWidths();
-  grid.style.gridTemplateColumns = widths['__select'] + 'px ' + widths['__date'] + 'px ' + SCHEDULE_COLUMNS.map(c => widths[c.key] + 'px').join(' ');
+  grid.style.gridTemplateColumns = widths['__select'] + 'px ' + widths['__date'] + 'px ' + visibleCols.map(c => widths[c.key] + 'px').join(' ');
 
   let head = `<div class="sg-head sg-group sg-selecthead" style="grid-column:span 2;"></div>` +
     groups.map(g => `<div class="sg-head sg-group" style="grid-column:span ${g.count};">${escapeHTML(g.name)}</div>`).join('') +
@@ -3570,7 +3661,7 @@ function renderScheduleTable(){
       `Date` +
       `<span class="sg-resize-handle" onmousedown="startScheduleColResize(event,'__date')"></span>` +
     `</div>` +
-    SCHEDULE_COLUMNS.map(c => `<div class="sg-head">${escapeHTML(c.label)}<span class="sg-resize-handle" onmousedown="startScheduleColResize(event,'${c.key}')"></span></div>`).join('');
+    visibleCols.map(c => `<div class="sg-head">${escapeHTML(c.label)}<span class="sg-resize-handle" onmousedown="startScheduleColResize(event,'${c.key}')"></span></div>`).join('');
 
   const ministerOptions = name => `<option value="">—</option>` + ministerRoster.map(m => `<option value="${escapeAttr(m)}" ${name===m?'selected':''}>${escapeHTML(m)}</option>`).join('');
   const seriesOptions = name => `<option value="">—</option>` + sermonSeriesRoster.map(s => `<option value="${escapeAttr(s)}" ${name===s?'selected':''}>${escapeHTML(s)}</option>`).join('') + `<option value="__add__">+ Add new series…</option>`;
@@ -3578,7 +3669,7 @@ function renderScheduleTable(){
   let rows = dates.map(dateKey => {
     const entry = scheduleData[dateKey] || {};
     const preacherColor = entry.preacher && ministerColors[entry.preacher] ? ministerColors[entry.preacher] : '';
-    const cells = SCHEDULE_COLUMNS.map(c => {
+    const cells = visibleCols.map(c => {
       const val = entry[c.key] || '';
       let inputHtml;
       if(c.kind === 'minister'){
@@ -3865,7 +3956,10 @@ async function checkForAutosaveRestore(){
   const when = new Date(snap.savedAt).toLocaleString();
   const label = snap.serviceTitle || snap.serviceDate || 'a recent session';
   const ok = await customConfirm(`Found unsaved work from ${when} (${label}). Restore it?`);
-  if(!ok) return;
+  if(!ok){
+    try{ localStorage.removeItem('currentAutosave'); }catch(e){}
+    return;
+  }
   document.getElementById('churchTitle').innerText = snap.churchTitle || "The Lord's Service";
   document.getElementById('serviceTitle').value = snap.serviceTitle || '';
   document.getElementById('serviceDate').value = snap.serviceDate || '';
