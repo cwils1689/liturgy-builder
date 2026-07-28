@@ -840,6 +840,16 @@
     border-radius:4px; padding:5px 9px; cursor:pointer;
   }
   .series-picker-add button:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .export-menu-popover{
+    display:none; position:fixed; z-index:2000;
+    background:#fff; border:1px solid var(--border); border-radius:8px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2); min-width:210px; padding:4px;
+  }
+  .export-menu-row{
+    display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:5px; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:13px; color:var(--ink); white-space:nowrap;
+  }
+  .export-menu-row:hover{ background:var(--bg); }
   .rt-print{ display:none; }
   .rt-print mark{ background:#fff59d !important; padding:0 1px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .rt-print ol, .rt-print ul, .print-response ol, .print-response ul{ margin:4px 0; padding-left:22px; }
@@ -1004,6 +1014,8 @@
     .sync-status-btn{ display:none !important; }
     .score-lightbox{ display:none !important; }
     .floating-toolbar{ display:none !important; }
+    .series-picker-popover{ display:none !important; }
+    .export-menu-popover{ display:none !important; }
     .hymnal-panel{ display:none !important; }
     .services-panel{ display:none !important; }
     .schedule-overlay{ display:none !important; }
@@ -1065,7 +1077,7 @@
   </header>
 
   <div class="toolbar">
-    <button class="primary" onclick="window.print()">🖨 Export / Print to PDF</button>
+    <button class="primary" onclick="openExportMenu(this)">📤 Export ▾</button>
     <button onclick="saveToFile()">💾 Save Liturgy File</button>
     <button onclick="document.getElementById('loadInput').click()">📂 Load Liturgy File</button>
     <button onclick="toggleSchedulePanel()">📅 Planner</button>
@@ -1173,6 +1185,8 @@
 
   <div id="seriesPickerPopover" class="series-picker-popover"></div>
 
+  <div id="exportMenuPopover" class="export-menu-popover"></div>
+
   <div id="scoreLightbox" class="score-lightbox" onclick="closeScoreLightboxFromBackdrop(event)">
     <button class="score-lightbox-close" onclick="closeScoreLightbox()" title="Close">✕</button>
     <div class="score-lightbox-content" id="scoreLightboxContent"></div>
@@ -1204,7 +1218,7 @@
   <div id="movements"></div>
 
   <div class="toolbar toolbar-bottom">
-    <button class="primary" onclick="window.print()">🖨 Export / Print to PDF</button>
+    <button class="primary" onclick="openExportMenu(this)">📤 Export ▾</button>
     <button onclick="saveToFile()">💾 Save Liturgy File</button>
   </div>
 
@@ -1423,8 +1437,8 @@ function renderElement(el, movement){
   } else if(el.type === 'hymn'){
     body = `
       <div class="hymn-fields" ondragover="event.preventDefault();this.classList.add('hymnal-drop-active')" ondragleave="this.classList.remove('hymnal-drop-active')" ondrop="handleHymnCardDrop(event,'${el.id}')">
-        <input class="hymn-number-input" placeholder="No." value="${escapeAttr(el.hymnNumber)}" oninput="updateField('${el.id}','hymnNumber',this.value)" onfocus="openHymnalPanel()">
-        <input class="hymn-title-input" placeholder="Hymn title" value="${escapeAttr(el.hymnTitle)}" oninput="updateField('${el.id}','hymnTitle',this.value)" onfocus="openHymnalPanel()">
+        <input class="hymn-number-input" placeholder="No." value="${escapeAttr(el.hymnNumber)}" oninput="updateField('${el.id}','hymnNumber',this.value);syncHymnalSearchFromField(this.value)" onfocus="openHymnalPanel()">
+        <input class="hymn-title-input" placeholder="Hymn title" value="${escapeAttr(el.hymnTitle)}" oninput="updateField('${el.id}','hymnTitle',this.value);syncHymnalSearchFromField(this.value)" onfocus="openHymnalPanel()">
         ${HYMN_FILE_MAP[el.hymnNumber] ? `<button class="hymn-play-btn" onclick="playHymnAudio('${el.hymnNumber}')" title="Play this hymn">▶</button>` : ''}
       </div>
     `;
@@ -2094,6 +2108,289 @@ function saveToFile(){
   markBackupDone();
 }
 
+/* ---------------------------------------------------------------------
+   Word (.docx) export. A .docx is just a ZIP of XML parts, so this
+   hand-builds the OOXML directly (word/document.xml + the handful of
+   parts Word requires) and zips it with JSZip, which the hymnal
+   importer already loads — no extra dependency needed. Schema element
+   order below (pBdr, spacing, ind, jc in pPr; b, i, strike, color, sz,
+   highlight, u in rPr) is not arbitrary — Word/LibreOffice reject or
+   silently reorder anything out of sequence, so don't rearrange these
+   without re-checking against the OOXML schema.
+--------------------------------------------------------------------- */
+function docxEsc(str){
+  return (str==null?'':String(str)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function docxRun(text, opts){
+  opts = opts || {};
+  let rpr = '';
+  if(opts.font) rpr += `<w:rFonts w:ascii="${opts.font}" w:hAnsi="${opts.font}" w:cs="${opts.font}"/>`;
+  if(opts.bold) rpr += '<w:b/>';
+  if(opts.italic) rpr += '<w:i/>';
+  if(opts.strike) rpr += '<w:strike/>';
+  if(opts.color) rpr += `<w:color w:val="${opts.color}"/>`;
+  if(opts.size) rpr += `<w:sz w:val="${opts.size}"/>`;
+  if(opts.highlight) rpr += '<w:highlight w:val="yellow"/>';
+  if(opts.underline) rpr += '<w:u w:val="single"/>';
+  const rprxml = rpr ? `<w:rPr>${rpr}</w:rPr>` : '';
+  return `<w:r>${rprxml}<w:t xml:space="preserve">${docxEsc(text)}</w:t></w:r>`;
+}
+function docxBreakRun(){ return '<w:r><w:br/></w:r>'; }
+function docxPara(runsXml, opts){
+  opts = opts || {};
+  let ppr = '';
+  if(opts.border === 'topbottom'){
+    ppr += '<w:pBdr><w:top w:val="single" w:sz="6" w:space="4" w:color="999999"/><w:bottom w:val="single" w:sz="6" w:space="4" w:color="999999"/></w:pBdr>';
+  }
+  if(opts.spacingBefore != null || opts.spacingAfter != null){
+    let attrs = '';
+    if(opts.spacingBefore != null) attrs += ` w:before="${opts.spacingBefore}"`;
+    if(opts.spacingAfter != null) attrs += ` w:after="${opts.spacingAfter}"`;
+    ppr += `<w:spacing${attrs}/>`;
+  }
+  if(opts.indent != null) ppr += `<w:ind w:left="${opts.indent}"/>`;
+  if(opts.align) ppr += `<w:jc w:val="${opts.align}"/>`;
+  const pprxml = ppr ? `<w:pPr>${ppr}</w:pPr>` : '';
+  return `<w:p>${pprxml}${runsXml||''}</w:p>`;
+}
+
+// Rich-text HTML (our own sanitized allow-list: b/strong, i/em, u, s/strike/del,
+// mark, ol/ul/li, br, div, p) -> an array of paragraphs, each an array of
+// {text, flags} runs. Block tags (p/div/li) start a new paragraph; br is a
+// soft line break folded into a hard paragraph break here for simplicity.
+function htmlToDocxParagraphs(html){
+  if(!html) return [];
+  const tokens = html.split(/(<[^>]+>)/);
+  const paragraphs = [];
+  let cur = [];
+  const flagStack = [{}];
+  const listStack = []; // [{ type: 'OL'|'UL', n: 0 }]
+  const flush = () => { paragraphs.push(cur); cur = []; };
+  const curFlags = () => Object.assign({}, ...flagStack);
+  const INLINE = { B:'bold', STRONG:'bold', I:'italic', EM:'italic', U:'underline', S:'strike', STRIKE:'strike', DEL:'strike', MARK:'highlight' };
+  const BLOCK = new Set(['P','DIV']);
+  const decode = t => t.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ');
+
+  for(const tok of tokens){
+    if(!tok) continue;
+    if(tok.startsWith('<')){
+      const m = tok.match(/^<\/?([a-zA-Z0-9]+)/);
+      if(!m) continue;
+      const tag = m[1].toUpperCase();
+      const closing = tok.startsWith('</');
+      if(tag === 'BR'){
+        cur.push({ brk:true });
+      } else if(BLOCK.has(tag)){
+        if(closing || cur.length) flush();
+      } else if(tag === 'OL' || tag === 'UL'){
+        if(!closing) listStack.push({ type:tag, n:0 });
+        else listStack.pop();
+      } else if(tag === 'LI'){
+        if(closing){
+          flush();
+        } else {
+          if(cur.length) flush();
+          let prefix = '\u2022 ';
+          if(listStack.length){
+            const top = listStack[listStack.length-1];
+            if(top.type === 'OL'){ top.n++; prefix = top.n + '. '; }
+          }
+          cur.push({ text: prefix, flags: curFlags() });
+        }
+      } else if(INLINE[tag]){
+        const name = INLINE[tag];
+        if(closing){
+          for(let i = flagStack.length-1; i>=0; i--){
+            if(flagStack[i][name]){ delete flagStack[i][name]; break; }
+          }
+        } else {
+          flagStack.push({ [name]: true });
+        }
+      }
+    } else {
+      const text = decode(tok);
+      if(text) cur.push({ text, flags: curFlags() });
+    }
+  }
+  if(cur.length) flush();
+  return paragraphs;
+}
+function docxParagraphsToXml(paragraphs, opts){
+  opts = opts || {};
+  return paragraphs.map(para => {
+    let runsXml = '';
+    para.forEach(run => {
+      if(run.brk){ runsXml += docxBreakRun(); return; }
+      runsXml += docxRun(run.text, run.flags);
+    });
+    return docxPara(runsXml, { align: opts.align, indent: opts.indent, spacingAfter: opts.spacingAfter != null ? opts.spacingAfter : 120 });
+  }).join('');
+}
+function docxRichXml(html, opts){
+  return docxParagraphsToXml(htmlToDocxParagraphs(html), opts);
+}
+// Mirrors buildResponsePrintHTML/speakerLine's exact logic (Pastor bold prefix,
+// skipLeader, seasonal alt replace/add, footnote) so the Word export matches
+// what actually prints for a "response" element.
+function docxSpeakerPara(speaker, text){
+  const paras = htmlToDocxParagraphs(text);
+  const prefixRun = docxRun(speaker + ': ', { bold: true });
+  if(!paras.length) return docxPara(prefixRun, { spacingAfter: 80 });
+  const first = paras[0];
+  let firstRunsXml = prefixRun;
+  first.forEach(run => {
+    if(run.brk){ firstRunsXml += docxBreakRun(); return; }
+    const flags = Object.assign({}, run.flags);
+    if(speaker === 'Pastor') flags.bold = true;
+    firstRunsXml += docxRun(run.text, flags);
+  });
+  let out = docxPara(firstRunsXml, { spacingAfter: 80 });
+  out += docxParagraphsToXml(paras.slice(1));
+  return out;
+}
+function docxResponseXml(el){
+  const useAlt = el.allowSeasonal && el.altActive;
+  let xml = '';
+  if(useAlt && el.altMode === 'replace'){
+    xml += docxSpeakerPara('Pastor', el.altLeaderText) + docxSpeakerPara('All', el.altPeopleText);
+    const fn = el.altFootnote || el.footnote;
+    if(fn) xml += docxPara(docxRun(fn, { italic:true, size:18 }), { spacingAfter:120 });
+    return xml;
+  }
+  if(useAlt) xml += docxSpeakerPara('Pastor', el.altLeaderText) + docxSpeakerPara('All', el.altPeopleText);
+  if(!el.skipLeader) xml += docxSpeakerPara('Pastor', el.leaderText);
+  xml += docxSpeakerPara('All', el.peopleText);
+  if(el.footnote) xml += docxPara(docxRun(el.footnote, { italic:true, size:18 }), { spacingAfter:120 });
+  return xml;
+}
+const DOCX_SERIF = 'Georgia'; // stand-in for the app's 'Spectral' webfont — Georgia is reliably available in Word/Google Docs/Zoho, so titles keep the serif look without depending on a font the reader may not have installed
+function docxElementTitle(title, minister){
+  if(!title) return '';
+  let runs = docxRun(title, { bold:true, size:21, font:DOCX_SERIF });
+  if(minister) runs += docxRun('  — ' + minister, { italic:true, size:18 });
+  return docxPara(runs, { spacingBefore:160, spacingAfter:40 });
+}
+function docxHeaderElement(title){
+  return docxPara(docxRun((title||'').toUpperCase(), { bold:true, size:22, font:DOCX_SERIF }), { align:'center', border:'topbottom', spacingBefore:160, spacingAfter:160 });
+}
+function buildLiturgyDocxBody(){
+  const church = document.getElementById('churchTitle').innerText || '';
+  const eyebrow = document.querySelector('.eyebrow')?.textContent || '';
+  const serviceTitle = document.getElementById('serviceTitle').value || '';
+  const serviceDateRaw = document.getElementById('serviceDate').value || '';
+  let dateStr = '';
+  if(serviceDateRaw){
+    try{
+      dateStr = new Date(serviceDateRaw + 'T00:00:00').toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    }catch(e){ dateStr = serviceDateRaw; }
+  }
+
+  let body = '';
+  if(eyebrow) body += docxPara(docxRun(eyebrow, { italic:true, size:18 }), { align:'center', spacingAfter:20 });
+  body += docxPara(docxRun(church, { bold:true, size:34, font:DOCX_SERIF }), { align:'center', spacingAfter:40 });
+  const sub = [serviceTitle, dateStr].filter(Boolean).join('  |  ');
+  if(sub) body += docxPara(docxRun(sub, { size:22 }), { align:'center', spacingAfter:300 });
+
+  state.forEach(movement => {
+    body += docxPara(docxRun((movement.label||'').toUpperCase(), { bold:true, size:26, font:DOCX_SERIF }), { align:'center', spacingBefore:300, spacingAfter:120 });
+
+    movement.elements.forEach(el => {
+      const effectiveMinister = el.minister || movement.defaultMinister || '';
+
+      if(el.type === 'header'){
+        body += docxHeaderElement(el.title);
+        return;
+      }
+
+      body += docxElementTitle(el.title, effectiveMinister);
+
+      if(el.type === 'hymn'){
+        if(el.hymnNumber || el.hymnTitle){
+          let runs = '';
+          if(el.hymnNumber) runs += docxRun(el.hymnNumber + '  ', {});
+          if(el.hymnTitle) runs += docxRun(el.hymnTitle, { italic:true, font:DOCX_SERIF });
+          body += docxPara(runs, { spacingAfter:120 });
+        }
+      } else if(el.type === 'exhortation'){
+        if(el.subtitle) body += docxPara(docxRun(el.subtitle, { bold:true, size:20 }), { spacingAfter:60 });
+        body += docxRichXml(el.content);
+      } else if(el.type === 'sermon'){
+        if(el.sermonTitle) body += docxPara(docxRun(el.sermonTitle, { bold:true }), { spacingAfter:40 });
+        if(el.passageReference) body += docxPara(docxRun(el.passageReference, { italic:true }), { spacingAfter:40 });
+        if(el.series) body += docxPara(docxRun('Series: ' + el.series, { italic:true, size:18 }), { spacingAfter:120 });
+        if(el.hasManuscript) body += docxRichXml(el.manuscript);
+      } else if(el.type === 'variant-text'){
+        const activeId = el.activeVariantId || (el.variants[0] && el.variants[0].id);
+        const active = el.variants.find(v => v.id === activeId) || el.variants[0];
+        if(active) body += docxRichXml(active.content);
+      } else if(el.type === 'response'){
+        body += docxResponseXml(el);
+      } else if(el.type === 'lectionary'){
+        el.readings.forEach(r => {
+          if(r.reference) body += docxPara(docxRun(r.label + ': ', { bold:true }) + docxRun(r.reference), { spacingAfter:40 });
+          else body += docxPara(docxRun(r.label + ':', { bold:true }), { spacingAfter:40 });
+          if(el.includeText) body += docxRichXml(r.content);
+        });
+      } else if(el.type === 'pastoral-prayer'){
+        el.sections.forEach(s => {
+          const runs = s.reference ? (docxRun(s.label + ': ', { bold:true }) + docxRun(s.reference)) : docxRun(s.label + ':', { bold:true });
+          body += docxPara(runs, { spacingAfter:40 });
+          body += docxRichXml(s.content);
+        });
+      } else {
+        if(el.type === 'scripture' && el.reference) body += docxPara(docxRun(el.reference, { italic:true }), { spacingAfter:40 });
+        body += docxRichXml(el.content);
+      }
+    });
+  });
+  return body;
+}
+async function assembleDocxBlob(bodyXml){
+  const CONTENT_TYPES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+</Types>`;
+  const RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+  const DOC_RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`;
+  const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults>
+  <w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>
+</w:styles>`;
+  const SECT = '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>';
+  const DOCUMENT = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${bodyXml}${SECT}</w:body></w:document>`;
+
+  const zip = new JSZip();
+  zip.file('[Content_Types].xml', CONTENT_TYPES);
+  zip.file('_rels/.rels', RELS);
+  zip.file('word/document.xml', DOCUMENT);
+  zip.file('word/_rels/document.xml.rels', DOC_RELS);
+  zip.file('word/styles.xml', STYLES);
+  return zip.generateAsync({ type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+}
+async function exportLiturgyDocx(){
+  const bodyXml = buildLiturgyDocxBody();
+  const blob = await assembleDocxBlob(bodyXml);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = document.getElementById('serviceDate').value || new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `liturgy-${dateStr}.docx`;
+  a.click();
+  URL.revokeObjectURL(url);
+  markBackupDone();
+}
+
 document.getElementById('loadInput').addEventListener('change', function(e){
   const file = e.target.files[0];
   if(!file) return;
@@ -2423,20 +2720,22 @@ async function fetchAllServiceSnapshotsFromSupabase(){
 
 /* ---------------------------------------------------------------------
    Phase 2 cloud sync — the Planner (Schedule) and the shared roster
-   data (ministers, minister colors, sermon series). Same additive,
-   fails-safe-to-local pattern as the liturgy archive: one small
-   key/value table in Supabase holds each of these as a single JSON
-   document, keyed by name. Personal preferences (the ESV key, column
-   widths) deliberately stay local-only — those aren't shared data.
+   data (ministers, minister colors, sermon series, ESV API key). Same
+   additive, fails-safe-to-local pattern as the liturgy archive: one
+   small key/value table in Supabase holds each of these as a single
+   JSON document, keyed by name. Column widths and visibility stay
+   local-only (personal, not shared).
 --------------------------------------------------------------------- */
 async function pushSharedDataToSupabase(key, data){
-  if(!sbClient || !currentUser) return;
+  if(!sbClient || !currentUser) return false;
   try{
     await sbClient.from('shared_data').upsert({
       key, data, updated_at: new Date().toISOString()
     }, { onConflict: 'key' });
+    return true;
   }catch(e){
     console.error('Could not sync "' + key + '" to the cloud; still saved locally.', e);
+    return false;
   }
 }
 async function fetchAllSharedDataFromSupabase(){
@@ -2621,13 +2920,21 @@ function syncLectionary(dateStr){
 function loadEsvKey(){
   try{ return localStorage.getItem('esvApiKey') || ''; }catch(e){ return ''; }
 }
-function saveEsvKey(){
+async function saveEsvKey(){
   const val = document.getElementById('esvApiKey').value.trim();
   try{ localStorage.setItem('esvApiKey', val); }catch(e){}
-  pushSharedDataToSupabase('esvApiKey', val);
   const status = document.getElementById('esvKeyStatus');
-  status.textContent = val ? 'Saved ✓' : '';
-  status.className = val ? 'saved' : '';
+  if(!val){ status.textContent = ''; status.className = ''; return; }
+  if(!currentUser){
+    status.textContent = 'Saved on this device only — sign in (☁️) to share it across devices';
+    status.className = '';
+    return;
+  }
+  status.textContent = 'Saving…';
+  status.className = '';
+  const synced = await pushSharedDataToSupabase('esvApiKey', val);
+  status.textContent = synced ? 'Saved & synced ✓' : 'Saved on this device — cloud sync failed, try again';
+  status.className = synced ? 'saved' : '';
 }
 (function initEsvKey(){
   const key = loadEsvKey();
@@ -2854,6 +3161,37 @@ function saveSermonSeriesRoster(){
   try{ localStorage.setItem('sermonSeriesRoster', JSON.stringify(sermonSeriesRoster)); }catch(e){}
   pushSharedDataToSupabase('sermonSeriesRoster', sermonSeriesRoster);
 }
+/* ---------------------------------------------------------------------
+   Export menu — one small dropdown (Print/PDF vs. Word) in place of two
+   separate toolbar buttons, opened from either the top or bottom toolbar.
+--------------------------------------------------------------------- */
+function openExportMenu(triggerEl){
+  const pop = document.getElementById('exportMenuPopover');
+  pop.innerHTML = `
+    <div class="export-menu-row" onclick="closeExportMenu(); window.print();">🖨 Print / Save as PDF</div>
+    <div class="export-menu-row" onclick="closeExportMenu(); exportLiturgyDocx();">📝 Export to Word (.docx)</div>
+  `;
+  pop.style.display = 'block';
+  const rect = triggerEl.getBoundingClientRect();
+  const popRect = pop.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 4;
+  if(left + popRect.width > window.innerWidth - 8) left = window.innerWidth - popRect.width - 8;
+  if(top + popRect.height > window.innerHeight - 8) top = rect.top - popRect.height - 4;
+  pop.style.left = Math.max(8, left) + 'px';
+  pop.style.top = Math.max(8, top) + 'px';
+  setTimeout(() => document.addEventListener('mousedown', exportMenuOutsideClick), 0);
+}
+function closeExportMenu(){
+  const pop = document.getElementById('exportMenuPopover');
+  pop.style.display = 'none';
+  document.removeEventListener('mousedown', exportMenuOutsideClick);
+}
+function exportMenuOutsideClick(e){
+  const pop = document.getElementById('exportMenuPopover');
+  if(!pop.contains(e.target)) closeExportMenu();
+}
+
 function addSeries(name){
   name = (name || '').trim();
   if(!name || sermonSeriesRoster.includes(name)) return;
@@ -3124,6 +3462,15 @@ function openHymnalPanel(){
   }
   loadHymnLyricsIfNeeded();
   updatePanelLayout();
+}
+// Mirrors whatever's typed into a Hymn number/title field (Builder or
+// Planner) into the hymnal panel's own title search, so the results list
+// filters live instead of requiring a separate search box.
+function syncHymnalSearchFromField(value){
+  const input = document.getElementById('hymnalSearchTitle');
+  if(!input) return;
+  input.value = value;
+  renderHymnalResults();
 }
 function updatePanelLayout(){
   const hymnalOpen = document.getElementById('hymnalPanel').classList.contains('open');
@@ -3752,18 +4099,48 @@ async function deleteServiceFromPanel(dateStr){
   if(sbClient && currentUser){
     try{ await sbClient.from('liturgies').delete().eq('service_date', dateStr); }catch(e){ console.error('Could not delete the cloud copy of this service.', e); }
   }
+  if(document.getElementById('serviceDate').value === dateStr){
+    // The service currently open in the Builder was the one just deleted —
+    // clear the session so the next autosave tick doesn't silently recreate
+    // it from whatever's still sitting in memory.
+    currentLoadedDate = null;
+    document.getElementById('serviceDate').value = '';
+    document.getElementById('serviceTitle').value = '';
+    document.getElementById('churchTitle').innerText = "The Lord's Service";
+    loadStateFromTemplate(DEFAULT_TEMPLATE);
+    render();
+    updateCurrentDateDisplay();
+  }
   renderServicesList();
 }
-function openServiceFromPanel(dateStr){
+async function openServiceFromPanel(dateStr){
   document.getElementById('serviceDate').value = dateStr;
-  onDateChange();
+  await onDateChange();
   renderServicesList();
 }
-function createNewServiceFromPanel(){
+async function createNewServiceFromPanel(){
   const dateStr = document.getElementById('servicesPanelDate').value;
   if(!dateStr){ alert('Pick a date first.'); return; }
+
+  // Never silently blank out a date that already has a service — check both
+  // the local archive and (if signed in) the cloud before creating anything.
+  const archive = loadLiturgyArchive();
+  let existing = (archive[dateStr] && archive[dateStr].movements) ? archive[dateStr] : null;
+  if(!existing && currentUser){
+    existing = await fetchLiturgyFromSupabase(dateStr);
+  }
+  if(existing){
+    alert(`A service already exists for ${formatServiceDateLabel(dateStr)} — opening it instead of creating a new one.`);
+    document.getElementById('serviceDate').value = dateStr;
+    await onDateChange();
+    renderServicesList();
+    return;
+  }
+
   document.getElementById('serviceDate').value = dateStr;
-  onDateChange();
+  await onDateChange(); // must finish (and replace `state`) before performAutosave reads it below —
+                        // calling this without awaiting let autosave capture the previous service's
+                        // still-in-memory state and save it under the new date instead of a fresh template
   performAutosave();
   renderServicesList();
 }
@@ -3877,8 +4254,9 @@ function renderScheduleTable(){
       } else {
         const isHymnCol = c.key.startsWith('hymn');
         const hymnFocus = isHymnCol ? ' onfocus="openHymnalPanel()"' : '';
+        const hymnFilter = isHymnCol ? ' oninput="syncHymnalSearchFromField(this.value)"' : '';
         const hymnDrop = isHymnCol ? ` ondragover="event.preventDefault()" ondrop="handleScheduleHymnDrop(event,'${dateKey}','${c.key}')"` : '';
-        inputHtml = `<input type="text" value="${escapeAttr(val)}" onchange="updateScheduleField('${dateKey}','${c.key}',this.value)"${hymnFocus}${hymnDrop}>`;
+        inputHtml = `<input type="text" value="${escapeAttr(val)}" onchange="updateScheduleField('${dateKey}','${c.key}',this.value)"${hymnFocus}${hymnFilter}${hymnDrop}>`;
       }
       const bg = (c.key === 'preacher' && preacherColor) ? ` style="background:${preacherColor}22;"` : '';
       return `<div class="sg-cell"${bg}>${inputHtml}</div>`;
@@ -4121,9 +4499,21 @@ function performAutosave(){
   pushLiturgyToSupabase(dateStr, snapshot);
 }
 setInterval(performAutosave, 8000);
-window.addEventListener('beforeunload', performAutosave);
+window.addEventListener('beforeunload', function(){
+  performAutosave();
+  try{ localStorage.setItem('lastSessionClean', '1'); }catch(e){}
+});
 
 async function checkForAutosaveRestore(){
+  // Only the previous session's *unclean* exit (crash, force-quit, killed tab)
+  // means something might genuinely be at risk — a normal close/refresh
+  // already ran performAutosave and is safely in the archive already, so
+  // there's nothing to "restore" and no reason to ask.
+  let cleanExit = false;
+  try{ cleanExit = localStorage.getItem('lastSessionClean') === '1'; }catch(e){}
+  try{ localStorage.removeItem('lastSessionClean'); }catch(e){} // this session is "dirty" again until it exits cleanly
+  if(cleanExit) return;
+
   let snap;
   try{
     const raw = localStorage.getItem('currentAutosave');
@@ -4253,6 +4643,20 @@ loadStateFromTemplate(DEFAULT_TEMPLATE);
 render();
 checkForAutosaveRestore();
 restoreSupabaseSession().then(checkBackupNudge);
+
+// This is a single-page app with nowhere real for "back" to go, so an
+// accidental edge-swipe-back gesture (common on mobile) would otherwise
+// leave the app entirely, potentially losing whatever wasn't autosaved
+// yet. Keep an extra history entry underneath the app at all times —
+// on 'back', the browser lands on that entry instead of leaving, and
+// this immediately re-adds another one, so the app can never actually
+// be swiped away from.
+try{
+  history.pushState(null, '', location.href);
+  window.addEventListener('popstate', function(){
+    history.pushState(null, '', location.href);
+  });
+}catch(e){}
 </script>
 </body>
 </html>
