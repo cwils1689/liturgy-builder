@@ -117,12 +117,12 @@
     z-index:50;
   }
   .settings-menu.open{ display:block; }
-  .settings-menu .esv-settings, .settings-menu .minister-settings{
+  .settings-menu .esv-settings{
     justify-content:flex-start;
     margin-top:0;
   }
   .settings-menu .esv-settings{ padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--border); }
-  .settings-menu .esv-settings input, .settings-menu .minister-settings input{ width:auto; flex:1; }
+  .settings-menu .esv-settings input{ width:auto; flex:1; }
   header.masthead .eyebrow{
     font-size:11px;
     letter-spacing:0.14em;
@@ -211,22 +211,19 @@
   #esvKeyStatus{ font-weight:600; }
   #esvKeyStatus.saved{ color:#3F6B4A; }
 
-  .minister-settings{
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    font-size:11.5px; color:var(--ink-faint); margin-top:6px; flex-wrap:wrap;
+  .ministers-panel-body{ padding:14px 16px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; }
+  .ministers-panel-hint{ font-size:11.5px; color:var(--ink-soft); line-height:1.5; }
+  .ministers-add-row{ display:flex; gap:8px; }
+  .ministers-add-row input{
+    flex:1; font-family:'Inter',sans-serif; font-size:13px;
+    border:1px solid var(--border); border-radius:5px; padding:7px 9px; color:var(--ink);
   }
-  .minister-settings label{ font-weight:600; }
-  .minister-settings input{
-    font-family:'Inter',sans-serif; font-size:11.5px;
-    border:1px solid var(--border); border-radius:4px;
-    padding:5px 8px; width:120px; background:#fff; color:var(--ink);
+  .ministers-add-row button{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
+    border:1px solid var(--gold); background:var(--gold); color:#fff;
+    border-radius:5px; padding:8px 12px; cursor:pointer; flex-shrink:0;
   }
-  .minister-settings button{
-    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
-    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
-    border-radius:4px; padding:5px 10px; cursor:pointer;
-  }
-  .minister-settings button:hover{ border-color:var(--ink-soft); }
+  .ministers-add-row button:hover{ opacity:0.88; }
   .minister-chips{ display:flex; gap:5px; flex-wrap:wrap; }
   .minister-chip{
     display:flex; align-items:center; gap:4px;
@@ -381,6 +378,11 @@
     padding:2px 0;
   }
   .element-title:focus{ outline:none; border-bottom:1px solid var(--m-color); }
+  .rubric-no-heading-tag{
+    font-family:'Inter',sans-serif; font-size:11px; font-weight:600; font-style:italic;
+    color:var(--ink-faint); flex:1;
+  }
+  .rich-editor.rubric-editor{ font-style:italic; }
   .element-card-header{ margin-top:10px; }
   .element-card-header .element-title{
     font-size:14.5px; font-weight:700; text-align:center;
@@ -419,6 +421,12 @@
     padding:2px 4px;
   }
   .remove-btn:hover{ color:#8a3a3a; }
+  .response-lines-list{ display:flex; flex-direction:column; gap:8px; }
+  .extra-line-row{ align-items:center; }
+  .extra-line-drag-handle{
+    cursor:grab; color:var(--ink-faint); user-select:none;
+    line-height:1; font-size:15px; flex-shrink:0; padding:2px 1px 0 0;
+  }
   .reference-input{
     width:100%;
     font-size:12.5px;
@@ -627,6 +635,87 @@
   }
   .hymnal-drop-active{ outline:2px dashed var(--gold); outline-offset:-2px; }
 
+  /* -----------------------------------------------------------------
+     Live Service Mode — a full-screen, read-only, clean rendering of
+     the current liturgy for reading from an iPad during the service.
+     Renders purely from the in-memory `state` (via buildLiveModeHTML),
+     making zero network calls, so it keeps working even if sanctuary
+     wifi drops mid-service as long as the liturgy was already open.
+     Sizes use em (not rem) throughout so the size cycle buttons can
+     scale the whole thing by changing font-size on .live-mode-scroll.
+  ----------------------------------------------------------------- */
+  .live-mode-overlay{
+    display:none; position:fixed; inset:0; z-index:5000;
+    background:#fdfbf6; flex-direction:column;
+  }
+  .live-mode-overlay.open{ display:flex; }
+  .live-mode-overlay.dark{ background:#15130f; }
+  .live-mode-topbar{
+    display:flex; align-items:center; justify-content:flex-end; gap:8px;
+    padding:10px 16px; border-bottom:1px solid var(--border); flex-shrink:0;
+  }
+  .live-mode-overlay.dark .live-mode-topbar{ border-bottom-color:#372f22; }
+  .live-mode-topbar button{
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:600;
+    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
+    border-radius:6px; padding:8px 13px; cursor:pointer;
+  }
+  .live-mode-topbar button:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .live-mode-overlay.dark .live-mode-topbar button{ background:#231f18; color:#d8d0bd; border-color:#3a3323; }
+  .live-mode-overlay.dark .live-mode-topbar button:hover{ border-color:#5a4f37; color:#f3efe4; }
+  .live-mode-exit-btn{ margin-left:8px; }
+  .live-mode-scroll{
+    flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    padding:28px 24px 100px; max-width:760px; margin:0 auto; width:100%;
+    box-sizing:border-box; font-size:18px;
+  }
+  .live-mode-scroll.size-sm{ font-size:15px; }
+  .live-mode-scroll.size-md{ font-size:18px; }
+  .live-mode-scroll.size-lg{ font-size:22px; }
+  .live-mode-scroll.size-xl{ font-size:27px; }
+  .live-mode-header{ text-align:center; margin-bottom:2em; }
+  .live-mode-header h1{
+    font-family:'Spectral',serif; font-weight:600; font-size:1.7em; margin:0 0 0.3em; color:var(--ink);
+  }
+  .live-mode-overlay.dark .live-mode-header h1{ color:#f3efe4; }
+  .live-mode-subhead{ font-size:0.9em; color:var(--ink-soft); }
+  .live-mode-overlay.dark .live-mode-subhead{ color:#b9b096; }
+  .live-mode-movement{ margin-bottom:2em; }
+  .live-mode-movement h2{
+    font-family:'Spectral',serif; font-weight:600; font-size:1.35em;
+    color:var(--m-color); border-bottom:2px solid var(--m-color);
+    padding-bottom:0.3em; margin:0 0 0.9em;
+  }
+  .live-mode-section-header{
+    font-family:'Spectral',serif; font-weight:700; font-size:1.05em; text-align:center;
+    letter-spacing:0.04em; padding:0.6em 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+    margin:1em 0;
+  }
+  .live-mode-overlay.dark .live-mode-section-header{ border-color:#3a3323; color:#f3efe4; }
+  .live-mode-element{ margin-bottom:1.3em; }
+  .live-mode-title{ font-family:'Spectral',serif; font-weight:600; font-size:1.05em; margin-bottom:0.3em; color:var(--ink); }
+  .live-mode-overlay.dark .live-mode-title{ color:#f3efe4; }
+  .live-mode-minister{ font-size:0.85em; font-style:italic; color:var(--ink-faint); font-weight:400; }
+  .live-mode-ref{ font-style:italic; font-size:0.9em; color:var(--ink-soft); margin-bottom:0.4em; }
+  .live-mode-overlay.dark .live-mode-ref{ color:#b9b096; }
+  .live-mode-subtitle{ font-weight:700; margin-bottom:0.4em; }
+  .live-mode-rubric{ font-style:italic; color:var(--ink-soft); font-size:0.95em; line-height:1.6; white-space:pre-line; }
+  .live-mode-overlay.dark .live-mode-rubric{ color:#c9c1ab; }
+  .live-mode-hymn{ font-size:0.95em; }
+  .live-mode-hymn em{ font-style:italic; }
+  .live-mode-body{ font-size:1em; line-height:1.7; white-space:pre-line; color:var(--ink); }
+  .live-mode-overlay.dark .live-mode-body{ color:#f0ebdc; }
+  .live-mode-body ol, .live-mode-body ul{ margin:0.3em 0; padding-left:1.4em; }
+  .live-mode-body mark{ background:#fff59d; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .live-mode-overlay.dark .live-mode-body mark{ background:#7a6a2a; color:#fff; }
+  .live-mode-response p{ margin:0.15em 0 0.7em; font-size:1em; line-height:1.7; white-space:pre-line; color:var(--ink); }
+  .live-mode-overlay.dark .live-mode-response p{ color:#f0ebdc; }
+  .live-mode-response .speaker{ font-weight:600; }
+  .live-mode-response .bold-line{ font-weight:700; }
+  .live-mode-response .bold-line strong{ text-decoration:underline; }
+  .live-mode-response .footnote{ font-size:0.85em; font-style:italic; color:var(--ink-soft); }
+  .live-mode-overlay.dark .live-mode-response .footnote{ color:#b9b096; }
+
   .schedule-overlay{
     display:none;
     position:fixed; inset:0; background:rgba(27,42,69,0.55);
@@ -822,6 +911,10 @@
   .series-picker-row-active{ background:var(--gold-light,#faf3dd); font-weight:600; }
   .series-picker-name{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .series-picker-clear{ color:var(--ink-faint); font-style:italic; }
+  .series-picker-empty{
+    padding:10px 8px; font-size:12px; color:var(--ink-faint); font-style:italic;
+    font-family:'Inter',sans-serif;
+  }
   .series-picker-edit{
     border:none; background:transparent; color:var(--ink-faint); cursor:pointer;
     font-size:12px; padding:2px 4px; border-radius:4px; flex-shrink:0;
@@ -850,6 +943,14 @@
     font-family:'Inter',sans-serif; font-size:13px; color:var(--ink); white-space:nowrap;
   }
   .export-menu-row:hover{ background:var(--bg); }
+  .templates-menu-divider{ height:1px; background:var(--border); margin:4px 2px; }
+  .templates-menu-row{ justify-content:space-between; padding-right:6px; }
+  .templates-menu-name{ flex:1; overflow:hidden; text-overflow:ellipsis; }
+  .templates-menu-delete{
+    border:none; background:transparent; color:var(--ink-faint);
+    cursor:pointer; font-size:12px; padding:2px 4px; border-radius:50%; flex-shrink:0;
+  }
+  .templates-menu-delete:hover{ color:#8a3a3a; }
   .rt-print{ display:none; }
   .rt-print mark{ background:#fff59d !important; padding:0 1px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .rt-print ol, .rt-print ul, .print-response ol, .print-response ul{ margin:4px 0; padding-left:22px; }
@@ -866,7 +967,7 @@
     font-size:11.5px; font-weight:600; color:var(--ink-soft);
     width:112px; flex-shrink:0; padding-top:6px;
   }
-  .response-input, .alt-label-input, .version-select{
+  .response-input, .version-select{
     flex:1;
     font-family:'Inter',sans-serif;
     font-size:13px;
@@ -887,21 +988,14 @@
     margin-top:2px; cursor:pointer;
   }
   .alt-toggle input{ cursor:pointer; }
-  .alt-fields{
-    display:flex; flex-direction:column; gap:8px;
-    border-left:2px solid var(--border);
-    padding:8px 0 2px 10px;
-    margin-top:2px;
-  }
-  .alt-label-input{ font-style:italic; }
   .print-response{ display:none; }
   .print-response p{ margin:2px 0 8px; font-size:13.5px; line-height:1.5; white-space:pre-line; }
   .print-response .speaker{ font-weight:600; }
-  .print-response .pastor-line{ font-weight:700; }
+  .print-response .bold-line{ font-weight:700; }
   .print-response mark{ background:#fff59d !important; padding:0 1px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .print-response strong{ font-weight:900 !important; }
   .print-response em{ font-style:italic !important; }
-  .print-response .pastor-line strong{ text-decoration:underline; }
+  .print-response .bold-line strong{ text-decoration:underline; }
   .print-response .footnote{ font-size:11.5px; font-style:italic; color:var(--ink-soft); }
   .hymn-fields{ display:flex; gap:8px; align-items:center; }
   .hymn-number-input{
@@ -926,6 +1020,15 @@
     font-size:11px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;
     color:var(--m-color); margin-bottom:5px;
   }
+  .lectionary-passage-details{ margin-top:2px; }
+  .lectionary-passage-summary{
+    cursor:pointer; list-style:none; font-size:11px; font-weight:600;
+    color:var(--ink-faint); padding:2px 0; user-select:none;
+  }
+  .lectionary-passage-summary::-webkit-details-marker{ display:none; }
+  .lectionary-passage-summary::before{ content:"▸ "; }
+  .lectionary-passage-details[open] > .lectionary-passage-summary::before{ content:"▾ "; }
+  .lectionary-passage-details .rich-editor{ margin-top:4px; }
   .carried-over-tag{
     font-size:10px; font-weight:600; text-transform:none; letter-spacing:normal;
     color:#B3261E; background:#FCE8E6; border-radius:3px; padding:1px 6px; margin-left:4px;
@@ -1006,7 +1109,6 @@
     footer.note{ display:none; }
     .sync-status{ display:none; }
     .esv-settings{ display:none; }
-    .minister-settings{ display:none; }
     .hamburger-btn{ display:none; }
     .settings-menu{ display:none !important; }
     .modal-overlay{ display:none !important; }
@@ -1018,6 +1120,7 @@
     .export-menu-popover{ display:none !important; }
     .hymnal-panel{ display:none !important; }
     .services-panel{ display:none !important; }
+    .live-mode-overlay{ display:none !important; }
     .schedule-overlay{ display:none !important; }
     .schedule-batch-bar{ display:none !important; }
     .column-picker{ display:none !important; }
@@ -1034,6 +1137,9 @@
     .alt-toggle{ display:none; }
     .lectionary-label{ color:var(--ink-soft) !important; }
     .skip-toggle{ display:none; }
+    .rubric-no-heading-tag{ display:none; }
+    .lectionary-passage-summary{ display:none; }
+    .prayer-picker-trigger{ display:none !important; }
     .esv-fetch-btn{ display:none; }
     .rt-field{ display:none; }
     .rt-print{ display:block; white-space:pre-line; line-height:1.5; font-size:13.5px; }
@@ -1059,12 +1165,7 @@
     <div id="settingsMenu" class="settings-menu">
       <div class="panel-settings">
         <button onclick="toggleServicesPanel()">📃 Services</button>
-      </div>
-      <div class="minister-settings">
-        <label>Ministers</label>
-        <div id="ministerChips" class="minister-chips"></div>
-        <input type="text" id="newMinisterName" placeholder="Add a name">
-        <button onclick="addMinisterFromInput()">Add</button>
+        <button onclick="toggleMinistersPanel()">👤 Ministers</button>
       </div>
       <div class="esv-settings">
         <label for="esvApiKey">ESV API Key <span class="settings-hint">(shared with everyone signed in)</span></label>
@@ -1078,13 +1179,15 @@
 
   <div class="toolbar">
     <button class="primary" onclick="openExportMenu(this)">📤 Export ▾</button>
-    <button onclick="saveToFile()">💾 Save Liturgy File</button>
     <button onclick="document.getElementById('loadInput').click()">📂 Load Liturgy File</button>
+    <button onclick="openTemplatesMenu(this)">📐 Templates ▾</button>
     <button onclick="toggleSchedulePanel()">📅 Planner</button>
     <button onclick="toggleHymnalPanel()">🎵 Hymnal</button>
-    <button class="danger" onclick="resetTemplate()">↺ Reset to Default Template</button>
+    <button onclick="openLiveMode()">⛪ Presentation Mode</button>
     <input type="file" id="loadInput" accept="application/json">
   </div>
+
+  <div id="templatesMenuPopover" class="export-menu-popover"></div>
 
   <div id="servicesPanel" class="services-panel">
     <div class="services-panel-header">
@@ -1100,6 +1203,21 @@
     </label>
     <div class="services-list-count" id="servicesCount"></div>
     <div class="services-list-wrap" id="servicesList"></div>
+  </div>
+
+  <div id="ministersPanel" class="services-panel">
+    <div class="services-panel-header">
+      <h3>Ministers</h3>
+      <button class="hymnal-close-btn" onclick="toggleMinistersPanel()" title="Close">✕</button>
+    </div>
+    <div class="ministers-panel-body">
+      <div class="ministers-panel-hint">Shared across the whole liturgy — pick a color for each minister to tint their cells in the Planner.</div>
+      <div id="ministerChips" class="minister-chips"></div>
+      <div class="ministers-add-row">
+        <input type="text" id="newMinisterName" placeholder="Add a name">
+        <button onclick="addMinisterFromInput()">Add</button>
+      </div>
+    </div>
   </div>
 
   <div id="scheduleOverlay" class="schedule-overlay">
@@ -1164,6 +1282,16 @@
     <button onclick="snoozeBackupNudge()">Remind me later</button>
   </div>
 
+  <div id="liveModeOverlay" class="live-mode-overlay">
+    <div class="live-mode-topbar">
+      <button onclick="cycleLiveModeSize(-1)" title="Smaller text">A−</button>
+      <button onclick="cycleLiveModeSize(1)" title="Larger text">A+</button>
+      <button onclick="toggleLiveModeDark()" title="Toggle dark mode for low light">🌙</button>
+      <button class="live-mode-exit-btn" onclick="closeLiveMode()" title="Exit Presentation Mode">✕ Exit</button>
+    </div>
+    <div class="live-mode-scroll" id="liveModeContent"></div>
+  </div>
+
   <div id="hymnPlaybackBar" class="hymn-playback-bar">
     <span id="hymnPlaybackLabel">🎵 Playing…</span>
     <label class="hymn-speed-control">Speed:
@@ -1187,6 +1315,7 @@
   </div>
 
   <div id="seriesPickerPopover" class="series-picker-popover"></div>
+  <div id="prayerPickerPopover" class="series-picker-popover"></div>
 
   <div id="exportMenuPopover" class="export-menu-popover"></div>
 
@@ -1222,7 +1351,6 @@
 
   <div class="toolbar toolbar-bottom">
     <button class="primary" onclick="openExportMenu(this)">📤 Export ▾</button>
-    <button onclick="saveToFile()">💾 Save Liturgy File</button>
   </div>
 
   <footer class="note">
@@ -1246,18 +1374,16 @@ const DEFAULT_TEMPLATE = [
     { title:'Welcome', type:'text', reference:'', locked:true,
       content:'To all who are weary and seek rest;\nto all who mourn and long for comfort;\nto all who struggle and desire victory;\nto all who sin and need a Savior;\nto all who are lonely and want fellowship;\nto all who hunger and thirst for righteousness;\nand to whoever will come —\nthis church opens wide her doors and offers her welcome in the name of the Lord Jesus Christ.' },
     { title:'Announcements', type:'text', reference:'', content:'', richEditor:true },
-    { title:'Moment of Silence to Prepare for Worship', type:'text', reference:'', content:'' },
+    { title:'Moment of Silence to Prepare for Worship', type:'header' },
   ]},
   { key:'call', label:'God Calls Us', color:'var(--call)', defaultMinister:'', elements:[
     { title:'Call to Worship', type:'text', reference:'', content:'Let us rise and worship the Triune God!' },
     { title:'Greeting', type:'response', reference:'', locked:true,
       leaderText:'Grace, mercy, and peace from God the Father, the Son, and the Holy Spirit.\nThe Lord be with you!',
-      peopleText:'And also with you!',
-      allowSeasonal:true, altMode:'add', hasAlt:false, altLabel:'Eastertide', altActive:false,
-      altLeaderText:'Alleluia! Christ is Risen!', altPeopleText:'Christ is risen, indeed! Alleluia!' },
+      peopleText:'And also with you!' },
     { title:'Scripture Reading', type:'scripture', reference:'', content:'', scheduleKey:'scripture' },
     { title:'Collect', type:'variant-text', reference:'', bcpLinked:true, scheduleKey:'collect',
-      variants:[{ id:'default', label:'Option 1', content:'' }], activeVariantId:'default' },
+      variants:[{ id:'default', label:'Contemporary', content:'' }], activeVariantId:'default' },
     { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn1' },
   ]},
   { key:'confession', label:'God Cleanses Us as We Confess Our Sin', color:'var(--confession)', defaultMinister:'', elements:[
@@ -1283,11 +1409,7 @@ const DEFAULT_TEMPLATE = [
     { title:'The Creed', type:'response', reference:'', locked:true,
       leaderText:'Having confessed our sin, let us now confess our faith in the words of the Apostles\' Creed.\nChristian, what do you believe?',
       peopleText:'I believe in God the Father Almighty; Maker of heaven and earth,\nand in Jesus Christ, his only begotten Son, our Lord,\nWho was conceived by the Holy Spirit, and born of the virgin Mary.\nHe suffered under Pontius Pilate, was crucified, died, and was buried.\nHe descended to the dead.\nOn the third day He rose again from the dead;\nHe ascended into Heaven, and sits at the right hand of God the Father Almighty;\nfrom there He will come to judge the living and the dead.\nI believe in the Holy Spirit, the holy catholic* Church, the communion of saints,\nthe forgiveness of sins, the resurrection of the body, and the life everlasting.\nAmen.',
-      hasFootnote:true, footnote:'*catholic means universal, and does not always refer to the Roman Catholic Church.',
-      allowSeasonal:true, altMode:'replace', altLabel:'Advent & Christmastide', altActive:false,
-      altLeaderText:'Having confessed our sin, let us now confess our faith in the words of the Nicene Creed.\nChristian, what do you believe?',
-      altPeopleText:'I believe in one God, the Father Almighty, Maker of heaven and earth\nand of all things visible and invisible;\nand in one Lord Jesus Christ, the only-begotten Son of God,\nbegotten of the Father before all worlds,\nGod of God, Light of Light, very God of very God, begotten, not made,\nbeing of one substance with the Father; by whom all things were made;\nwho, for us men, and for our salvation, came down from Heaven,\nand was incarnate by the Holy Spirit of the virgin, Mary, and was made man;\nand was crucified also for us under Pontius Pilate; He suffered and was buried;\nand the third day he rose again, according to the Scriptures;\nand ascended into Heaven, and sits on the right hand of the Father;\nand He shall come again, with glory, to judge both the living and the dead;\nwhose kingdom shall have no end.\nAnd I believe in the Holy Spirit, the Lord, and Giver of Life,\nwho proceeds from the Father and the Son;\nwho with the Father and the Son together is worshipped and glorified;\nwho spoke by the prophets.\nAnd I believe in one, holy, catholic and apostolic church;\nI acknowledge one baptism for the remission of sins;\nand I look for the resurrection of the dead, and the life of the world to come. Amen',
-      altFootnote:'*catholic means universal, and does not always refer to the Roman Catholic Church.' },
+      hasFootnote:true, footnote:'*catholic means universal, and does not always refer to the Roman Catholic Church.' },
     { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn3' },
     { title:'Lectionary', type:'lectionary', reference:'', includeText:false, hasTracks:false, track:'track1', trackData:null, scheduleKey:'lectionaryReader', readings:[
       { key:'ot', label:'Old Testament', reference:'', content:'' },
@@ -1320,15 +1442,15 @@ const DEFAULT_TEMPLATE = [
     { title:'Communion Instructions', type:'text', reference:'',
       content:'This sacrament is for all baptized believers in Jesus Christ, who are not under disciplinary action of another local church. If you are not a believer or have not been baptized, we\'re glad you\'re here, and you are welcome to observe, but please allow the elements to pass today and talk to the pastor about how you may partake in the future.\n\nTwo distributions, the bread first and then the wine. Wait and we\'ll partake together.' },
     { title:'The Bread', type:'scripture', reference:'1 Corinthians 11:23-24', content:'' },
-    { title:'Blessing of the Bread', type:'variant-text',
-      variants:[{ id:'bread-standard', label:'Standard', content:'Father, we thank you for this bread and the body of your Son. As truly as this bread arose from the earth, endured the furnace of affliction, and rose glorified for us to enjoy today, we remember and proclaim the same of our Savior. God, turn our hearts to be satisfied in our crucified and glorified Lord. In this bread, give us Christ. Amen.' }],
-      activeVariantId:'bread-standard' },
+    { title:'Blessing of the Bread', type:'prayer', reference:'',
+      content:'Father, we thank you for this bread and the body of your Son. As truly as this bread arose from the earth, endured the furnace of affliction, and rose glorified for us to enjoy today, we remember and proclaim the same of our Savior. God, turn our hearts to be satisfied in our crucified and glorified Lord. In this bread, give us Christ. Amen.',
+      savedVersions:[{ id:'bread-standard', name:'Standard', content:'Father, we thank you for this bread and the body of your Son. As truly as this bread arose from the earth, endured the furnace of affliction, and rose glorified for us to enjoy today, we remember and proclaim the same of our Savior. God, turn our hearts to be satisfied in our crucified and glorified Lord. In this bread, give us Christ. Amen.' }] },
     { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn6' },
     { title:'Reception of the Bread', type:'text', reference:'', content:'The bread is communion in the body of Christ. Take and eat.' },
     { title:'The Wine', type:'scripture', reference:'1 Corinthians 11:25', content:'' },
-    { title:'Blessing of the Wine', type:'variant-text',
-      variants:[{ id:'wine-standard', label:'Standard', content:'O God, you give wine to gladden the heart of man. Grant us gladness of heart as we remember the blood of your Son that made full atonement for our sin. We give thanks and ask your blessing. In this cup, give us Christ.' }],
-      activeVariantId:'wine-standard' },
+    { title:'Blessing of the Wine', type:'prayer', reference:'',
+      content:'O God, you give wine to gladden the heart of man. Grant us gladness of heart as we remember the blood of your Son that made full atonement for our sin. We give thanks and ask your blessing. In this cup, give us Christ.',
+      savedVersions:[{ id:'wine-standard', name:'Standard', content:'O God, you give wine to gladden the heart of man. Grant us gladness of heart as we remember the blood of your Son that made full atonement for our sin. We give thanks and ask your blessing. In this cup, give us Christ.' }] },
     { title:'Hymn', type:'hymn', hymnNumber:'', hymnTitle:'', scheduleKey:'hymn7' },
     { title:'Reception of the Wine', type:'text', reference:'', content:'The cup of blessing is communion in the blood of Christ. Let us drink together.' },
     { title:'Proclamation of Remembrance', type:'response', reference:'', locked:true,
@@ -1353,10 +1475,11 @@ function newId(){ return 'el' + (idCounter++); }
 
 // Retired element types get migrated on load so old saved data (local archive,
 // cloud, or a downloaded liturgy file) keeps working without the user having
-// to manually re-pick a type for every old element. Currently: 'rubric' was
-// visually and functionally identical to 'text' and has been folded into it.
+// to manually re-pick a type for every old element. (No retired types
+// currently — 'rubric' was folded into 'text' for a while, then brought back
+// as its own type with different rendering, so it no longer needs migrating.)
 function migrateElementType(type){
-  return type === 'rubric' ? 'text' : type;
+  return type;
 }
 function loadStateFromTemplate(template){
   state = template.map(m => ({
@@ -1415,9 +1538,9 @@ function renderElement(el, movement){
 
   const header = `
     <div class="element-row1">
-      <input class="element-title" value="${escapeAttr(el.title)}" placeholder="Element title" oninput="updateField('${el.id}','title',this.value)">
+      ${el.type !== 'rubric' ? `<input class="element-title" value="${escapeAttr(el.title)}" placeholder="Element title" oninput="updateField('${el.id}','title',this.value)">` : '<span class="rubric-no-heading-tag"></span>'}
       ${el.locked ? '<span class="lock-badge" title="Standing text — part of every service">🔒</span>' : ''}
-      ${el.type !== 'hymn' && el.type !== 'header' ? `
+      ${el.type !== 'hymn' && el.type !== 'header' && el.type !== 'rubric' ? `
       <select class="minister-select" title="Minister leading this element" onchange="handleMinisterChange('${el.id}',this)">
         <option value="" ${!el.minister?'selected':''}>${escapeHTML(defaultLabel)}</option>
         ${ministerRoster.map(name => `<option value="${escapeAttr(name)}" ${el.minister===name?'selected':''}>${escapeHTML(name)}</option>`).join('')}
@@ -1425,16 +1548,18 @@ function renderElement(el, movement){
       </select>
       ${effectiveMinister ? `<span class="minister-tag">${escapeHTML(effectiveMinister)}</span>` : ''}` : ''}
       <select class="type-select" onchange="updateField('${el.id}','type',this.value)">
-        <option value="scripture" ${el.type==='scripture'?'selected':''}>Scripture</option>
-        <option value="text" ${el.type==='text'?'selected':''}>Text / Prayer</option>
+        <option value="variant-text" ${el.type==='variant-text'?'selected':''}>Collect</option>
         <option value="response" ${el.type==='response'?'selected':''}>Congregational Response</option>
+        <option value="exhortation" ${el.type==='exhortation'?'selected':''}>Exhortation</option>
         <option value="header" ${el.type==='header'?'selected':''}>Header</option>
         <option value="hymn" ${el.type==='hymn'?'selected':''}>Hymn</option>
         <option value="lectionary" ${el.type==='lectionary'?'selected':''}>Lectionary</option>
         <option value="pastoral-prayer" ${el.type==='pastoral-prayer'?'selected':''}>Pastoral Prayer (Opening/Thanksgiving/Petitions)</option>
-        <option value="variant-text" ${el.type==='variant-text'?'selected':''}>Prayer (multiple versions)</option>
-        <option value="exhortation" ${el.type==='exhortation'?'selected':''}>Exhortation</option>
+        <option value="prayer" ${el.type==='prayer'?'selected':''}>Prayer</option>
+        <option value="rubric" ${el.type==='rubric'?'selected':''}>Rubric</option>
+        <option value="scripture" ${el.type==='scripture'?'selected':''}>Scripture</option>
         <option value="sermon" ${el.type==='sermon'?'selected':''}>Sermon</option>
+        <option value="text" ${el.type==='text'?'selected':''}>Text</option>
       </select>
       ${el.locked ? '' : `<button class="remove-btn" title="Remove" onclick="removeElement('${el.id}')">✕</button>`}
     </div>
@@ -1482,66 +1607,53 @@ function renderElement(el, movement){
       <div class="print-response"><p>${normalizeInitialRichContent(active.content)}</p></div>
     `;
   } else if(el.type === 'response'){
-    const toggleLabel = el.altMode==='replace'
-      ? `Use the ${escapeHTML(el.altLabel)||'seasonal'} version this week (replaces the text above)`
-      : `Add this ${escapeHTML(el.altLabel)||'seasonal'} exchange this week (goes before the text above)`;
-    body = `
-      <div class="response-fields">
-        <div class="response-line">
+    const linesHtml = getResponseLineOrder(el).map(key => {
+      if(key === 'leader'){
+        return `
+        <div class="response-line draggable-response-line" data-line-key="leader">
+          <span class="extra-line-drag-handle" title="Drag to reorder">⠿</span>
           <label>Pastor says</label>
           ${richEditorHtml(el.id, 'leaderText', el.leaderText, 'e.g. The Lord be with you!', 'rich-editor-inline')}
+        </div>`;
+      }
+      if(key === 'people'){
+        return `
+        <div class="response-line draggable-response-line" data-line-key="people">
+          <span class="extra-line-drag-handle" title="Drag to reorder">⠿</span>
+          <label>All respond</label>
+          ${richEditorHtml(el.id, 'peopleText', el.peopleText, 'e.g. And also with you!', 'rich-editor-inline')}
+        </div>`;
+      }
+      const ln = (el.extraLines || []).find(l => l.id === key);
+      if(!ln) return '';
+      return `
+      <div class="response-line extra-line-row draggable-response-line" data-line-key="${ln.id}">
+        <span class="extra-line-drag-handle" title="Drag to reorder">⠿</span>
+        <select class="version-select" style="max-width:150px;" onchange="updateExtraLineField('${el.id}','${ln.id}','speaker',this.value)">
+          <option value="Pastor" ${ln.speaker==='Pastor'?'selected':''}>Pastor</option>
+          <option value="All" ${ln.speaker==='All'?'selected':''}>All</option>
+          <option value="" ${!ln.speaker?'selected':''}>Rubric (no speaker)</option>
+        </select>
+        ${richEditorHtml(el.id, 'extraLine:' + ln.id, ln.content, 'Additional line…', 'rich-editor-inline')}
+        <button class="remove-btn" title="Remove this line" onclick="removeExtraLine('${el.id}','${ln.id}')">✕</button>
+      </div>`;
+    }).join('');
+    body = `
+      <div class="response-fields">
+        <div class="response-lines-list">
+          ${linesHtml}
         </div>
         ${el.allowSkipLeader ? `
         <label class="skip-toggle" title="Leave the Pastor's line out of this week's printed liturgy (e.g. if the passage above already ends in Amen)">
           <input type="checkbox" ${el.skipLeader?'checked':''} onchange="updateField('${el.id}','skipLeader',this.checked)">
           Skip the Pastor's line this week
         </label>` : ''}
-        <div class="response-line">
-          <label>All respond</label>
-          ${richEditorHtml(el.id, 'peopleText', el.peopleText, 'e.g. And also with you!', 'rich-editor-inline')}
-        </div>
-        ${(el.extraLines || []).map(ln => `
-        <div class="response-line extra-line-row">
-          <select class="version-select" style="max-width:150px;" onchange="updateExtraLineField('${el.id}','${ln.id}','speaker',this.value)">
-            <option value="Pastor" ${ln.speaker==='Pastor'?'selected':''}>Pastor</option>
-            <option value="All" ${ln.speaker==='All'?'selected':''}>All</option>
-            <option value="" ${!ln.speaker?'selected':''}>Rubric (no speaker)</option>
-          </select>
-          ${richEditorHtml(el.id, 'extraLine:' + ln.id, ln.content, 'Additional line…', 'rich-editor-inline')}
-          <button class="remove-btn" title="Remove this line" onclick="removeExtraLine('${el.id}','${ln.id}')">✕</button>
-        </div>`).join('')}
         <button class="add-element" onclick="addExtraLine('${el.id}')">+ Add a line (Pastor / All / Rubric)</button>
         ${el.hasFootnote ? `
         <div class="response-line">
           <label>Footnote (optional)</label>
           <input class="response-input" style="min-height:auto" placeholder="Explanatory note shown under the text, e.g. *catholic means universal…" value="${escapeAttr(el.footnote)}" oninput="updateField('${el.id}','footnote',this.value)">
         </div>` : ''}
-        ${el.allowSeasonal ? `
-        <label class="alt-toggle">
-          <input type="checkbox" ${el.hasAlt?'checked':''} onchange="updateField('${el.id}','hasAlt',this.checked)">
-          Has a seasonal variant
-        </label>
-        ${el.hasAlt ? `
-        <div class="alt-fields">
-          <input class="alt-label-input" placeholder="Season name (e.g. Eastertide)" value="${escapeAttr(el.altLabel)}" oninput="updateField('${el.id}','altLabel',this.value)">
-          <div class="response-line">
-            <label>Pastor (alt.)</label>
-            ${richEditorHtml(el.id, 'altLeaderText', el.altLeaderText, '', 'rich-editor-inline')}
-          </div>
-          <div class="response-line">
-            <label>All (alt.)</label>
-            ${richEditorHtml(el.id, 'altPeopleText', el.altPeopleText, '', 'rich-editor-inline')}
-          </div>
-          ${el.hasFootnote ? `
-          <div class="response-line">
-            <label>Footnote (alt.)</label>
-            <input class="response-input" style="min-height:auto" placeholder="Same footnote, if unchanged" value="${escapeAttr(el.altFootnote)}" oninput="updateField('${el.id}','altFootnote',this.value)">
-          </div>` : ''}
-          <label class="alt-toggle">
-            <input type="checkbox" ${el.altActive?'checked':''} onchange="updateField('${el.id}','altActive',this.checked)">
-            ${toggleLabel}
-          </label>
-        </div>` : ''}` : ''}
       </div>
       <div class="print-response">${buildResponsePrintHTML(el)}</div>
     `;
@@ -1553,7 +1665,10 @@ function renderElement(el, movement){
           <input class="reference-input" placeholder="${escapeAttr(r.label)} reference" value="${escapeAttr(r.reference)}" oninput="updateReadingField('${el.id}','${r.key}','reference',this.value)" onblur="autoFetchEsvForReading('${el.id}','${r.key}')">
           <button class="esv-fetch-btn" onclick="fetchEsvForReading('${el.id}','${r.key}')">📖 Fetch ESV</button>
         </div>
-        ${richEditorHtml(el.id, 'section:' + r.key, r.content, 'Passage text (optional)', el.includeText ? '' : 'text-hide-in-print')}
+        <details class="lectionary-passage-details" ${el.includeText ? 'open' : ''}>
+          <summary class="lectionary-passage-summary">Passage text</summary>
+          ${richEditorHtml(el.id, 'section:' + r.key, r.content, 'Passage text', el.includeText ? '' : 'text-hide-in-print')}
+        </details>
       </div>
     `).join('');
     body = `
@@ -1570,6 +1685,14 @@ function renderElement(el, movement){
         <input type="checkbox" ${el.includeText?'checked':''} onchange="updateField('${el.id}','includeText',this.checked)">
         Include full text for these readings in the printed liturgy
       </label>
+    `;
+  } else if(el.type === 'rubric'){
+    body = richEditorHtml(el.id, 'content', el.content, placeholderFor('rubric'), 'rich-editor-tall rubric-editor');
+  } else if(el.type === 'prayer'){
+    const savedCount = (el.savedVersions || []).length;
+    body = `
+      <button type="button" class="series-picker-trigger prayer-picker-trigger" title="Pick a saved version of this prayer, or save what you've written" onclick="openPrayerPicker(this,'${el.id}')">${savedCount ? '📖 ' + savedCount + ' saved version' + (savedCount===1?'':'s') : '📖 Saved prayers…'} <span class="series-picker-caret">▾</span></button>
+      ${richEditorHtml(el.id, 'content', el.content, 'Write a prayer here, or pick a saved one above…', 'rich-editor-tall')}
     `;
   } else if(el.type === 'pastoral-prayer'){
     const rows = el.sections.map(s => `
@@ -1598,6 +1721,19 @@ function renderElement(el, movement){
     <span class="drag-handle">⠿</span>
     <div class="element-body">${header}${body}</div>
   `;
+
+  if(el.type === 'response'){
+    const linesList = card.querySelector('.response-lines-list');
+    if(linesList){
+      Sortable.create(linesList, {
+        handle: '.extra-line-drag-handle',
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        onEnd: () => reorderResponseLinesFromDOM(el.id, linesList)
+      });
+    }
+  }
+
   return card;
 }
 
@@ -1628,28 +1764,44 @@ function placeholderFor(type){
   return 'Prayer, exhortation, or custom text…';
 }
 
+// Resolves the display order of a response element's lines — the two fixed
+// 'leader'/'people' slots plus every extraLines entry — as a flat array of
+// tokens ('leader', 'people', or an extraLines id). el.lineOrder holds
+// whatever the user has dragged into place; anything missing from it (a
+// brand-new element, an extra line just added, or old data saved before
+// lineOrder existed) falls back to the original fixed order (leader, people,
+// then extra lines in array order) so nothing old ever looks different until
+// the user actually drags something. Shared by the Builder render, print, and
+// docx export so all three always agree on line order.
+function getResponseLineOrder(el){
+  const extraIds = (el.extraLines || []).map(l => l.id);
+  const validKeys = new Set(['leader', 'people', ...extraIds]);
+  let order = (el.lineOrder || []).filter(k => validKeys.has(k));
+  if(!order.includes('leader')) order.push('leader');
+  if(!order.includes('people')){
+    const leaderIdx = order.indexOf('leader');
+    order.splice(leaderIdx + 1, 0, 'people');
+  }
+  extraIds.forEach(id => { if(!order.includes(id)) order.push(id); });
+  return order;
+}
 function speakerLine(speaker, text){
-  const cls = speaker === 'Pastor' ? ' class="pastor-line"' : '';
+  const cls = speaker === 'All' ? ' class="bold-line"' : '';
   return `<p${cls}><span class="speaker">${speaker}:</span> ${normalizeInitialRichContent(text)}</p>`;
 }
 function buildResponsePrintHTML(el){
-  const useAlt = el.allowSeasonal && el.altActive;
   let html = '';
-  if(useAlt && el.altMode === 'replace'){
-    html += speakerLine('Pastor', el.altLeaderText) + speakerLine('All', el.altPeopleText);
-    const fn = el.altFootnote || el.footnote;
-    if(fn) html += `<p class="footnote">${escapeHTML(fn)}</p>`;
-  } else {
-    if(useAlt){
-      html += speakerLine('Pastor', el.altLeaderText) + speakerLine('All', el.altPeopleText);
+  getResponseLineOrder(el).forEach(key => {
+    if(key === 'leader'){
+      if(!el.skipLeader) html += speakerLine('Pastor', el.leaderText);
+    } else if(key === 'people'){
+      html += speakerLine('All', el.peopleText);
+    } else {
+      const ln = (el.extraLines || []).find(l => l.id === key);
+      if(ln) html += ln.speaker ? speakerLine(ln.speaker, ln.content) : `<p>${normalizeInitialRichContent(ln.content)}</p>`;
     }
-    if(!el.skipLeader) html += speakerLine('Pastor', el.leaderText);
-    html += speakerLine('All', el.peopleText);
-    if(el.footnote) html += `<p class="footnote">${escapeHTML(el.footnote)}</p>`;
-  }
-  (el.extraLines || []).forEach(ln => {
-    html += ln.speaker ? speakerLine(ln.speaker, ln.content) : `<p>${normalizeInitialRichContent(ln.content)}</p>`;
   });
+  if(el.footnote) html += `<p class="footnote">${escapeHTML(el.footnote)}</p>`;
   return html;
 }
 
@@ -1686,7 +1838,7 @@ function updateField(id, field, value){
     el.variants = [{ id:'v'+Date.now(), label:'Standard', content:'' }];
     el.activeVariantId = el.variants[0].id;
   }
-  if(['type','hasAlt','hasManuscript','includeText','activeVariantId','minister'].includes(field)){ render(); return; }
+  if(['type','hasManuscript','includeText','activeVariantId','minister'].includes(field)){ render(); return; }
   if(el.type === 'response') refreshResponsePrint(id);
 }
 
@@ -1718,6 +1870,13 @@ function removeExtraLine(id, lineId){
   el.extraLines = el.extraLines.filter(l => l.id !== lineId);
   refreshResponsePrint(id);
   render();
+}
+function reorderResponseLinesFromDOM(id, listEl){
+  const el = findEl(id);
+  if(!el) return;
+  el.lineOrder = Array.from(listEl.children).map(c => c.dataset.lineKey).filter(Boolean);
+  refreshResponsePrint(id);
+  syncElementBackToSchedule(id);
 }
 function updateExtraLineField(id, lineId, field, value){
   const el = findEl(id);
@@ -2125,6 +2284,104 @@ function resetTemplate(){
   render();
 }
 
+/* ---------------------------------------------------------------------
+   Liturgy Templates — named, reusable movement/element skeletons beyond
+   the single built-in DEFAULT_TEMPLATE. First step toward the longer-term
+   goal of a blank skeleton app other churches could customize to their
+   own liturgy: this is what lets someone build out a structure once (or
+   several variants — e.g. a normal Sunday vs. a Communion-less service)
+   and reapply it to a fresh date without starting from scratch or
+   re-picking the default every time. Stored the same additive,
+   fails-safe-to-local way as the minister roster: local storage always,
+   Supabase shared_data (key 'liturgyTemplates') when signed in.
+--------------------------------------------------------------------- */
+let liturgyTemplates = {};
+function loadLiturgyTemplates(){
+  try{
+    const raw = localStorage.getItem('liturgyTemplates');
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {};
+}
+function saveLiturgyTemplatesToStorage(){
+  try{ localStorage.setItem('liturgyTemplates', JSON.stringify(liturgyTemplates)); }catch(e){}
+  pushSharedDataToSupabase('liturgyTemplates', liturgyTemplates);
+}
+function captureCurrentAsTemplateData(){
+  // Same shape loadStateFromTemplate expects (and DEFAULT_TEMPLATE is
+  // already in) — strip the runtime-only `id` off each element so a
+  // fresh id gets generated wherever this template is applied.
+  return state.map(m => ({
+    key: m.key, label: m.label, color: m.color, defaultMinister: m.defaultMinister || '',
+    elements: m.elements.map(e => { const { id, ...rest } = e; return rest; })
+  }));
+}
+async function saveCurrentAsTemplate(){
+  const name = await customPrompt('Name this template (e.g. "Standard CRW Service"):');
+  if(!name || !name.trim()) return;
+  const trimmed = name.trim();
+  if(liturgyTemplates[trimmed]){
+    const ok = await customConfirm(`A template named "${trimmed}" already exists. Overwrite it?`);
+    if(!ok) return;
+  }
+  liturgyTemplates[trimmed] = captureCurrentAsTemplateData();
+  saveLiturgyTemplatesToStorage();
+}
+async function applyTemplate(name){
+  const data = liturgyTemplates[name];
+  if(!data) return;
+  const ok = await customConfirm(`Load the "${name}" template? This replaces every movement/element currently in the Builder — save this liturgy first if you want to keep it.`);
+  if(!ok) return;
+  loadStateFromTemplate(data);
+  render();
+}
+async function deleteTemplateFromMenu(name){
+  const ok = await customConfirm(`Delete the "${name}" template? This can't be undone.`);
+  if(!ok) return;
+  delete liturgyTemplates[name];
+  saveLiturgyTemplatesToStorage();
+  renderTemplatesMenuContent();
+}
+function renderTemplatesMenuContent(){
+  const pop = document.getElementById('templatesMenuPopover');
+  const names = Object.keys(liturgyTemplates).sort();
+  pop.innerHTML = `
+    <div class="export-menu-row" onclick="closeTemplatesMenu(); resetTemplate();">↺ Reset to Default Template</div>
+    ${names.length ? '<div class="templates-menu-divider"></div>' : ''}
+    ${names.map(n => `
+      <div class="export-menu-row templates-menu-row">
+        <span class="templates-menu-name" onclick="closeTemplatesMenu(); applyTemplate('${escapeAttr(n).replace(/'/g,"\\'")}')">📐 ${escapeHTML(n)}</span>
+        <button class="templates-menu-delete" title="Delete template" onclick="event.stopPropagation(); deleteTemplateFromMenu('${escapeAttr(n).replace(/'/g,"\\'")}')">✕</button>
+      </div>
+    `).join('')}
+    <div class="templates-menu-divider"></div>
+    <div class="export-menu-row" onclick="closeTemplatesMenu(); saveCurrentAsTemplate();">💾 Save current liturgy as template…</div>
+  `;
+}
+function openTemplatesMenu(triggerEl){
+  const pop = document.getElementById('templatesMenuPopover');
+  renderTemplatesMenuContent();
+  pop.style.display = 'block';
+  const rect = triggerEl.getBoundingClientRect();
+  const popRect = pop.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 4;
+  if(left + popRect.width > window.innerWidth - 8) left = window.innerWidth - popRect.width - 8;
+  if(top + popRect.height > window.innerHeight - 8) top = rect.top - popRect.height - 4;
+  pop.style.left = Math.max(8, left) + 'px';
+  pop.style.top = Math.max(8, top) + 'px';
+  setTimeout(() => document.addEventListener('mousedown', templatesMenuOutsideClick), 0);
+}
+function closeTemplatesMenu(){
+  const pop = document.getElementById('templatesMenuPopover');
+  pop.style.display = 'none';
+  document.removeEventListener('mousedown', templatesMenuOutsideClick);
+}
+function templatesMenuOutsideClick(e){
+  const pop = document.getElementById('templatesMenuPopover');
+  if(!pop.contains(e.target)) closeTemplatesMenu();
+}
+
 function saveToFile(){
   const payload = {
     churchTitle: document.getElementById('churchTitle').innerText,
@@ -2210,12 +2467,12 @@ function docxPara(runsXml, opts){
 // mark, ol/ul/li, br, div, p) -> an array of paragraphs, each an array of
 // {text, flags} runs. Block tags (p/div/li) start a new paragraph; br is a
 // soft line break folded into a hard paragraph break here for simplicity.
-function htmlToDocxParagraphs(html){
+function htmlToDocxParagraphs(html, baseFlags){
   if(!html) return [];
   const tokens = html.split(/(<[^>]+>)/);
   const paragraphs = [];
   let cur = [];
-  const flagStack = [{}];
+  const flagStack = [Object.assign({}, baseFlags)];
   const listStack = []; // [{ type: 'OL'|'UL', n: 0 }]
   const flush = () => { paragraphs.push(cur); cur = []; };
   const curFlags = () => Object.assign({}, ...flagStack);
@@ -2293,9 +2550,10 @@ function docxParagraphsToXml(paragraphs, opts){
   }).join('');
 }
 function docxRichXml(html, opts){
-  return docxParagraphsToXml(htmlToDocxParagraphs(html), opts);
+  opts = opts || {};
+  return docxParagraphsToXml(htmlToDocxParagraphs(html, opts.baseFlags), opts);
 }
-// Mirrors buildResponsePrintHTML/speakerLine's exact logic (Pastor bold prefix,
+// Mirrors buildResponsePrintHTML/speakerLine's exact logic (All bold prefix,
 // skipLeader, seasonal alt replace/add, footnote) so the Word export matches
 // what actually prints for a "response" element — including formatting: the
 // print CSS puts the speaker label inline (bold label, normal text after) with
@@ -2309,7 +2567,7 @@ function docxSpeakerPara(speaker, text){
   first.forEach(run => {
     if(run.brk){ firstRunsXml += docxBreakRun(); return; }
     const flags = Object.assign({}, run.flags);
-    if(speaker === 'Pastor') flags.bold = true;
+    if(speaker === 'All') flags.bold = true;
     firstRunsXml += docxRun(run.text, flags);
   });
   let out = docxPara(firstRunsXml, { spacingAfter: 40 });
@@ -2317,21 +2575,18 @@ function docxSpeakerPara(speaker, text){
   return out;
 }
 function docxResponseXml(el){
-  const useAlt = el.allowSeasonal && el.altActive;
   let xml = '';
-  if(useAlt && el.altMode === 'replace'){
-    xml += docxSpeakerPara('Pastor', el.altLeaderText) + docxSpeakerPara('All', el.altPeopleText);
-    const fn = el.altFootnote || el.footnote;
-    if(fn) xml += docxPara(docxRun(fn, { italic:true, size:18 }), { spacingAfter:40 });
-  } else {
-    if(useAlt) xml += docxSpeakerPara('Pastor', el.altLeaderText) + docxSpeakerPara('All', el.altPeopleText);
-    if(!el.skipLeader) xml += docxSpeakerPara('Pastor', el.leaderText);
-    xml += docxSpeakerPara('All', el.peopleText);
-    if(el.footnote) xml += docxPara(docxRun(el.footnote, { italic:true, size:18 }), { spacingAfter:40 });
-  }
-  (el.extraLines || []).forEach(ln => {
-    xml += ln.speaker ? docxSpeakerPara(ln.speaker, ln.content) : docxRichXml(ln.content);
+  getResponseLineOrder(el).forEach(key => {
+    if(key === 'leader'){
+      if(!el.skipLeader) xml += docxSpeakerPara('Pastor', el.leaderText);
+    } else if(key === 'people'){
+      xml += docxSpeakerPara('All', el.peopleText);
+    } else {
+      const ln = (el.extraLines || []).find(l => l.id === key);
+      if(ln) xml += ln.speaker ? docxSpeakerPara(ln.speaker, ln.content) : docxRichXml(ln.content);
+    }
   });
+  if(el.footnote) xml += docxPara(docxRun(el.footnote, { italic:true, size:18 }), { spacingAfter:40 });
   return xml;
 }
 const DOCX_FONT = 'Georgia'; // stand-in for the app's 'Spectral' title webfont — used only on titles/headings, matching the actual print output's serif-titles/sans-body split (not a uniform font)
@@ -2376,9 +2631,11 @@ function buildLiturgyDocxBody(){
         return;
       }
 
-      body += docxElementTitle(el.title, effectiveMinister);
+      if(el.type !== 'rubric') body += docxElementTitle(el.title, effectiveMinister);
 
-      if(el.type === 'hymn'){
+      if(el.type === 'rubric'){
+        body += docxRichXml(el.content, { baseFlags:{ italic:true } });
+      } else if(el.type === 'hymn'){
         if(el.hymnNumber || el.hymnTitle){
           let runs = '';
           if(el.hymnNumber) runs += docxRun(el.hymnNumber + '  ', {});
@@ -2419,6 +2676,134 @@ function buildLiturgyDocxBody(){
   });
   return body;
 }
+
+/* ---------------------------------------------------------------------
+   Live Service Mode — a full-screen, read-only view of the current
+   liturgy for reading from during the service (e.g. on an iPad at the
+   lectern). buildLiveModeHTML() walks the same in-memory `state` the
+   Builder and docx export already use, so it needs no network calls of
+   its own — safe to open and keep using even if sanctuary wifi is
+   spotty or drops entirely, as long as the liturgy was already loaded
+   beforehand. Mirrors buildLiturgyDocxBody's per-type structure but
+   emits plain display HTML instead of OOXML.
+--------------------------------------------------------------------- */
+function buildLiveModeHTML(){
+  const church = document.getElementById('churchTitle').innerText || '';
+  const serviceTitle = document.getElementById('serviceTitle').value || '';
+  const serviceDateRaw = document.getElementById('serviceDate').value || '';
+  let dateStr = '';
+  if(serviceDateRaw){
+    try{
+      dateStr = new Date(serviceDateRaw + 'T00:00:00').toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    }catch(e){ dateStr = serviceDateRaw; }
+  }
+  const sub = [serviceTitle, dateStr].filter(Boolean).join('  |  ');
+
+  let html = `<div class="live-mode-header"><h1>${escapeHTML(church)}</h1>${sub ? `<div class="live-mode-subhead">${escapeHTML(sub)}</div>` : ''}</div>`;
+
+  state.forEach(movement => {
+    html += `<div class="live-mode-movement" style="--m-color:${escapeAttr(movement.color)}"><h2>${escapeHTML(movement.label)}</h2>`;
+
+    movement.elements.forEach(el => {
+      const effectiveMinister = el.minister || movement.defaultMinister || '';
+
+      if(el.type === 'header'){
+        html += `<div class="live-mode-section-header">${escapeHTML(el.title || '')}</div>`;
+        return;
+      }
+
+      html += `<div class="live-mode-element">`;
+      if(el.type !== 'rubric'){
+        html += `<div class="live-mode-title">${escapeHTML(el.title || '')}${effectiveMinister ? ` <span class="live-mode-minister">— ${escapeHTML(effectiveMinister)}</span>` : ''}</div>`;
+      }
+
+      if(el.type === 'rubric'){
+        html += `<div class="live-mode-rubric">${normalizeInitialRichContent(el.content)}</div>`;
+      } else if(el.type === 'hymn'){
+        if(el.hymnNumber || el.hymnTitle){
+          html += `<div class="live-mode-hymn">${el.hymnNumber ? escapeHTML(el.hymnNumber) + '  ' : ''}${el.hymnTitle ? `<em>${escapeHTML(el.hymnTitle)}</em>` : ''}</div>`;
+        }
+      } else if(el.type === 'exhortation'){
+        if(el.subtitle) html += `<div class="live-mode-subtitle">${escapeHTML(el.subtitle)}</div>`;
+        html += `<div class="live-mode-body">${normalizeInitialRichContent(el.content)}</div>`;
+      } else if(el.type === 'sermon'){
+        if(el.sermonTitle) html += `<div class="live-mode-subtitle">${escapeHTML(el.sermonTitle)}</div>`;
+        if(el.passageReference) html += `<div class="live-mode-ref">${escapeHTML(el.passageReference)}</div>`;
+        if(el.series) html += `<div class="live-mode-ref">Series: ${escapeHTML(el.series)}</div>`;
+        if(el.hasManuscript) html += `<div class="live-mode-body">${normalizeInitialRichContent(el.manuscript)}</div>`;
+      } else if(el.type === 'variant-text'){
+        const activeId = el.activeVariantId || (el.variants[0] && el.variants[0].id);
+        const active = el.variants.find(v => v.id === activeId) || el.variants[0];
+        if(active) html += `<div class="live-mode-body">${normalizeInitialRichContent(active.content)}</div>`;
+      } else if(el.type === 'response'){
+        html += `<div class="live-mode-response">${buildResponsePrintHTML(el)}</div>`;
+      } else if(el.type === 'lectionary'){
+        el.readings.forEach(r => {
+          html += `<div class="live-mode-ref"><strong>${escapeHTML(r.label)}${r.reference ? ': ' + escapeHTML(r.reference) : ':'}</strong></div>`;
+          if(el.includeText) html += `<div class="live-mode-body">${normalizeInitialRichContent(r.content)}</div>`;
+        });
+      } else if(el.type === 'pastoral-prayer'){
+        el.sections.forEach(s => {
+          html += `<div class="live-mode-ref"><strong>${escapeHTML(s.label)}${s.reference ? ': ' + escapeHTML(s.reference) : ':'}</strong></div>`;
+          html += `<div class="live-mode-body">${normalizeInitialRichContent(s.content)}</div>`;
+        });
+      } else {
+        if(el.type === 'scripture' && el.reference) html += `<div class="live-mode-ref">${escapeHTML(el.reference)}</div>`;
+        html += `<div class="live-mode-body">${normalizeInitialRichContent(el.content)}</div>`;
+      }
+      html += `</div>`;
+    });
+
+    html += `</div>`;
+  });
+
+  return html;
+}
+const LIVE_MODE_SIZES = ['size-sm', 'size-md', 'size-lg', 'size-xl'];
+function loadLiveModePrefs(){
+  let size = 'size-md', dark = false;
+  try{
+    size = localStorage.getItem('liveModeSize') || 'size-md';
+    dark = localStorage.getItem('liveModeDark') === '1';
+  }catch(e){}
+  if(!LIVE_MODE_SIZES.includes(size)) size = 'size-md';
+  return { size, dark };
+}
+function saveLiveModePrefs(size, dark){
+  try{
+    localStorage.setItem('liveModeSize', size);
+    localStorage.setItem('liveModeDark', dark ? '1' : '0');
+  }catch(e){}
+}
+function applyLiveModeSizeAndTheme(){
+  const { size, dark } = loadLiveModePrefs();
+  const scroll = document.getElementById('liveModeContent');
+  LIVE_MODE_SIZES.forEach(s => scroll.classList.remove(s));
+  scroll.classList.add(size);
+  document.getElementById('liveModeOverlay').classList.toggle('dark', dark);
+}
+function cycleLiveModeSize(delta){
+  const { size, dark } = loadLiveModePrefs();
+  let idx = LIVE_MODE_SIZES.indexOf(size) + delta;
+  idx = Math.max(0, Math.min(LIVE_MODE_SIZES.length - 1, idx));
+  saveLiveModePrefs(LIVE_MODE_SIZES[idx], dark);
+  applyLiveModeSizeAndTheme();
+}
+function toggleLiveModeDark(){
+  const { size, dark } = loadLiveModePrefs();
+  saveLiveModePrefs(size, !dark);
+  applyLiveModeSizeAndTheme();
+}
+function openLiveMode(){
+  document.getElementById('liveModeContent').innerHTML = buildLiveModeHTML();
+  document.getElementById('liveModeOverlay').classList.add('open');
+  applyLiveModeSizeAndTheme();
+  document.getElementById('liveModeContent').scrollTop = 0;
+}
+function closeLiveMode(){
+  document.getElementById('liveModeOverlay').classList.remove('open');
+}
+
 async function assembleDocxBlob(bodyXml){
   const CONTENT_TYPES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
@@ -2665,12 +3050,6 @@ async function onDateChange(){
   if(!info){ render(); refreshServicesPanelIfOpen(); updateCurrentDateDisplay(); return; }
   document.getElementById('serviceTitle').value = `${info.label} (Year ${info.rclYear})`;
   document.getElementById('mainColorDot').innerHTML = scheduleColorDotHtml(dateStr);
-  state.forEach(m => m.elements.forEach(e => {
-    if(e.type === 'response' && e.allowSeasonal){
-      e.altActive = e.altMode === 'replace' ? info.isAdventOrChristmastide : info.isEastertide;
-      if(e.altActive) e.hasAlt = true;
-    }
-  }));
   render();
   syncLectionary(dateStr);
   applyScheduleForDate(dateStr);
@@ -2845,6 +3224,10 @@ async function pullSharedDataOnSignIn(){
     sermonSeriesRoster = cloud.sermonSeriesRoster;
     try{ localStorage.setItem('sermonSeriesRoster', JSON.stringify(sermonSeriesRoster)); }catch(e){}
   }
+  if(cloud.liturgyTemplates && Object.keys(cloud.liturgyTemplates).length >= Object.keys(liturgyTemplates).length){
+    liturgyTemplates = cloud.liturgyTemplates;
+    try{ localStorage.setItem('liturgyTemplates', JSON.stringify(liturgyTemplates)); }catch(e){}
+  }
   if(cloud.esvApiKey){
     try{ localStorage.setItem('esvApiKey', cloud.esvApiKey); }catch(e){}
     const input = document.getElementById('esvApiKey');
@@ -2874,12 +3257,6 @@ function resyncCurrentDate(){
   const info = getLiturgicalInfo(dateStr);
   if(info){
     document.getElementById('serviceTitle').value = `${info.label} (Year ${info.rclYear})`;
-    state.forEach(m => m.elements.forEach(e => {
-      if(e.type === 'response' && e.allowSeasonal){
-        e.altActive = e.altMode === 'replace' ? info.isAdventOrChristmastide : info.isEastertide;
-        if(e.altActive) e.hasAlt = true;
-      }
-    }));
   }
   render();
   syncLectionary(dateStr);
@@ -2919,6 +3296,7 @@ function lookupLink(dateStr){
 
 const BCP_DATA = {"First Sunday of Advent":["Almighty God, give us grace to cast away the works of darkness, and put on the armor of light, now in the time of this mortal life in which your Son Jesus Christ came to visit us in great humility; that in the last day, when he shall come again in his glorious majesty to judge both the living and the dead, we may rise to the life immortal; through him who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Second Sunday of Advent":["Merciful God, who sent your messengers the prophets to preach repentance and prepare the way for our salvation: Give us grace to heed their warnings and forsake our sins, that we may greet with joy the coming of Jesus Christ our Redeemer; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Third Sunday of Advent":["Stir up your power, O Lord, and with great might come among us; and, because we are sorely hindered by our sins, let your bountiful grace and mercy speedily help and deliver us; through Jesus Christ our Lord, to whom, with you and the Holy Spirit, be honor and glory, now and for ever. Amen."],"Fourth Sunday of Advent":["Purify our conscience, Almighty God, by your daily visitation, that your Son Jesus Christ, at his coming, may find in us a mansion prepared for himself; who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Nativity of the Lord (Christmas)":["O God, you make us glad by the yearly festival of the birth of your only Son Jesus Christ: Grant that we, who joyfully receive him as our Redeemer, may with sure confidence behold him when he comes to be our Judge; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen.","O God, you have caused this holy night to shine with the brightness of the true Light: Grant that we, who have known the mystery of that Light on earth, may also enjoy him perfectly in heaven; where with you and the Holy Spirit he lives and reigns, one God, in glory everlasting. Amen.","Almighty God, you have given your only-begotten Son to take our nature upon him, and to be born of a pure virgin: Grant that we, who have been born again and made your children by adoption and grace, may daily be renewed by your Holy Spirit; through our Lord Jesus Christ, to whom with you and the same Spirit be honor and glory, now and for ever. Amen."],"First Sunday after Christmas Day":["Almighty God, you have poured upon us the new light of your incarnate Word: Grant that this light, enkindled in our hearts, may shine forth in our lives; through Jesus Christ our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Holy Name of Jesus":["Eternal Father, you gave to your incarnate Son the holy name of Jesus to be the sign of our salvation: Plant in every heart, we pray, the love of him who is the Savior of the world, our Lord Jesus Christ; who lives and reigns with you and the Holy Spirit, one God, in glory everlasting. Amen."],"Second Sunday after Christmas":["O God, who wonderfully created, and yet more wonderfully restored, the dignity of human nature: Grant that we may share the divine life of him who humbled himself to share our humanity, your Son Jesus Christ; who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen."],"Epiphany of the Lord":["O God, by the leading of a star you manifested your only Son to the Peoples of the earth: Lead us, who know you now by faith, to your presence, where we may see your glory face to face; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Baptism of the Lord":["Father in heaven, who at the baptism of Jesus in the River Jordan proclaimed him your beloved Son and anointed him with the Holy Spirit: Grant that all who are baptized into his Name may keep the covenant they have made, and boldly confess him as Lord and Savior; who with you and the Holy Spirit lives and reigns, one God, in glory everlasting. Amen."],"Second Sunday after the Epiphany":["Almighty God, whose Son our Savior Jesus Christ is the light of the world: Grant that your people, illumined by your Word and Sacraments, may shine with the radiance of Christ's glory, that he may be known, worshiped, and obeyed to the ends of the earth; through Jesus Christ our Lord, who with you and the Holy Spirit lives and reigns, one God, now and for ever. Amen."],"Third Sunday after the Epiphany":["Give us grace, O Lord, to answer readily the call of our Savior Jesus Christ and proclaim to all people the Good News of his salvation, that we and the whole world may perceive the glory of his marvelous works; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Fourth Sunday after the Epiphany":["Almighty and everlasting God, you govern all things both in heaven and on earth: Mercifully hear the supplications of your people, and in our time grant us your peace; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Fifth Sunday after the Epiphany":["Set us free, O God, from the bondage of our sins, and give us the liberty of that abundant life which you have made known to us in your Son our Savior Jesus Christ; who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Transfiguration Sunday":["O God, who before the passion of your only-begotten Son revealed his glory upon the holy mountain: Grant to us that we, beholding by faith the light of his countenance, may be strengthened to bear our cross, and be changed into his likeness from glory to glory; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Ash Wednesday":["Almighty and everlasting God, you hate nothing you have made and forgive the sins of all who are penitent: Create and make in us new and contrite hearts, that we, worthily lamenting our sins and acknowledging our wretchedness, may obtain of you, the God of all mercy, perfect remission and forgiveness; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"First Sunday in Lent":["Almighty God, whose blessed Son was led by the Spirit to be tempted by Satan: Come quickly to help us who are assaulted by many temptations; and, as you know the weaknesses of each of us, let each one find you mighty to save; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Second Sunday in Lent":["O God, whose glory it is always to have mercy: Be gracious to all who have gone astray from your ways, and bring them again with penitent hearts and steadfast faith to embrace and hold fast the unchangeable truth of your Word, Jesus Christ your Son; who with you and the Holy Spirit lives and reigns, one God, for ever and ever. Amen."],"Third Sunday in Lent":["Almighty God, you know that we have no power in ourselves to help ourselves: Keep us both outwardly in our bodies and inwardly in our souls, that we may be defended from all adversities which may happen to the body, and from all evil thoughts which may assault and hurt the soul; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Fourth Sunday in Lent":["Gracious Father, whose blessed Son Jesus Christ came down from heaven to be the true bread which gives life to the world: Evermore give us this bread, that he may live in us, and we in him; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Fifth Sunday in Lent":["Almighty God, you alone can bring into order the unruly wills and affections of sinners: Grant your people grace to love what you command and desire what you promise; that, among the swift and varied changes of the world, our hearts may surely there be fixed where true joys are to be found; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Liturgy of the Passion":["Almighty and everliving God, in your tender love for the human race you sent your Son our Savior Jesus Christ to take upon him our nature, and to suffer death upon the cross, giving us the example of his great humility: Mercifully grant that we may walk in the way of his suffering, and also share in his resurrection; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Monday of Holy Week":["Almighty God, whose dear Son went not up to joy but first he suffered pain, and entered not into glory before he was crucified: Mercifully grant that we, walking in the way of the cross, may find it none other that the way of life and peace; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Tuesday of Holy Week":["O God, by the passion of your blessed Son you made an instrument of shameful death to be for us the means of life: Grant us so to glory in the cross of Christ, that we may gladly suffer shame and loss for the sake of your Son our Savior Jesus Christ; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Wednesday of Holy Week":["Lord God, whose blessed Son our Savior gave his body to be whipped and his face to be spit upon: Give us grace to accept joyfully the sufferings of the present time, confident of the glory that shall be revealed; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Maundy Thursday":["Almighty Father, whose dear Son, on the night before he suffered, instituted the Sacrament of his Body and Blood: Mercifully grant that we may receive it thankfully in remembrance of Jesus Christ our Lord, who in these holy mysteries gives us a pledge of eternal life; and who now lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Good Friday":["Almighty God, we pray you graciously to behold this your family, for whom our Lord Jesus Christ was willing to be betrayed, and given into the hands of sinners, and to suffer death upon the cross; who now lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Resurrection of the Lord":["O God, who for our redemption gave your only-begotten Son to the death of the cross, and by his glorious resurrection delivered us from the power of our enemy: Grant us so to die daily to sin, that we may evermore live with him in the joy of his resurrection; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen.","O God, who made this most holy night to shine with the glory of the Lord's resurrection: Stir up in your Church that Spirit of adoption which is given to us in Baptism, that we, being renewed both in body and mind, may worship you in sincerity and truth; through Jesus Christ our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen.","Almighty God, who through your only-begotten Son Jesus Christ overcame death and opened to us the gate of everlasting life: Grant that we, who celebrate with joy the day of the Lord's resurrection, may be raised from the death of sin by your life-giving Spirit; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Second Sunday of Easter":["Almighty and everlasting God, who in the Paschal mystery established the new covenant of reconciliation: Grant that all who have been reborn into the fellowship of Christ's Body may show forth in their lives what they profess by their faith; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Third Sunday of Easter":["O God, whose blessed Son made himself known to his disciples in the breaking of bread: Open the eyes of our faith, that we may behold him in all his redeeming work; who lives and reigns with you, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Fourth Sunday of Easter":["O God, whose Son Jesus is the good shepherd of your people; Grant that when we hear his voice we may know him who calls us each by name, and follow where he leads; who, with you and the Holy Spirit, lives and reigns, one God, for ever and ever. Amen."],"Fifth Sunday of Easter":["Almighty God, whom truly to know is everlasting life: Grant us so perfectly to know your Son Jesus Christ to be the way, the truth, and the life, that we may steadfastly follow his steps in the way that leads to eternal life; through Jesus Christ your Son our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen."],"Sixth Sunday of Easter":["O God, you have prepared for those who love you such good things as surpass our understanding: Pour into our hearts such love towards you, that we, loving you in all things and above all things, may obtain your promises, which exceed all that we can desire; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Ascension of the Lord":["Almighty God, whose blessed Son our Savior Jesus Christ ascended far above all heavens that he might fill all things: Mercifully give us faith to perceive that, according to his promise, he abides with his Church on earth, even to the end of the ages; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, in glory everlasting. Amen.","Grant, we pray, Almighty God, that as we believe your only-begotten Son our Lord Jesus Christ to have ascended into heaven, so we may also in heart and mind there ascend, and with him continually dwell; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Seventh Sunday of Easter":["O God, the King of glory, you have exalted your only Son Jesus Christ with great triumph to your kingdom in heaven: Do not leave us comfortless, but send us your Holy Spirit to strengthen us, and exalt us to that place where our Savior Christ has gone before; who lives and reigns with you and the Holy Spirit, one God, in glory everlasting. Amen."],"Day of Pentecost":["Almighty God, on this day you opened the way of eternal life to every race and nation by the promised gift of your Holy Spirit: Shed abroad this gift throughout the world by the preaching of the Gospel, that it may reach to the ends of the earth; through Jesus Christ our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen.","O God, who on this day taught the hearts of your faithful people by sending to them the light of your Holy Spirit: Grant us by the same Spirit to have a right judgment in all things, and evermore to rejoice in his holy comfort; through Jesus Christ your Son our Lord, who lives and reigns with you, in the unity of the Holy Spirit, one God, for ever and ever. Amen."],"Trinity Sunday":["Almighty and everlasting God, you have given to us your servants grace, by the confession of a true faith, to acknowledge the glory of the eternal Trinity, and in the power of your divine Majesty to worship the Unity: Keep us steadfast in this faith and worship, and bring us at last to see you in your one and eternal glory, O Father; who with the Son and the Holy Spirit live and reign, one God, for ever and ever. Amen."],"Reign of Christ":["Almighty and everlasting God, whose will it is to restore all things in your well-beloved Son, the King of kings and Lord of lords: Mercifully grant that the peoples of the earth, divided and enslaved by sin, may be freed and brought together under his most gracious rule; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 1":["Remember, O Lord, what you have wrought in us and not what we deserve; and, as you have called us to your service, make us worthy of our calling; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 2":["Almighty and merciful God, in your goodness keep us, we pray, from all things that may hurt us, that we, being ready both in mind and body, may accomplish with free hearts those things which belong to your purpose; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 3":["Grant, O Lord, that the course of this world may be peaceably governed by your providence; and that your Church may joyfully serve you in confidence and serenity; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 4":["O God, your never-failing providence sets in order all things both in heaven and earth: Put away from us, we entreat you, all hurtful things, and give us those things which are profitable for us; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 5":["O God, from whom all good proceeds: Grant that by your inspiration we may think those things that are right, and by your merciful guiding may do them; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 6":["Keep, O Lord, your household the Church in your steadfast faith and love, that through your grace we may proclaim your truth with boldness, and minister your justice with compassion; for the sake of our Savior Jesus Christ, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 7":["O Lord, make us have perpetual love and reverence for your holy Name, for you never fail to help and govern those whom you have set upon the sure foundation of your loving-kindness; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 8":["Almighty God, you have built your Church upon the foundation of the apostles and prophets, Jesus Christ himself being the chief cornerstone: Grant us so to be joined together in unity of spirit by their teaching, that we may be made a holy temple acceptable to you; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 9":["O God, you have taught us to keep all your commandments by loving you and our neighbor: Grant us the grace of your Holy Spirit, that we may be devoted to you with our whole heart, and united to one another with pure affection; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 10":["O Lord, mercifully receive the prayers of your people who call upon you, and grant that they may know and understand what things they ought to do, and also may have grace and power faithfully to accomplish them; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 11":["Almighty God, the fountain of all wisdom, you know our necessities before we ask and our ignorance in asking: Have compassion on our weakness, and mercifully give us those things which for our unworthiness we dare not, and for our blindness we cannot ask; through the worthiness of your Son Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 12":["O God, the protector of all who trust in you, without whom nothing is strong, nothing is holy: Increase and multiply upon us your mercy; that, with you as our ruler and guide, we may so pass through things temporal, that we lose not the things eternal; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 13":["Let your continual mercy, O Lord, cleanse and defend your Church; and, because it cannot continue in safety without your help, protect and govern it always by your goodness; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 14":["Grant to us, Lord, we pray, the spirit to think and do always those things that are right, that we, who cannot exist without you, may by you be enabled to live according to your will; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 15":["Almighty God, you have given your only Son to be for us a sacrifice for sin, and also an example of godly life: Give us grace to receive thankfully the fruits of his redeeming work, and to follow daily in the blessed steps of his most holy life; through Jesus Christ your Son our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 16":["Grant, O merciful God, that your Church, being gathered together in unity by your Holy Spirit, may show forth your power among all peoples, to the glory of your Name; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 17":["Lord of all power and might, the author and giver of all good things: Graft in our hearts the love of your Name; increase in us true religion; nourish us with all goodness; and bring forth in us the fruit of good works; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 18":["Grant us, O Lord, to trust in you with all our hearts; for, as you always resist the proud who confide in their own strength, so you never forsake those who make their boast of your mercy; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 19":["O God, because without you we are not able to please you, mercifully grant that your Holy Spirit may in all things direct and rule our hearts; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 20":["Grant us, Lord, not to be anxious about earthly things, but to love things heavenly; and even now, while we are placed among things that are passing away, to hold fast to those that shall endure; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 21":["O God, you declare your almighty power chiefly in showing mercy and pity: Grant us the fullness of your grace, that we, running to obtain your promises, may become partakers of your heavenly treasure; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 22":["Almighty and everlasting God, you are always more ready to hear than we to pray, and to give more than we either desire or deserve: Pour upon us the abundance of your mercy, forgiving us those things of which our conscience is afraid, and giving us those good things for which we are not worthy to ask, except through the merits and mediation of Jesus Christ our Savior; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 23":["Lord, we pray that your grace may always precede and follow us, that we may continually be given to good works; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 24":["Almighty and everlasting God, in Christ you have revealed your glory among the nations: Preserve the works of your mercy, that your Church throughout the world may persevere with steadfast faith in the confession of your Name; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 25":["Almighty and everlasting God, increase in us the gifts of faith, hope, and charity; and, that we may obtain what you promise, make us love what you command; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 26":["Almighty and merciful God, it is only by your gift that your faithful people offer you true and laudable service: Grant that we may run without stumbling to obtain your heavenly promises; through Jesus Christ our Lord, who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."],"Proper 27":["O God, whose blessed Son came into the world that he might destroy the works of the devil and make us children of God and heirs of eternal life: Grant that, having this hope, we may purify ourselves as he is pure; that, when he comes again with power and great glory, we may be made like him in his eternal and glorious kingdom; where he lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 28":["Blessed Lord, who caused all holy Scriptures to be written for our learning: Grant us so to hear them, read, mark, learn, and inwardly digest them, that we may embrace and ever hold fast the blessed hope of everlasting life, which you have given us in our Savior Jesus Christ; who lives and reigns with you and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 29":["Almighty and everlasting God, whose will it is to restore all things in your well-beloved Son, the King of kings and Lord of lords: Mercifully grant that the peoples of the earth, divided and enslaved by sin, may be freed and brought together under his most gracious rule; who lives and reigns with you and the Holy Spirit, one God, now and for ever. Amen."]};
 
+const BCP_DATA_TRADITIONAL = {"First Sunday of Advent":["Almighty God, give us grace that we may cast away the works of darkness, and put upon us the armor of light, now in the time of this mortal life in which thy Son Jesus Christ came to visit us in great humility; that in the last day, when he shall come again in his glorious majesty to judge both the quick and the dead, we may rise to the life immortal; through him who liveth and reigneth with thee and the Holy Ghost, one God, now and for ever. Amen."],"Second Sunday of Advent":["Merciful God, who didst send thy messengers the prophets to preach repentance and prepare the way for our salvation: Give us grace to heed their warnings and forsake our sins, that we may greet with joy the coming of Jesus Christ our Redeemer; who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Third Sunday of Advent":["Stir up thy power, O Lord, and with great might come among us; and, because we are sorely hindered by our sins, let thy bountiful grace and mercy speedily help and deliver us; through Jesus Christ our Lord, to whom, with thee and the Holy Ghost, be honor and glory, world without end. Amen."],"Fourth Sunday of Advent":["We beseech thee, Almighty God, to purify our consciences by thy daily visitation, that when thy Son our Lord cometh he may find in us a mansion prepared for himself; through the same Jesus Christ our Lord, who liveth and reigneth with thee, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Nativity of the Lord (Christmas)":["O God, who makest us glad by the yearly remembrance of the birth of thy only Son Jesus Christ: Grant that as we joyfully receive him for our Redeemer, so we may with sure confidence behold him when he shall come to be our Judge; who liveth and reigneth with thee and the Holy Ghost, one God, world without end. Amen.","O God, who hast caused this holy night to shine with the illumination of the true Light: Grant us, we beseech thee, that as we have known the mystery of that Light upon earth, so may we also perfectly enjoy him in heaven; where with thee and the Holy Spirit he liveth and reigneth, one God, in glory everlasting. Amen.","Almighty God, who hast given us thy only-begotten Son to take our nature upon him and as at this time to be born of a pure virgin: Grant that we, being regenerate and made thy children by adoption and grace, may daily be renewed by thy Holy Spirit; through the same our Lord Jesus Christ, who liveth and reigneth with thee and the same Spirit ever, one God, world without end. Amen."],"First Sunday after Christmas Day":["Almighty God, who hast poured upon us the new light of thine incarnate Word: Grant that the same light, enkindled in our hearts, may shine forth in our lives; through the same Jesus Christ our Lord, who liveth and reigneth with thee, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Holy Name of Jesus":["Eternal Father, who didst give to thine incarnate Son the holy name of Jesus to be the sign of our salvation: Plant in every heart, we beseech thee, the love of him who is the Savior of the world, even our Lord Jesus Christ; who liveth and reigneth with thee and the Holy Spirit, one God, in glory everlasting. Amen."],"Second Sunday after Christmas":["O God, who didst wonderfully create, and yet more wonderfully restore, the dignity of human nature: Grant that we may share the divine life of him who humbled himself to share our humanity, thy Son Jesus Christ; who liveth and reigneth with thee, in the unity of the Holy Spirit, one God, for ever and ever. Amen."],"Epiphany of the Lord":["O God, who by the leading of a star didst manifest thy only-begotten Son to the peoples of the earth: Lead us, who know thee now by faith, to thy presence, where we may behold thy glory face to face; through the same Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Baptism of the Lord":["Father in heaven, who at the baptism of Jesus in the River Jordan didst proclaim him thy beloved Son and anoint him with the Holy Spirit: Grant that all who are baptized into his Name may keep the covenant they have made, and boldly confess him as Lord and Savior; who with thee and the same Spirit liveth and reigneth, one God, in glory everlasting. Amen."],"Second Sunday after the Epiphany":["Almighty God, whose Son our Savior Jesus Christ is the light of the world: Grant that thy people, illumined by thy Word and Sacraments, may shine with the radiance of Christ's glory, that he may be known, worshiped, and obeyed to the ends of the earth; through the same Jesus Christ our Lord, who with thee and the Holy Spirit liveth and reigneth, one God, now and for ever. Amen."],"Third Sunday after the Epiphany":["Give us grace, O Lord, to answer readily the call of our Savior Jesus Christ and proclaim to all people the Good News of his salvation, that we and all the whole world may perceive the glory of his marvelous works; who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Fourth Sunday after the Epiphany":["Almighty and everlasting God, who dost govern all things in heaven and earth: Mercifully hear the supplications of thy people, and in our time grant us thy peace; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Fifth Sunday after the Epiphany":["Set us free, O God, from the bondage of our sins and give us, we beseech thee, the liberty of that abundant life which thou hast manifested to us in thy Son our Savior Jesus Christ; who liveth and reigneth with thee, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Transfiguration Sunday":["O God, who before the passion of thy only-begotten Son didst reveal his glory upon the holy mount: Grant unto us that we, beholding by faith the light of his countenance, may be strengthened to bear our cross, and be changed into his likeness from glory to glory; through the same Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Ash Wednesday":["Almighty and everlasting God, who hatest nothing that thou hast made and dost forgive the sins of all those who are penitent: Create and make in us new and contrite hearts, that we, worthily lamenting our sins and acknowledging our wretchedness, may obtain of thee, the God of all mercy, perfect remission and forgiveness; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"First Sunday in Lent":["Almighty God, whose blessed Son was led by the Spirit to be tempted of Satan: Make speed to help thy servants who are assaulted by manifold temptations; and, as thou knowest their several infirmities, let each one find thee mighty to save; through Jesus Christ thy Son our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Second Sunday in Lent":["O God, whose glory it is always to have mercy: Be gracious to all who have gone astray from thy ways, and bring them again with penitent hearts and steadfast faith to embrace and hold fast the unchangeable truth of thy Word, Jesus Christ thy Son; who with thee and the Holy Spirit liveth and reigneth, one God, for ever and ever. Amen."],"Third Sunday in Lent":["Almighty God, who seest that we have no power of ourselves to help ourselves: Keep us both outwardly in our bodies and inwardly in our souls, that we may be defended from all adversities which may happen to the body, and from all evil thoughts which may assault and hurt the soul; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Fourth Sunday in Lent":["Gracious Father, whose blessed Son Jesus Christ came down from heaven to be the true bread which giveth life to the world: Evermore give us this bread, that he may live in us, and we in him; who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Fifth Sunday in Lent":["O Almighty God, who alone canst order the unruly wills and affections of sinful men: Grant unto thy people that they may love the thing which thou commandest, and desire that which thou dost promise; that so, among the sundry and manifold changes of the world, our hearts may surely there be fixed where true joys are to be found; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Liturgy of the Passion":["Almighty and everlasting God, who, of thy tender love towards mankind, hast sent thy Son our Savior Jesus Christ to take upon him our flesh, and to suffer death upon the cross, that all mankind should follow the example of his great humility: Mercifully grant that we may both follow the example of his patience, and also be made partakers of his resurrection; through the same Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Monday of Holy Week":["Almighty God, whose most dear Son went not up to joy but first he suffered pain, and entered not into glory before he was crucified: Mercifully grant that we, walking in the way of the cross, may find it none other than the way of life and peace; through the same thy Son Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Tuesday of Holy Week":["O God, by the passion of thy blessed Son didst make an instrument of shameful death to be unto us the means of life: Grant us so to glory in the cross of Christ, that we may gladly suffer shame and loss for the sake of thy Son our Savior Jesus Christ; who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Wednesday of Holy Week":["O Lord God, whose blessed Son our Savior gave his back to the smiters and hid not his face from shame: Grant us grace to take joyfully the sufferings of the present time, in full assurance of the glory that shall be revealed; through the same Jesus Christ thy Son our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Maundy Thursday":["Almighty Father, whose dear Son, on the night before he suffered, did institute the Sacrament of his Body and Blood: Mercifully grant that we may thankfully receive the same in remembrance of him who in these holy mysteries giveth us a pledge of life eternal, the same thy Son Jesus Christ our Lord; who now liveth and reigneth with thee and the Holy Spirit ever, one God, world without end. Amen."],"Good Friday":["Almighty God, we beseech thee graciously to behold this thy family, for whom our Lord Jesus Christ was contented to be betrayed, and given into the hands of sinners, and to suffer death upon the cross; who now liveth and reigneth with thee and the Holy Ghost ever, one God, world without end. Amen."],"Resurrection of the Lord":["O God, who for our redemption didst give thine only-begotten Son to the death of the cross, and by his glorious resurrection hast delivered us from the power of our enemy: Grant us so to die daily to sin, that we may evermore live with him in the joy of his resurrection; through the same thy Son Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen.","O God, who didst make this most holy night to shine with the glory of the Lord's resurrection: Stir up in thy Church that Spirit of adoption which is given to us in Baptism, that we, being renewed both in body and mind, may worship thee in sincerity and truth; through the same Jesus Christ our Lord, who liveth and reigneth with thee in the unity of the same Spirit, one God, now and for ever. Amen.","Almighty God, who through thine only-begotten Son Jesus Christ hast overcome death and opened unto us the gate of everlasting life: Grant that we, who celebrate with joy the day of the Lord's resurrection, may be raised from the death of sin by thy life-giving Spirit; through the same Jesus Christ our Lord, who liveth and reigneth with thee and the same Spirit ever, one God, world without end. Amen."],"Second Sunday of Easter":["Almighty and everlasting God, who in the Paschal mystery hast established the new covenant of reconciliation: Grant that all who have been reborn into the fellowship of Christ's Body may show forth in their lives what they profess by their faith; through the same Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Third Sunday of Easter":["O God, whose blessed Son did manifest himself to his disciples in the breaking of bread: Open, we pray thee, the eyes of our faith, that we may behold him in all his redeeming work; through the same thy Son Jesus Christ our Lord, who liveth and reigneth with thee, in the unity of the Holy Spirit, one God, now and for ever. Amen."],"Fourth Sunday of Easter":["O God, whose Son Jesus is the good shepherd of thy people: Grant that when we hear his voice we may know him who calleth us each by name, and follow where he doth lead; who, with thee and the Holy Spirit, liveth and reigneth, one God, for ever and ever. Amen."],"Fifth Sunday of Easter":["O Almighty God, whom truly to know is everlasting life: Grant us so perfectly to know thy Son Jesus Christ to be the way, the truth, and the life, that we may steadfastly follow his steps in the way that leadeth to eternal life; through the same thy Son Jesus Christ our Lord, who liveth and reigneth with thee, in the unity of the Holy Spirit, one God, for ever and ever. Amen."],"Sixth Sunday of Easter":["O God, who hast prepared for those who love thee such good things as pass man's understanding: Pour into our hearts such love toward thee, that we, loving thee in all things and above all things, may obtain thy promises, which exceed all that we can desire; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Ascension of the Lord":["O Almighty God, whose blessed Son our Savior Jesus Christ ascended far above all heavens that he might fill all things: Mercifully give us faith to perceive that, according to his promise, he abideth with his Church on earth, even unto the end of the ages; through the same Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, in glory everlasting. Amen.","Grant, we beseech thee, Almighty God, that like as we do believe thy only-begotten Son our Lord Jesus Christ to have ascended into the heavens, so we may also in heart and mind thither ascend, and with him continually dwell; who liveth and reigneth with thee and the Holy Ghost, one God, world without end. Amen."],"Seventh Sunday of Easter":["O God, the King of glory, who hast exalted thine only Son Jesus Christ with great triumph unto thy kingdom in heaven: We beseech thee, leave us not comfortless, but send to us thine Holy Ghost to comfort us, and exalt us unto the same place whither our Savior Christ is gone before; who liveth and reigneth with thee and the same Holy Ghost, one God, world without end. Amen."],"Day of Pentecost":["Almighty God, who on this day didst open the way of eternal life to every race and nation by the promised gift of thy Holy Spirit: Shed abroad this gift throughout the world by the preaching of the Gospel, that it may reach to the ends of the earth; through Jesus Christ our Lord, who liveth and reigneth with thee, in the unity of the same Spirit, one God, for ever and ever. Amen.","O God, who on this day didst teach the hearts of thy faithful people by sending to them the light of thy Holy Spirit: Grant us by the same Spirit to have a right judgment in all things, and evermore to rejoice in his holy comfort; through the merits of Christ Jesus our Savior, who liveth and reigneth with thee, in the unity of the same Spirit, one God, world without end. Amen."],"Trinity Sunday":["Almighty and everlasting God, who hast given unto us thy servants grace, by the confession of a true faith, to acknowledge the glory of the eternal Trinity, and in the power of the Divine Majesty to worship the Unity: We beseech thee that thou wouldest keep us steadfast in this faith and worship, and bring us at last to see thee in thy one and eternal glory, O Father; who with the Son and the Holy Spirit livest and reignest, one God, for ever and ever. Amen."],"Reign of Christ":["Almighty and everlasting God, whose will it is to restore all things in thy well-beloved Son, the King of kings and Lord of lords: Mercifully grant that the peoples of the earth, divided and enslaved by sin, may be freed and brought together under his most gracious rule; who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Proper 1":["Remember, O Lord, what thou hast wrought in us and not what we deserve; and, as thou hast called us to thy service, make us worthy of our calling; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Proper 2":["O Almighty and most merciful God, of thy bountiful goodness keep us, we beseech thee, from all things that may hurt us, that we, being ready both in body and soul, may with free hearts accomplish those things which belong to thy purpose; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Proper 3":["Grant, O Lord, we beseech thee, that the course of this world may be peaceably governed by thy providence, and that thy Church may joyfully serve thee in confidence and serenity; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 4":["O God, whose never-failing providence ordereth all things both in heaven and earth: We humbly beseech thee to put away from us all hurtful things, and to give us those things which are profitable for us; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 5":["O God, from whom all good doth come: Grant that by thy inspiration we may think those things that are right, and by thy merciful guiding may perform the same; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 6":["Keep, O Lord, we beseech thee, thy household the Church in thy steadfast faith and love, that by the help of thy grace we may proclaim thy truth with boldness, and minister thy justice with compassion; for the sake of our Savior Jesus Christ, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Proper 7":["O Lord, we beseech thee, make us to have a perpetual fear and love of thy holy Name, for thou never failest to help and govern those whom thou hast set upon the sure foundation of thy loving-kindness; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 8":["O Almighty God, who hast built thy Church upon the foundation of the apostles and prophets, Jesus Christ himself being the chief cornerstone: Grant us so to be joined together in unity of spirit by their doctrine, that we may be made an holy temple acceptable unto thee; through the same Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 9":["O God, who hast taught us to keep all thy commandments by loving thee and our neighbor: Grant us the grace of thy Holy Spirit, that we may be devoted to thee with our whole heart, and united to one another with pure affection; through Jesus Christ our Lord, who liveth and reigneth with thee and the same Spirit, one God, for ever and ever. Amen."],"Proper 10":["O Lord, we beseech thee mercifully to receive the prayers of thy people who call upon thee, and grant that they may both perceive and know what things they ought to do, and also may have grace and power faithfully to fulfill the same; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Proper 11":["Almighty God, the fountain of all wisdom, who knowest our necessities before we ask and our ignorance in asking: Have compassion, we beseech thee, upon our infirmities, and those things which for our unworthiness we dare not, and for our blindness we cannot ask, mercifully give us for the worthiness of thy Son Jesus Christ our Lord; who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Proper 12":["O God, the protector of all that trust in thee, without whom nothing is strong, nothing is holy: Increase and multiply upon us thy mercy; that, thou being our ruler and guide, we may so pass through things temporal, that we finally lose not the things eternal; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 13":["O Lord, we beseech thee, let thy continual pity cleanse and defend thy Church, and, because it cannot continue in safety without thy succor, preserve it evermore by thy help and goodness; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 14":["Grant to us, Lord, we beseech thee, the spirit to think and do always such things as are right, that we, who cannot exist without thee, may by thee be enabled to live according to thy will; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 15":["Almighty God, who hast given thy only Son to be unto us both a sacrifice for sin and also an example of godly life: Give us grace that we may always most thankfully receive that his inestimable benefit, and also daily endeavor ourselves to follow the blessed steps of his most holy life; through the same thy Son Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Proper 16":["Grant, we beseech thee, merciful God, that thy Church, being gathered together in unity by thy Holy Spirit, may manifest thy power among all peoples, to the glory of thy Name; through Jesus Christ our Lord, who liveth and reigneth with thee and the same Spirit, one God, world without end. Amen."],"Proper 17":["Lord of all power and might, who art the author and giver of all good things: Graft in our hearts the love of thy Name, increase in us true religion, nourish us with all goodness, and bring forth in us the fruit of good works; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 18":["Grant us, O Lord, we pray thee, to trust in thee with all our heart; seeing that, as thou dost alway resist the proud who confide in their own strength, so thou dost not forsake those who make their boast of thy mercy; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Proper 19":["O God, forasmuch as without thee we are not able to please thee, mercifully grant that thy Holy Spirit may in all things direct and rule our hearts; through Jesus Christ our Lord, who with thee and the same Spirit liveth and reigneth, one God, now and for ever. Amen."],"Proper 20":["Grant us, O Lord, not to mind earthly things, but to love things heavenly; and even now, while we are placed among things that are passing away, to cleave to those that shall abide; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 21":["O God, who declarest thy almighty power chiefly in showing mercy and pity: Mercifully grant unto us such a measure of thy grace, that we, running to obtain thy promises, may be made partakers of thy heavenly treasure; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 22":["Almighty and everlasting God, who art always more ready to hear than we to pray, and art wont to give more than either we desire or deserve: Pour down upon us the abundance of thy mercy, forgiving us those things whereof our conscience is afraid, and giving us those good things which we are not worthy to ask, but through the merits and mediation of Jesus Christ thy Son our Lord; who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 23":["Lord, we pray thee that thy grace may always precede and follow us, and make us continually to be given to all good works; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Proper 24":["Almighty and everlasting God, who in Christ hast revealed thy glory among the nations: Preserve the works of thy mercy, that thy Church throughout the world may persevere with steadfast faith in the confession of thy Name; through the same Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 25":["Almighty and everlasting God, give unto us the increase of faith, hope, and charity; and, that we may obtain that which thou dost promise, make us to love that which thou dost command; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 26":["Almighty and merciful God, of whose only gift it cometh that thy faithful people do unto thee true and laudable service: Grant, we beseech thee, that we may run without stumbling to obtain thy heavenly promises; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."],"Proper 27":["O God, whose blessed Son was manifested that he might destroy the works of the devil and make us the children of God and heirs of eternal life: Grant us, we beseech thee, that, having this hope, we may purify ourselves even as he is pure; that, when he shall appear again with power and great glory, we may be made like unto him in his eternal and glorious kingdom; where with thee, O Father, and thee, O Holy Ghost, he liveth and reigneth ever, one God, world without end. Amen."],"Proper 28":["Blessed Lord, who hast caused all holy Scriptures to be written for our learning: Grant that we may in such wise hear them, read, mark, learn, and inwardly digest them; that, by patience and comfort of thy holy Word, we may embrace and ever hold fast the blessed hope of everlasting life, which thou hast given us in our Savior Jesus Christ; who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."],"Proper 29":["Almighty and everlasting God, whose will it is to restore all things in thy well-beloved Son, the King of kings and Lord of lords: Mercifully grant that the peoples of the earth, divided and enslaved by sin, may be freed and brought together under his most gracious rule; who liveth and reigneth with thee and the Holy Spirit, one God, now and for ever. Amen."]};
 function findCollectElement(){
   for(const m of state) for(const e of m.elements) if(e.bcpLinked) return e;
   return null;
@@ -2929,6 +3307,12 @@ function bcpOptionsFor(entry){
   const properMatch = entry.name.match(/^Proper (\d+)/);
   if(properMatch) return BCP_DATA['Proper ' + properMatch[1]] || null;
   return BCP_DATA[entry.name] || null;
+}
+function bcpTraditionalOptionsFor(entry){
+  if(!entry) return null;
+  const properMatch = entry.name.match(/^Proper (\d+)/);
+  if(properMatch) return BCP_DATA_TRADITIONAL['Proper ' + properMatch[1]] || null;
+  return BCP_DATA_TRADITIONAL[entry.name] || null;
 }
 
 function syncLectionary(dateStr){
@@ -2964,12 +3348,23 @@ function syncLectionary(dateStr){
     filled.push('readings');
   }
   const collectOptions = bcpOptionsFor(entry);
+  const collectOptionsTraditional = bcpTraditionalOptionsFor(entry);
   if(col && collectOptions){
-    col.variants = collectOptions.map((text, i) => ({
+    const variants = collectOptions.map((text, i) => ({
       id: 'bcp' + i,
-      label: collectOptions.length > 1 ? `Option ${i + 1}` : 'Standard',
+      label: collectOptions.length > 1 ? `Contemporary — Option ${i + 1}` : 'Contemporary',
       content: text
     }));
+    if(collectOptionsTraditional){
+      collectOptionsTraditional.forEach((text, i) => {
+        variants.push({
+          id: 'bcpt' + i,
+          label: collectOptionsTraditional.length > 1 ? `Traditional — Option ${i + 1}` : 'Traditional',
+          content: text
+        });
+      });
+    }
+    col.variants = variants;
     col.activeVariantId = col.variants[0].id;
     filled.push('collect');
   }
@@ -3244,6 +3639,7 @@ function openExportMenu(triggerEl){
   pop.innerHTML = `
     <div class="export-menu-row" onclick="closeExportMenu(); window.print();">🖨 Print / Save as PDF</div>
     <div class="export-menu-row" onclick="closeExportMenu(); exportLiturgyDocx();">📝 Export to Word (.docx)</div>
+    <div class="export-menu-row" onclick="closeExportMenu(); saveToFile();">💾 Save Liturgy File</div>
   `;
   pop.style.display = 'block';
   const rect = triggerEl.getBoundingClientRect();
@@ -3417,6 +3813,106 @@ async function renameSeriesEverywhere(oldName){
 }
 
 /* ---------------------------------------------------------------------
+   Prayer picker — a lightweight, per-element library of saved versions
+   for the "Prayer" element type. Deliberately
+   NOT a global/shared library: each prayer element (e.g. Blessing of
+   the Bread vs. Blessing of the Wine) keeps its own separate list, so
+   picking a saved version never shows options meant for a different
+   element. A new prayer element starts blank/unsaved and behaves like
+   a plain Text/Prayer box until something is actually saved to it.
+--------------------------------------------------------------------- */
+let prayerPickerElId = null;
+
+function openPrayerPicker(triggerEl, elId){
+  prayerPickerElId = elId;
+  const pop = document.getElementById('prayerPickerPopover');
+  renderPrayerPickerList();
+  pop.style.display = 'block';
+  const rect = triggerEl.getBoundingClientRect();
+  const popRect = pop.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 4;
+  if(left + popRect.width > window.innerWidth - 8) left = window.innerWidth - popRect.width - 8;
+  if(top + popRect.height > window.innerHeight - 8) top = rect.top - popRect.height - 4;
+  pop.style.left = Math.max(8, left) + 'px';
+  pop.style.top = Math.max(8, top) + 'px';
+  setTimeout(() => document.addEventListener('mousedown', prayerPickerOutsideClick), 0);
+}
+function closePrayerPicker(){
+  const pop = document.getElementById('prayerPickerPopover');
+  pop.style.display = 'none';
+  prayerPickerElId = null;
+  document.removeEventListener('mousedown', prayerPickerOutsideClick);
+}
+function prayerPickerOutsideClick(e){
+  const pop = document.getElementById('prayerPickerPopover');
+  if(!pop.contains(e.target)) closePrayerPicker();
+}
+function renderPrayerPickerList(){
+  const pop = document.getElementById('prayerPickerPopover');
+  const el = findEl(prayerPickerElId);
+  if(!el){ closePrayerPicker(); return; }
+  const versions = el.savedVersions || [];
+  const rows = versions.map(v => `
+    <div class="series-picker-row">
+      <span class="series-picker-name" onclick="choosePrayerFromPicker('${v.id}')">${escapeHTML(v.name)}</span>
+      <button class="series-picker-edit" title="Delete &quot;${escapeAttr(v.name)}&quot;" onclick="event.stopPropagation(); deleteSavedPrayer('${v.id}')">✕</button>
+    </div>
+  `).join('');
+  pop.innerHTML = `
+    ${versions.length ? rows : '<div class="series-picker-empty">No saved versions yet — write one below, then save it.</div>'}
+    <div class="series-picker-add">
+      <input type="text" id="prayerPickerAddInput" placeholder="Save current text as…" onkeydown="if(event.key==='Enter') savePrayerFromPicker()">
+      <button onclick="savePrayerFromPicker()">💾 Save</button>
+    </div>
+  `;
+}
+async function choosePrayerFromPicker(versionId){
+  const el = findEl(prayerPickerElId);
+  if(!el) return;
+  const v = (el.savedVersions || []).find(v => v.id === versionId);
+  if(!v) return;
+  if(el.content && el.content !== v.content){
+    const ok = await customConfirm(`Replace the current text with the saved "${v.name}" version? Anything typed here that you haven't saved will be lost.`);
+    if(!ok) return;
+  }
+  el.content = v.content;
+  closePrayerPicker();
+  render();
+}
+async function savePrayerFromPicker(){
+  const input = document.getElementById('prayerPickerAddInput');
+  const name = (input.value || '').trim();
+  if(!name) return;
+  const el = findEl(prayerPickerElId);
+  if(!el) return;
+  if(!el.savedVersions) el.savedVersions = [];
+  const existing = el.savedVersions.find(v => v.name === name);
+  if(existing){
+    const ok = await customConfirm(`"${name}" is already saved for this prayer. Overwrite it with the current text?`);
+    if(!ok) return;
+    existing.content = el.content;
+  } else {
+    el.savedVersions.push({ id:'pv' + Date.now() + Math.random().toString(36).slice(2,6), name, content: el.content });
+  }
+  render();
+  const freshTrigger = document.querySelector(`.element-card[data-id="${prayerPickerElId}"] .prayer-picker-trigger`);
+  if(freshTrigger) openPrayerPicker(freshTrigger, prayerPickerElId);
+}
+async function deleteSavedPrayer(versionId){
+  const el = findEl(prayerPickerElId);
+  if(!el || !el.savedVersions) return;
+  const v = el.savedVersions.find(v => v.id === versionId);
+  if(!v) return;
+  const ok = await customConfirm(`Delete the saved version "${v.name}"? This can't be undone.`);
+  if(!ok) return;
+  el.savedVersions = el.savedVersions.filter(x => x.id !== versionId);
+  render();
+  const freshTrigger = document.querySelector(`.element-card[data-id="${prayerPickerElId}"] .prayer-picker-trigger`);
+  if(freshTrigger) openPrayerPicker(freshTrigger, prayerPickerElId);
+}
+
+/* ---------------------------------------------------------------------
    Custom modal — replaces window.confirm/prompt. Native browser dialogs
    can get silently suppressed (some mobile browsers, or after a page
    has shown a few of them), which looks like the button just doing
@@ -3489,6 +3985,25 @@ document.addEventListener('input', function(e){
     autoResize(e.target);
     refreshRtPrint(e.target);
   }
+});
+
+// A lectionary passage box can be manually collapsed in the Builder purely to
+// save screen space, independent of whether it's actually set to print (that's
+// still governed by the "Include full text…" checkbox / text-hide-in-print
+// CSS). Force every box open right before printing so a collapsed-but-included
+// passage never silently goes missing from the printed output, then restore
+// whatever state each one was actually in afterward.
+window.addEventListener('beforeprint', () => {
+  document.querySelectorAll('.lectionary-passage-details').forEach(d => {
+    d.dataset.wasOpen = d.open ? '1' : '0';
+    d.open = true;
+  });
+});
+window.addEventListener('afterprint', () => {
+  document.querySelectorAll('.lectionary-passage-details').forEach(d => {
+    d.open = d.dataset.wasOpen === '1';
+    delete d.dataset.wasOpen;
+  });
 });
 
 function toggleSettingsMenu(){
@@ -4107,16 +4622,35 @@ function onScheduleColResizeEnd(){
    archive already powering autosave), jump between them, or start a
    new one — inspired by the Plans list in Planning Center Services.
 --------------------------------------------------------------------- */
+function updateLeftPanelBodyClass(){
+  const anyOpen = document.getElementById('servicesPanel').classList.contains('open')
+    || document.getElementById('ministersPanel').classList.contains('open');
+  document.body.classList.toggle('services-open', anyOpen);
+}
 function toggleServicesPanel(){
   const panel = document.getElementById('servicesPanel');
   const opening = !panel.classList.contains('open');
+  if(opening) document.getElementById('ministersPanel').classList.remove('open');
   panel.classList.toggle('open');
-  document.body.classList.toggle('services-open', panel.classList.contains('open'));
+  updateLeftPanelBodyClass();
   if(opening){
     const dateField = document.getElementById('servicesPanelDate');
     if(!dateField.value) dateField.value = document.getElementById('serviceDate').value || '';
     renderServicesList();
   }
+}
+/* ---------------------------------------------------------------------
+   Ministers panel — the roster used to live inline in the hamburger
+   menu; it's now its own slide-in panel (same pattern as Services) so
+   the menu stays short and the roster gets room to breathe.
+--------------------------------------------------------------------- */
+function toggleMinistersPanel(){
+  const panel = document.getElementById('ministersPanel');
+  const opening = !panel.classList.contains('open');
+  if(opening) document.getElementById('servicesPanel').classList.remove('open');
+  panel.classList.toggle('open');
+  updateLeftPanelBodyClass();
+  if(opening) renderMinisterChips();
 }
 function formatServiceDateLabel(dateStr){
   const [y, m, d] = dateStr.split('-').map(Number);
@@ -4715,6 +5249,7 @@ ministerRoster = loadMinisterRoster();
 ministerColors = loadMinisterColors();
 scheduleData = loadSchedule();
 sermonSeriesRoster = loadSermonSeriesRoster();
+liturgyTemplates = loadLiturgyTemplates();
 renderMinisterChips();
 loadStateFromTemplate(DEFAULT_TEMPLATE);
 render();
