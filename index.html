@@ -310,6 +310,7 @@
   }
   .minister-chip button:hover{ color:#8a3a3a; }
   .minister-chip button.minister-link-btn{ font-size:10px; opacity:0.45; }
+  .icon-flip-h{ display:inline-block; transform:scaleX(-1); }
   .minister-chip button.minister-link-btn:hover{ color:var(--m-color, #3a6a5a); opacity:0.85; }
   .minister-chip button.minister-link-btn.linked{ opacity:0.9; color:#3a7a5a; }
   .minister-color-swatch{
@@ -748,6 +749,22 @@
   .live-mode-overlay.dark .live-mode-topbar button{ background:#231f18; color:#d8d0bd; border-color:#3a3323; }
   .live-mode-overlay.dark .live-mode-topbar button:hover{ border-color:#5a4f37; color:#f3efe4; }
   .live-mode-exit-btn{ margin-left:8px; }
+  .live-font-wrap{ position:relative; }
+  .live-font-popover{
+    display:none; position:absolute; top:calc(100% + 4px); right:0;
+    width:150px; background:#fff; border:1px solid var(--border); border-radius:8px;
+    box-shadow:var(--shadow); z-index:5001; overflow:hidden;
+  }
+  .live-font-popover.open{ display:block; }
+  .live-mode-overlay.dark .live-font-popover{ background:#231f18; border-color:#3a3323; }
+  .live-font-option{
+    display:block; width:100%; text-align:left; border:none; background:transparent;
+    font-family:'Inter',sans-serif; font-size:13px; padding:9px 12px; cursor:pointer; color:var(--ink);
+  }
+  .live-font-option:hover{ background:var(--bg); }
+  .live-font-option.active{ font-weight:700; }
+  .live-mode-overlay.dark .live-font-option{ color:#d8d0bd; }
+  .live-mode-overlay.dark .live-font-option:hover{ background:#2c271e; }
   .live-mode-scroll{
     flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;
     padding:28px 24px 100px; max-width:760px; margin:0 auto; width:100%;
@@ -757,6 +774,21 @@
   .live-mode-scroll.size-md{ font-size:18px; }
   .live-mode-scroll.size-lg{ font-size:22px; }
   .live-mode-scroll.size-xl{ font-size:27px; }
+  .live-mode-scroll.font-sans .live-mode-body, .live-mode-scroll.font-sans .live-mode-rubric,
+  .live-mode-scroll.font-sans .live-mode-ref, .live-mode-scroll.font-sans .live-mode-subtitle,
+  .live-mode-scroll.font-sans .live-mode-hymn, .live-mode-scroll.font-sans .live-mode-response p{
+    font-family:'Inter',sans-serif;
+  }
+  .live-mode-scroll.font-serif .live-mode-body, .live-mode-scroll.font-serif .live-mode-rubric,
+  .live-mode-scroll.font-serif .live-mode-ref, .live-mode-scroll.font-serif .live-mode-subtitle,
+  .live-mode-scroll.font-serif .live-mode-hymn, .live-mode-scroll.font-serif .live-mode-response p{
+    font-family:'Spectral',serif;
+  }
+  .live-mode-scroll.font-mono .live-mode-body, .live-mode-scroll.font-mono .live-mode-rubric,
+  .live-mode-scroll.font-mono .live-mode-ref, .live-mode-scroll.font-mono .live-mode-subtitle,
+  .live-mode-scroll.font-mono .live-mode-hymn, .live-mode-scroll.font-mono .live-mode-response p{
+    font-family:ui-monospace,'SF Mono',Consolas,Menlo,monospace;
+  }
   .live-mode-header{ text-align:center; margin-bottom:2em; }
   .live-mode-header h1{
     font-family:'Spectral',serif; font-weight:600; font-size:1.7em; margin:0 0 0.3em; color:var(--ink);
@@ -785,8 +817,9 @@
   .live-mode-subtitle{ font-weight:700; margin-bottom:0.4em; }
   .live-mode-rubric{ font-style:italic; color:var(--ink-soft); font-size:0.95em; line-height:1.6; white-space:pre-line; }
   .live-mode-overlay.dark .live-mode-rubric{ color:#c9c1ab; }
-  .live-mode-hymn{ font-size:0.95em; }
+  .live-mode-hymn{ font-size:0.95em; font-weight:700; }
   .live-mode-hymn em{ font-style:italic; }
+  .live-mode-hymn-num{ margin-right:1.2em; }
   .live-mode-body{ font-size:1em; line-height:1.7; white-space:pre-line; color:var(--ink); }
   .live-mode-overlay.dark .live-mode-body{ color:#f0ebdc; }
   .live-mode-body ol, .live-mode-body ul{ margin:0.3em 0; padding-left:1.4em; }
@@ -1125,11 +1158,6 @@
   .lectionary-passage-summary::before{ content:"▸ "; }
   .lectionary-passage-details[open] > .lectionary-passage-summary::before{ content:"▾ "; }
   .lectionary-passage-details .rich-editor{ margin-top:4px; }
-  .carried-over-tag{
-    font-size:10px; font-weight:600; text-transform:none; letter-spacing:normal;
-    color:#B3261E; background:#FCE8E6; border-radius:3px; padding:1px 6px; margin-left:4px;
-  }
-  .carried-over-text{ color:#B3261E !important; }
 
   .backup-nudge{
     display:none;
@@ -1198,6 +1226,11 @@
     .minister-tag::before{ content:"— "; }
     .element-card{ border:none; background:#fff; padding:6px 0; }
     .element-title, .reference-input, .content-area, .hymn-number-input, .hymn-title-input, .rich-editor{ border:none; background:transparent; padding:0; }
+    .hymn-number-input, .hymn-title-input{ font-weight:700; }
+    .hymn-fields::before{
+      content:"Hymn "; order:-1; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:var(--ink);
+    }
+    .hymn-number-input{ margin-right:12px; }
     .element-card-header .element-title{
       border-top:1px solid #999 !important; border-bottom:1px solid #999 !important; padding:6px 0 !important;
     }
@@ -1225,7 +1258,6 @@
     .column-picker{ display:none !important; }
     .resync-btn{ display:none !important; }
     .current-date-display{ display:none !important; }
-    .rich-editor.carried-over-text{ color:inherit !important; }
     .backup-nudge{ display:none !important; }
     .hymn-playback-bar{ display:none !important; }
     .hymn-play-btn{ display:none !important; }
@@ -1406,6 +1438,14 @@
     <div class="live-mode-topbar">
       <button onclick="cycleLiveModeSize(-1)" title="Smaller text">A−</button>
       <button onclick="cycleLiveModeSize(1)" title="Larger text">A+</button>
+      <div class="live-font-wrap">
+        <button onclick="toggleLiveFontPopover()" title="Font type">Aa ▾</button>
+        <div id="liveFontPopover" class="live-font-popover">
+          <button class="live-font-option" data-font="font-sans" onclick="setLiveModeFont('font-sans')">Sans</button>
+          <button class="live-font-option" data-font="font-serif" onclick="setLiveModeFont('font-serif')">Serif</button>
+          <button class="live-font-option" data-font="font-mono" onclick="setLiveModeFont('font-mono')">Monotype</button>
+        </div>
+      </div>
       <button onclick="toggleLiveModeDark()" title="Toggle dark mode for low light">🌙</button>
       <button class="live-mode-exit-btn" onclick="closeLiveMode()" title="Exit Presentation Mode">✕ Exit</button>
     </div>
@@ -1817,12 +1857,12 @@ function renderElement(el, movement){
   } else if(el.type === 'pastoral-prayer'){
     const rows = el.sections.map(s => `
       <div class="lectionary-row">
-        <div class="lectionary-label">${escapeHTML(s.label)}${s.carriedOver ? ' <span class="carried-over-tag">carried from last time — review</span>' : ''}</div>
+        <div class="lectionary-label">${escapeHTML(s.label)}</div>
         <div class="ref-row">
           <input class="reference-input" placeholder="${escapeAttr(s.label)} scripture reference" value="${escapeAttr(s.reference)}" oninput="updateReadingField('${el.id}','${s.key}','reference',this.value)" onblur="autoFetchEsvForReading('${el.id}','${s.key}')">
           <button class="esv-fetch-btn" onclick="fetchEsvForReading('${el.id}','${s.key}')">📖 Fetch ESV</button>
         </div>
-        ${richEditorHtml(el.id, 'section:' + s.key, s.content, `${s.label} content…`, s.carriedOver ? 'carried-over-text' : '')}
+        ${richEditorHtml(el.id, 'section:' + s.key, s.content, `${s.label} content…`)}
       </div>
     `).join('');
     body = rows;
@@ -2303,7 +2343,6 @@ function persistRichEditorContent(div){
     const s = list && list.find(s => s.key === key);
     if(s){
       s.content = html;
-      if(s.carriedOver) s.carriedOver = false;
     }
   } else if(target.startsWith('extraLine:')){
     const lid = target.slice(10);
@@ -2773,10 +2812,10 @@ function buildLiturgyDocxBody(){
         body += docxRichXml(el.content, { baseFlags:{ italic:true } });
       } else if(el.type === 'hymn'){
         if(el.hymnNumber || el.hymnTitle){
-          let runs = '';
-          if(el.hymnNumber) runs += docxRun(el.hymnNumber + '  ', {});
-          if(el.hymnTitle) runs += docxRun(el.hymnTitle, { italic:true, font:DOCX_FONT });
-          body += docxPara(runs, { spacingAfter:40 });
+          let runs = docxRun('Hymn ', { bold:true });
+          if(el.hymnNumber) runs += docxRun(el.hymnNumber, { bold:true }) + docxTabRun();
+          if(el.hymnTitle) runs += docxRun(el.hymnTitle, { bold:true, italic:true, font:DOCX_FONT });
+          body += docxPara(runs, { tabs:[{ pos:700 }], spacingAfter:40 });
         }
       } else if(el.type === 'exhortation'){
         if(el.subtitle) body += docxPara(docxRun(el.subtitle, { bold:true, size:20 }), { spacingAfter:60 });
@@ -2857,7 +2896,7 @@ function buildLiveModeHTML(){
         html += `<div class="live-mode-rubric">${normalizeInitialRichContent(el.content)}</div>`;
       } else if(el.type === 'hymn'){
         if(el.hymnNumber || el.hymnTitle){
-          html += `<div class="live-mode-hymn">${el.hymnNumber ? escapeHTML(el.hymnNumber) + '  ' : ''}${el.hymnTitle ? `<em>${escapeHTML(el.hymnTitle)}</em>` : ''}</div>`;
+          html += `<div class="live-mode-hymn">Hymn ${el.hymnNumber ? `<span class="live-mode-hymn-num">${escapeHTML(el.hymnNumber)}</span>` : ''}${el.hymnTitle ? `<em>${escapeHTML(el.hymnTitle)}</em>` : ''}</div>`;
         }
       } else if(el.type === 'exhortation'){
         if(el.subtitle) html += `<div class="live-mode-subtitle">${escapeHTML(el.subtitle)}</div>`;
@@ -2910,39 +2949,74 @@ function toggleShowElementTitles(){
 document.addEventListener('DOMContentLoaded', () => setShowElementTitles(loadShowElementTitles()));
 
 const LIVE_MODE_SIZES = ['size-sm', 'size-md', 'size-lg', 'size-xl'];
+const LIVE_MODE_FONTS = ['font-sans', 'font-serif', 'font-mono'];
 function loadLiveModePrefs(){
-  let size = 'size-md', dark = false;
+  let size = 'size-md', dark = false, font = 'font-sans';
   try{
     size = localStorage.getItem('liveModeSize') || 'size-md';
     dark = localStorage.getItem('liveModeDark') === '1';
+    font = localStorage.getItem('liveModeFont') || 'font-sans';
   }catch(e){}
   if(!LIVE_MODE_SIZES.includes(size)) size = 'size-md';
-  return { size, dark };
+  if(!LIVE_MODE_FONTS.includes(font)) font = 'font-sans';
+  return { size, dark, font };
 }
-function saveLiveModePrefs(size, dark){
+function saveLiveModePrefs(size, dark, font){
   try{
     localStorage.setItem('liveModeSize', size);
     localStorage.setItem('liveModeDark', dark ? '1' : '0');
+    localStorage.setItem('liveModeFont', font);
   }catch(e){}
 }
 function applyLiveModeSizeAndTheme(){
-  const { size, dark } = loadLiveModePrefs();
+  const { size, dark, font } = loadLiveModePrefs();
   const scroll = document.getElementById('liveModeContent');
   LIVE_MODE_SIZES.forEach(s => scroll.classList.remove(s));
   scroll.classList.add(size);
+  LIVE_MODE_FONTS.forEach(f => scroll.classList.remove(f));
+  scroll.classList.add(font);
   document.getElementById('liveModeOverlay').classList.toggle('dark', dark);
+  document.querySelectorAll('.live-font-option').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.font === font);
+  });
 }
 function cycleLiveModeSize(delta){
-  const { size, dark } = loadLiveModePrefs();
+  const { size, dark, font } = loadLiveModePrefs();
   let idx = LIVE_MODE_SIZES.indexOf(size) + delta;
   idx = Math.max(0, Math.min(LIVE_MODE_SIZES.length - 1, idx));
-  saveLiveModePrefs(LIVE_MODE_SIZES[idx], dark);
+  saveLiveModePrefs(LIVE_MODE_SIZES[idx], dark, font);
   applyLiveModeSizeAndTheme();
 }
 function toggleLiveModeDark(){
-  const { size, dark } = loadLiveModePrefs();
-  saveLiveModePrefs(size, !dark);
+  const { size, dark, font } = loadLiveModePrefs();
+  saveLiveModePrefs(size, !dark, font);
   applyLiveModeSizeAndTheme();
+}
+function setLiveModeFont(fontKey){
+  const { size, dark } = loadLiveModePrefs();
+  saveLiveModePrefs(size, dark, fontKey);
+  applyLiveModeSizeAndTheme();
+  closeLiveFontPopover();
+}
+function toggleLiveFontPopover(){
+  const popover = document.getElementById('liveFontPopover');
+  const opening = !popover.classList.contains('open');
+  if(opening){
+    popover.classList.add('open');
+    setTimeout(() => document.addEventListener('mousedown', liveFontPopoverOutsideClick), 0);
+  } else {
+    closeLiveFontPopover();
+  }
+}
+function closeLiveFontPopover(){
+  const popover = document.getElementById('liveFontPopover');
+  if(popover) popover.classList.remove('open');
+  document.removeEventListener('mousedown', liveFontPopoverOutsideClick);
+}
+function liveFontPopoverOutsideClick(e){
+  const popover = document.getElementById('liveFontPopover');
+  const wrap = document.querySelector('.live-font-wrap');
+  if(popover && wrap && !wrap.contains(e.target)) closeLiveFontPopover();
 }
 function openLiveMode(){
   document.getElementById('liveModeContent').innerHTML = buildLiveModeHTML();
@@ -2952,6 +3026,7 @@ function openLiveMode(){
 }
 function closeLiveMode(){
   document.getElementById('liveModeOverlay').classList.remove('open');
+  closeLiveFontPopover();
 }
 
 async function assembleDocxBlob(bodyXml){
@@ -3203,7 +3278,6 @@ async function onDateChange(){
   render();
   syncLectionary(dateStr);
   applyScheduleForDate(dateStr);
-  carryForwardPetitions(dateStr);
   render();
   refreshServicesPanelIfOpen();
   updateCurrentDateDisplay();
@@ -3437,7 +3511,6 @@ function resyncCurrentDate(){
   render();
   syncLectionary(dateStr);
   applyScheduleForDate(dateStr);
-  carryForwardPetitions(dateStr);
   render();
 }
 document.getElementById('serviceDate').addEventListener('change', onDateChange);
@@ -3956,8 +4029,8 @@ function renderMinisterChips(){
     <span class="minister-chip">
       <input type="color" class="minister-color-swatch" value="${ministerColors[name] || '#e8e6dd'}" title="Color for ${escapeAttr(name)} (used in the Schedule)" onchange="setMinisterColor('${escName}',this.value)">
       ${escapeHTML(name)}
+      <button class="icon-flip-h" title="Rename ${escapeAttr(name)} everywhere" onclick="renameMinisterEverywhere('${escName}')">✎</button>
       <button class="minister-link-btn${linked ? ' linked' : ''}" title="${linked ? 'Login linked: ' + escapeAttr(ministerEmails[name]) + ' (click to edit)' : 'Link a login email (optional)'}" onclick="editMinisterEmail('${escName}')">🔗</button>
-      <button title="Rename ${escapeAttr(name)} everywhere" onclick="renameMinisterEverywhere('${escName}')">✎</button>
       <button title="Remove ${escapeAttr(name)}" onclick="removeMinister('${escName}')">✕</button>
     </span>
   `;
@@ -4025,7 +4098,7 @@ async function renameMinisterEverywhere(oldName){
     alert(`"${trimmed}" is already in the roster.`);
     return;
   }
-  const ok = await customConfirm(`Rename "${oldName}" to "${trimmed}"? This updates the roster, their color and login link, and every movement/element they're assigned to in every past service — including services stored in the cloud, if you're signed in.`);
+  const ok = await customConfirm(`Rename "${oldName}" to "${trimmed}"? This updates the roster, their color and login link, every movement/element they're assigned to in every past service — including services stored in the cloud, if you're signed in — and any exact-match Preacher/Lectionary Reader notes in the Planner.`);
   if(!ok) return;
 
   ministerRoster = ministerRoster.map(n => n === oldName ? trimmed : n);
@@ -4076,10 +4149,44 @@ async function renameMinisterEverywhere(oldName){
   }
   try{ localStorage.setItem('liturgyArchive', JSON.stringify(archive)); }catch(e){}
 
+  // 4. Planner's freeform preacher/lectionaryReader text notes. These
+  //    aren't guaranteed to hold an exact roster-name match (abbreviations,
+  //    "Name?" notes, first-name-only), so only exact matches are rewritten
+  //    automatically — anything else is listed for the pastor to review and
+  //    fix by hand, per their explicit "I can help you match as needed".
+  const cleanWord = s => (s || '').toLowerCase().replace(/[?.,]/g, '').trim();
+  const oldWords = cleanWord(oldName).split(/\s+/).filter(Boolean);
+  let plannerExactCount = 0;
+  const plannerUncertain = [];
+  for(const dateStr in scheduleData){
+    const entry = scheduleData[dateStr];
+    ['preacher', 'lectionaryReader'].forEach(key => {
+      const val = entry[key];
+      if(!val) return;
+      if(val === oldName){
+        entry[key] = trimmed;
+        plannerExactCount++;
+      } else {
+        const valWords = cleanWord(val).split(/\s+/).filter(Boolean);
+        if(oldWords.some(w => valWords.includes(w))){
+          plannerUncertain.push(`${dateStr} — ${key}: "${val}"`);
+        }
+      }
+    });
+  }
+  if(plannerExactCount) saveSchedule();
+
   render();
   renderMinisterChips();
   refreshServicesPanelIfOpen();
-  alert(`Renamed "${oldName}" to "${trimmed}" — updated ${touchedDates.size} past service(s) plus the roster.`);
+  if(document.getElementById('scheduleOverlay')?.classList.contains('open')) renderScheduleTable();
+  let msg = `Renamed "${oldName}" to "${trimmed}" — updated ${touchedDates.size} past service(s), the roster, and ${plannerExactCount} exact Planner note(s).`;
+  if(plannerUncertain.length){
+    const shown = plannerUncertain.slice(0, 12);
+    msg += `\n\n${plannerUncertain.length} Planner note(s) look related but weren't changed automatically (not an exact match) — check these:\n` + shown.join('\n');
+    if(plannerUncertain.length > shown.length) msg += `\n…and ${plannerUncertain.length - shown.length} more.`;
+  }
+  alert(msg);
 }
 async function handleMinisterChange(id, selectEl){
   const value = selectEl.value;
@@ -5592,7 +5699,7 @@ async function applyScheduleForDate(dateStr){
    (whatever date is selected) is quietly saved to this browser — both
    as "the very latest state" (for crash recovery) and into a per-date
    archive (so past liturgies can be looked back on, and so features
-   like Pastoral Prayer carry-forward have something to pull from).
+   like the Services panel and notifications have something to pull from).
    This is separate from — and doesn't replace — the manual "Save
    Liturgy File" button.
 --------------------------------------------------------------------- */
@@ -5652,6 +5759,14 @@ function performAutosave(){
     const prior = loadLiturgyArchive()[dateStr];
     if(prior && Array.isArray(prior.notifiedMinisters)) notifiedMinisters = prior.notifiedMinisters;
   }catch(e){}
+  // If the person currently saving is themselves one of the assigned
+  // ministers, they don't need a notification for their own action —
+  // mark them caught up immediately rather than surfacing "new
+  // assignment: you" for something they just did themselves.
+  const savingAsMinister = getCurrentUserMinister();
+  if(savingAsMinister && assignedMinisters.includes(savingAsMinister) && !notifiedMinisters.includes(savingAsMinister)){
+    notifiedMinisters = [...notifiedMinisters, savingAsMinister];
+  }
   const snapshot = {
     churchTitle: document.getElementById('churchTitle').innerText,
     serviceTitle: document.getElementById('serviceTitle').value,
@@ -5723,38 +5838,6 @@ async function checkForAutosaveRestore(){
   }));
   render();
   updateCurrentDateDisplay();
-}
-
-function findMostRecentArchiveBefore(dateStr){
-  const archive = loadLiturgyArchive();
-  const dates = Object.keys(archive).filter(d => d < dateStr).sort();
-  return dates.length ? archive[dates[dates.length - 1]] : null;
-}
-
-/* ---------------------------------------------------------------------
-   Pastoral Prayer carry-forward. If this week's Petitions is empty,
-   pull in last time's Petitions text automatically and mark it in red
-   as a "review me" flag — clears the moment it's edited.
---------------------------------------------------------------------- */
-function clearCarriedOverFlag(id, key){
-  const el = findEl(id);
-  if(!el || !el.sections) return;
-  const s = el.sections.find(s => s.key === key);
-  if(s) s.carriedOver = false;
-}
-function carryForwardPetitions(dateStr){
-  const pp = findByScheduleKey('pastoralPrayer');
-  if(!pp || !pp.sections) return;
-  const petitions = pp.sections.find(s => s.key === 'petitions');
-  if(!petitions || petitions.content) return;
-  const prev = findMostRecentArchiveBefore(dateStr);
-  if(!prev) return;
-  const prevMovement = (prev.movements || []).find(m => m.key === 'consecration');
-  const prevPP = prevMovement && prevMovement.elements.find(el => el.scheduleKey === 'pastoralPrayer');
-  const prevPetitions = prevPP && prevPP.sections && prevPP.sections.find(s => s.key === 'petitions');
-  if(!prevPetitions || !prevPetitions.content) return;
-  petitions.content = prevPetitions.content;
-  petitions.carriedOver = true;
 }
 
 /* ---------------------------------------------------------------------
