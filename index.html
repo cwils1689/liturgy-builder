@@ -2799,7 +2799,7 @@ function buildLiturgyDocxBody(){
     body += docxPara(docxRun(movement.label || '', { bold:true, size:28, font:DOCX_FONT }), { spacingBefore:300, spacingAfter:120 });
 
     movement.elements.forEach(el => {
-      const effectiveMinister = el.minister || movement.defaultMinister || '';
+      const effectiveMinister = el.type === 'hymn' ? '' : (el.minister || movement.defaultMinister || '');
 
       if(el.type === 'header'){
         body += docxHeaderElement(el.title);
@@ -2880,7 +2880,7 @@ function buildLiveModeHTML(){
     html += `<div class="live-mode-movement" style="--m-color:${escapeAttr(movement.color)}"><h2>${escapeHTML(movement.label)}</h2>`;
 
     movement.elements.forEach(el => {
-      const effectiveMinister = el.minister || movement.defaultMinister || '';
+      const effectiveMinister = el.type === 'hymn' ? '' : (el.minister || movement.defaultMinister || '');
 
       if(el.type === 'header'){
         html += `<div class="live-mode-section-header">${escapeHTML(el.title || '')}</div>`;
