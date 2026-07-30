@@ -68,7 +68,6 @@
   }
   .hamburger-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
   .sync-status-btn{
-    position:absolute; top:0; right:0;
     height:34px;
     border:1px solid var(--border); background:transparent; color:var(--ink-faint);
     border-radius:6px; font-size:11.5px; font-family:'Inter',sans-serif; font-weight:600;
@@ -76,6 +75,51 @@
   }
   .sync-status-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
   .sync-status-btn.synced{ border-color:#3f6b4a; color:#3f6b4a; }
+  .header-top-right{
+    position:absolute; top:0; right:0;
+    display:flex; align-items:center; gap:8px;
+  }
+  .notif-bell-btn{
+    position:relative;
+    width:34px; height:34px;
+    border:1px solid var(--border); background:transparent; color:var(--ink-soft);
+    border-radius:6px; font-size:15px; cursor:pointer;
+  }
+  .notif-bell-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .notif-badge{
+    position:absolute; top:-5px; right:-5px;
+    min-width:16px; height:16px; padding:0 3px;
+    background:var(--consecration); color:#fff; border-radius:8px;
+    font-size:10px; font-weight:700; line-height:16px; text-align:center;
+    font-family:'Inter',sans-serif;
+  }
+  .notif-popover{
+    display:none; position:absolute; top:40px; right:0;
+    width:280px; max-height:340px; overflow-y:auto;
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    box-shadow:var(--shadow);
+    z-index:60; font-family:'Inter',sans-serif;
+  }
+  .notif-popover.open{ display:block; }
+  .notif-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 12px; border-bottom:1px solid var(--border);
+    font-size:12px; font-weight:700; color:var(--ink);
+  }
+  .notif-mark-all{
+    background:none; border:none; color:var(--commission); font-size:11px; font-weight:600; cursor:pointer; padding:0;
+  }
+  .notif-mark-all:hover{ text-decoration:underline; }
+  .notif-empty{ padding:16px 12px; font-size:12px; color:var(--ink-faint); text-align:center; }
+  .notif-list{ display:flex; flex-direction:column; }
+  .notif-item{
+    padding:9px 12px; border-bottom:1px solid var(--border);
+    cursor:pointer; font-size:12.5px;
+  }
+  .notif-item:last-child{ border-bottom:none; }
+  .notif-item:hover{ background:var(--bg); }
+  .notif-item-date{ font-weight:600; color:var(--ink); }
+  .notif-item-title{ color:var(--ink-soft); font-size:11.5px; margin-top:1px; }
   .auth-overlay{
     display:none;
     position:fixed; inset:0; z-index:2500;
@@ -1137,6 +1181,8 @@
     .modal-overlay{ display:none !important; }
     .auth-overlay{ display:none !important; }
     .sync-status-btn{ display:none !important; }
+    .header-top-right{ display:none !important; }
+    .notif-bell-btn, .notif-popover{ display:none !important; }
     .score-lightbox{ display:none !important; }
     .floating-toolbar{ display:none !important; }
     .series-picker-popover{ display:none !important; }
@@ -1175,7 +1221,13 @@
 
   <header class="masthead">
     <button id="settingsToggle" class="hamburger-btn" onclick="toggleSettingsMenu()" title="Settings (ESV key, ministers)">☰</button>
-    <button id="syncStatusIndicator" class="sync-status-btn" onclick="handleSyncStatusClick()" title="Cloud sync status">☁️ Login to Sync</button>
+    <div class="header-top-right">
+      <button id="notifBellBtn" class="notif-bell-btn" onclick="toggleNotificationsPanel()" title="Your new assignments" style="display:none;">
+        🔔<span id="notifBadge" class="notif-badge" style="display:none;"></span>
+      </button>
+      <div id="notifPopover" class="notif-popover"></div>
+      <button id="syncStatusIndicator" class="sync-status-btn" onclick="handleSyncStatusClick()" title="Cloud sync status">☁️ Login to Sync</button>
+    </div>
     <div class="eyebrow">Pillar Reformed Church</div>
     <h1 contenteditable="true" id="churchTitle">The Lord's Service</h1>
     <div class="service-meta">
@@ -3151,7 +3203,8 @@ async function handleSignIn(){
     hideAuthOverlay();
     updateSyncStatusIndicator();
     refreshServicesPanelIfOpen();
-    pullSharedDataOnSignIn();
+    refreshNotifications();
+    pullSharedDataOnSignIn().then(refreshNotifications);
   }catch(e){
     errEl.textContent = 'Could not reach the sign-in service. Check your connection and try again.';
   }
@@ -3164,6 +3217,7 @@ async function handleSyncStatusClick(){
     currentUser = null;
     updateSyncStatusIndicator();
     refreshServicesPanelIfOpen();
+    refreshNotifications();
   } else {
     showAuthOverlay();
   }
@@ -3188,7 +3242,8 @@ async function restoreSupabaseSession(){
       currentUser = data.session.user;
       updateSyncStatusIndicator();
       refreshServicesPanelIfOpen();
-      pullSharedDataOnSignIn();
+      refreshNotifications();
+      pullSharedDataOnSignIn().then(refreshNotifications);
     }
   }catch(e){
     console.error('Supabase session check failed; continuing local-only.', e);
@@ -3656,6 +3711,128 @@ function getCurrentUserMinister(){
   if(!currentUser || !currentUser.email) return null;
   const email = currentUser.email.toLowerCase();
   return ministerRoster.find(name => (ministerEmails[name] || '').toLowerCase() === email) || null;
+}
+/* ---------------------------------------------------------------------
+   Phase 4 of the collaboration/assignment feature — in-app notification
+   bell. Diffs each liturgy's assignedMinisters against notifiedMinisters
+   (set up in Phase 2's performAutosave) to find assignments the signed-in
+   minister hasn't seen yet. Purely client-side, piggybacking on the
+   existing liturgies table — no new Supabase schema. Only covers upcoming
+   (today-or-later) services, since a past assignment isn't actionable.
+   Real email notifications are a separate, larger piece: a static GitHub
+   Pages site can't safely hold an email-provider API key client-side, so
+   that would need a small secret-holding backend (e.g. a Supabase Edge
+   Function calling Resend) — not built yet, see project notes.
+--------------------------------------------------------------------- */
+let notifSourceArchive = {};
+let myPendingNotifications = [];
+async function refreshNotifications(){
+  const btn = document.getElementById('notifBellBtn');
+  const myMinisterName = getCurrentUserMinister();
+  if(!currentUser || !myMinisterName){
+    myPendingNotifications = [];
+    notifSourceArchive = {};
+    if(btn) btn.style.display = 'none';
+    updateNotificationBadge();
+    return;
+  }
+  if(btn) btn.style.display = '';
+  const archive = loadLiturgyArchive();
+  let merged = archive;
+  try{
+    const cloud = await fetchAllServiceSnapshotsFromSupabase();
+    if(Object.keys(cloud).length) merged = { ...archive, ...cloud };
+  }catch(e){}
+  notifSourceArchive = merged;
+  const todayStr = new Date().toISOString().slice(0,10);
+  myPendingNotifications = Object.keys(merged)
+    .filter(d => d >= todayStr)
+    .filter(d => Array.isArray(merged[d].assignedMinisters) && merged[d].assignedMinisters.includes(myMinisterName))
+    .filter(d => !(Array.isArray(merged[d].notifiedMinisters) && merged[d].notifiedMinisters.includes(myMinisterName)))
+    .sort()
+    .map(d => ({ date: d, title: merged[d].serviceTitle || '' }));
+  updateNotificationBadge();
+  const popover = document.getElementById('notifPopover');
+  if(popover && popover.classList.contains('open')) renderNotificationsPopover();
+}
+function updateNotificationBadge(){
+  const badge = document.getElementById('notifBadge');
+  if(!badge) return;
+  const n = myPendingNotifications.length;
+  badge.textContent = n > 9 ? '9+' : String(n);
+  badge.style.display = n > 0 ? '' : 'none';
+}
+function toggleNotificationsPanel(){
+  const popover = document.getElementById('notifPopover');
+  const opening = !popover.classList.contains('open');
+  if(opening){
+    popover.classList.add('open');
+    renderNotificationsPopover();
+    refreshNotifications().then(renderNotificationsPopover);
+    setTimeout(() => document.addEventListener('mousedown', notifPopoverOutsideClick), 0);
+  } else {
+    closeNotificationsPanel();
+  }
+}
+function closeNotificationsPanel(){
+  const popover = document.getElementById('notifPopover');
+  popover.classList.remove('open');
+  document.removeEventListener('mousedown', notifPopoverOutsideClick);
+}
+function notifPopoverOutsideClick(e){
+  const popover = document.getElementById('notifPopover');
+  const btn = document.getElementById('notifBellBtn');
+  if(!popover.contains(e.target) && e.target !== btn && !btn.contains(e.target)) closeNotificationsPanel();
+}
+function renderNotificationsPopover(){
+  const popover = document.getElementById('notifPopover');
+  if(!myPendingNotifications.length){
+    popover.innerHTML = '<div class="notif-empty">No new assignments.</div>';
+    return;
+  }
+  popover.innerHTML = `
+    <div class="notif-header">
+      <span>New assignments</span>
+      <button class="notif-mark-all" onclick="markAllNotificationsRead()">Mark all read</button>
+    </div>
+    <div class="notif-list">
+      ${myPendingNotifications.map(n => `
+        <div class="notif-item" onclick="openNotification('${n.date}')">
+          <div class="notif-item-date">${escapeHTML(formatServiceDateLabel(n.date))}</div>
+          ${n.title ? `<div class="notif-item-title">${escapeHTML(n.title)}</div>` : ''}
+        </div>
+      `).join('')}
+    </div>`;
+}
+async function markNotificationRead(dateStr){
+  const myMinisterName = getCurrentUserMinister();
+  if(!myMinisterName) return;
+  const entry = notifSourceArchive[dateStr];
+  if(!entry) return;
+  const notified = new Set(Array.isArray(entry.notifiedMinisters) ? entry.notifiedMinisters : []);
+  notified.add(myMinisterName);
+  entry.notifiedMinisters = [...notified];
+  try{
+    const archive = loadLiturgyArchive();
+    archive[dateStr] = entry;
+    localStorage.setItem('liturgyArchive', JSON.stringify(archive));
+  }catch(e){}
+  pushLiturgyToSupabase(dateStr, entry);
+  myPendingNotifications = myPendingNotifications.filter(n => n.date !== dateStr);
+  updateNotificationBadge();
+}
+async function openNotification(dateStr){
+  await markNotificationRead(dateStr);
+  renderNotificationsPopover();
+  closeNotificationsPanel();
+  document.getElementById('serviceDate').value = dateStr;
+  await onDateChange();
+  renderServicesList();
+}
+async function markAllNotificationsRead(){
+  const dates = myPendingNotifications.map(n => n.date);
+  for(const d of dates){ await markNotificationRead(d); }
+  renderNotificationsPopover();
 }
 function renderMinisterChips(){
   const box = document.getElementById('ministerChips');
@@ -5279,6 +5456,7 @@ function performAutosave(){
   lastSavedSnapshotJSON = buildCurrentSnapshotJSON();
 }
 setInterval(performAutosave, 8000);
+setInterval(refreshNotifications, 60000);
 window.addEventListener('beforeunload', function(){
   performAutosave();
   try{ localStorage.setItem('lastSessionClean', '1'); }catch(e){}
