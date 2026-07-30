@@ -67,25 +67,25 @@
     cursor:pointer;
   }
   .hamburger-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
-  .sync-status-btn{
-    height:34px;
-    border:1px solid var(--border); background:transparent; color:var(--ink-faint);
-    border-radius:6px; font-size:11.5px; font-family:'Inter',sans-serif; font-weight:600;
-    padding:0 10px; cursor:pointer; white-space:nowrap;
-  }
-  .sync-status-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
-  .sync-status-btn.synced{ border-color:#3f6b4a; color:#3f6b4a; }
   .header-top-right{
     position:absolute; top:0; right:0;
     display:flex; align-items:center; gap:8px;
   }
-  .notif-bell-btn{
+  .user-status-btn{
     position:relative;
-    width:34px; height:34px;
-    border:1px solid var(--border); background:transparent; color:var(--ink-soft);
-    border-radius:6px; font-size:15px; cursor:pointer;
+    height:34px; min-width:34px;
+    border:1px solid var(--border); background:transparent; color:var(--ink-faint);
+    border-radius:17px; font-size:11.5px; font-family:'Inter',sans-serif; font-weight:600;
+    padding:0 12px; cursor:pointer; white-space:nowrap;
+    display:flex; align-items:center; justify-content:center; gap:5px;
   }
-  .notif-bell-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .user-status-btn:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .user-status-btn.signed-in{
+    width:34px; height:34px; padding:0; border-radius:50%;
+    border-color:#3f6b4a; color:#3f6b4a; font-size:12.5px;
+  }
+  .user-status-initials{ font-family:'Inter',sans-serif; font-weight:700; letter-spacing:0.3px; }
+  .user-status-label{ margin-left:4px; }
   .notif-badge{
     position:absolute; top:-5px; right:-5px;
     min-width:16px; height:16px; padding:0 3px;
@@ -120,6 +120,16 @@
   .notif-item:hover{ background:var(--bg); }
   .notif-item-date{ font-weight:600; color:var(--ink); }
   .notif-item-title{ color:var(--ink-soft); font-size:11.5px; margin-top:1px; }
+  .notif-account-row{
+    padding:9px 12px; border-bottom:1px solid var(--border);
+    font-size:11px; color:var(--ink-soft); word-break:break-all;
+  }
+  .notif-footer{ padding:6px 12px; border-top:1px solid var(--border); }
+  .notif-logout-btn{
+    background:none; border:none; color:var(--ink-soft); font-size:12px; font-weight:600;
+    cursor:pointer; padding:4px 0; width:100%; text-align:left;
+  }
+  .notif-logout-btn:hover{ color:var(--ink); text-decoration:underline; }
   .auth-overlay{
     display:none;
     position:fixed; inset:0; z-index:2500;
@@ -1180,9 +1190,8 @@
     .settings-menu{ display:none !important; }
     .modal-overlay{ display:none !important; }
     .auth-overlay{ display:none !important; }
-    .sync-status-btn{ display:none !important; }
+    .user-status-btn, .notif-popover{ display:none !important; }
     .header-top-right{ display:none !important; }
-    .notif-bell-btn, .notif-popover{ display:none !important; }
     .score-lightbox{ display:none !important; }
     .floating-toolbar{ display:none !important; }
     .series-picker-popover{ display:none !important; }
@@ -1222,11 +1231,11 @@
   <header class="masthead">
     <button id="settingsToggle" class="hamburger-btn" onclick="toggleSettingsMenu()" title="Settings (ESV key, ministers)">☰</button>
     <div class="header-top-right">
-      <button id="notifBellBtn" class="notif-bell-btn" onclick="toggleNotificationsPanel()" title="Your new assignments" style="display:none;">
-        🔔<span id="notifBadge" class="notif-badge" style="display:none;"></span>
+      <button id="userStatusBtn" class="user-status-btn" onclick="handleSyncStatusClick()" title="Login to sync">
+        <span id="userStatusContent">☁️<span class="user-status-label">Login</span></span>
+        <span id="notifBadge" class="notif-badge" style="display:none;"></span>
       </button>
       <div id="notifPopover" class="notif-popover"></div>
-      <button id="syncStatusIndicator" class="sync-status-btn" onclick="handleSyncStatusClick()" title="Cloud sync status">☁️ Login to Sync</button>
     </div>
     <div class="eyebrow">Pillar Reformed Church</div>
     <h1 contenteditable="true" id="churchTitle">The Lord's Service</h1>
@@ -3209,29 +3218,46 @@ async function handleSignIn(){
     errEl.textContent = 'Could not reach the sign-in service. Check your connection and try again.';
   }
 }
-async function handleSyncStatusClick(){
+function handleSyncStatusClick(){
   if(currentUser){
-    const ok = await customConfirm(`Signed in as ${currentUser.email}. Sign out?`);
-    if(!ok) return;
-    try{ if(sbClient) await sbClient.auth.signOut(); }catch(e){}
-    currentUser = null;
-    updateSyncStatusIndicator();
-    refreshServicesPanelIfOpen();
-    refreshNotifications();
+    toggleNotificationsPanel();
   } else {
     showAuthOverlay();
   }
 }
+async function handleLogoutFromPopover(){
+  closeNotificationsPanel();
+  const ok = await customConfirm(`Signed in as ${currentUser.email}. Sign out?`);
+  if(!ok) return;
+  try{ if(sbClient) await sbClient.auth.signOut(); }catch(e){}
+  currentUser = null;
+  updateSyncStatusIndicator();
+  refreshServicesPanelIfOpen();
+  refreshNotifications();
+}
+function getUserStatusInitials(){
+  const minister = getCurrentUserMinister();
+  if(minister){
+    const parts = minister.trim().split(/\s+/).filter(Boolean);
+    if(parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    if(parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  }
+  if(currentUser && currentUser.email) return currentUser.email[0].toUpperCase();
+  return '';
+}
 function updateSyncStatusIndicator(){
-  const el = document.getElementById('syncStatusIndicator');
-  if(!el) return;
+  const btn = document.getElementById('userStatusBtn');
+  const content = document.getElementById('userStatusContent');
+  if(!btn || !content) return;
   if(currentUser){
     const minister = getCurrentUserMinister();
-    el.textContent = '☁️ ' + currentUser.email + (minister ? ` (${minister})` : '');
-    el.classList.add('synced');
+    content.innerHTML = `<span class="user-status-initials">${escapeHTML(getUserStatusInitials())}</span>`;
+    btn.title = currentUser.email + (minister ? ` (${minister})` : '') + ' — notifications & logout';
+    btn.classList.add('signed-in');
   } else {
-    el.textContent = '☁️ Login to Sync';
-    el.classList.remove('synced');
+    content.innerHTML = `☁️<span class="user-status-label">Login</span>`;
+    btn.title = 'Login to sync';
+    btn.classList.remove('signed-in');
   }
 }
 async function restoreSupabaseSession(){
@@ -3727,16 +3753,13 @@ function getCurrentUserMinister(){
 let notifSourceArchive = {};
 let myPendingNotifications = [];
 async function refreshNotifications(){
-  const btn = document.getElementById('notifBellBtn');
   const myMinisterName = getCurrentUserMinister();
   if(!currentUser || !myMinisterName){
     myPendingNotifications = [];
     notifSourceArchive = {};
-    if(btn) btn.style.display = 'none';
     updateNotificationBadge();
     return;
   }
-  if(btn) btn.style.display = '';
   const archive = loadLiturgyArchive();
   let merged = archive;
   try{
@@ -3781,16 +3804,17 @@ function closeNotificationsPanel(){
 }
 function notifPopoverOutsideClick(e){
   const popover = document.getElementById('notifPopover');
-  const btn = document.getElementById('notifBellBtn');
+  const btn = document.getElementById('userStatusBtn');
   if(!popover.contains(e.target) && e.target !== btn && !btn.contains(e.target)) closeNotificationsPanel();
 }
 function renderNotificationsPopover(){
   const popover = document.getElementById('notifPopover');
-  if(!myPendingNotifications.length){
-    popover.innerHTML = '<div class="notif-empty">No new assignments.</div>';
-    return;
-  }
-  popover.innerHTML = `
+  const minister = getCurrentUserMinister();
+  const accountRow = currentUser
+    ? `<div class="notif-account-row">${escapeHTML(currentUser.email)}${minister ? ' (' + escapeHTML(minister) + ')' : ''}</div>`
+    : '';
+  const listHtml = myPendingNotifications.length
+    ? `
     <div class="notif-header">
       <span>New assignments</span>
       <button class="notif-mark-all" onclick="markAllNotificationsRead()">Mark all read</button>
@@ -3802,6 +3826,13 @@ function renderNotificationsPopover(){
           ${n.title ? `<div class="notif-item-title">${escapeHTML(n.title)}</div>` : ''}
         </div>
       `).join('')}
+    </div>`
+    : '<div class="notif-empty">No new assignments.</div>';
+  popover.innerHTML = `
+    ${accountRow}
+    ${listHtml}
+    <div class="notif-footer">
+      <button class="notif-logout-btn" onclick="handleLogoutFromPopover()">Log out</button>
     </div>`;
 }
 async function markNotificationRead(dateStr){
@@ -3817,7 +3848,7 @@ async function markNotificationRead(dateStr){
     archive[dateStr] = entry;
     localStorage.setItem('liturgyArchive', JSON.stringify(archive));
   }catch(e){}
-  pushLiturgyToSupabase(dateStr, entry);
+  await pushLiturgyToSupabase(dateStr, entry);
   myPendingNotifications = myPendingNotifications.filter(n => n.date !== dateStr);
   updateNotificationBadge();
 }
