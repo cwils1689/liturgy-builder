@@ -113,13 +113,21 @@
   .notif-empty{ padding:16px 12px; font-size:12px; color:var(--ink-faint); text-align:center; }
   .notif-list{ display:flex; flex-direction:column; }
   .notif-item{
-    padding:9px 12px; border-bottom:1px solid var(--border);
-    cursor:pointer; font-size:12.5px;
+    display:flex; align-items:center; gap:8px;
+    padding:0 8px 0 0; border-bottom:1px solid var(--border);
+    font-size:12.5px;
   }
   .notif-item:last-child{ border-bottom:none; }
   .notif-item:hover{ background:var(--bg); }
+  .notif-item-main{ flex:1; padding:9px 4px 9px 12px; cursor:pointer; min-width:0; }
   .notif-item-date{ font-weight:600; color:var(--ink); }
   .notif-item-title{ color:var(--ink-soft); font-size:11.5px; margin-top:1px; }
+  .notif-item-mark-read{
+    flex-shrink:0; width:22px; height:22px; border-radius:50%;
+    border:1px solid var(--border); background:transparent; color:var(--ink-faint);
+    font-size:11px; cursor:pointer; line-height:1;
+  }
+  .notif-item-mark-read:hover{ border-color:#3f6b4a; color:#3f6b4a; }
   .notif-account-row{
     padding:9px 12px; border-bottom:1px solid var(--border);
     font-size:11px; color:var(--ink-soft); word-break:break-all;
@@ -266,6 +274,18 @@
   #esvKeyStatus.saved{ color:#3F6B4A; }
 
   .ministers-panel-body{ padding:14px 16px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; }
+  .assignment-movement-group{ margin-bottom:2px; }
+  .assignment-movement-name{
+    font-family:'Spectral',serif; font-size:13.5px; font-weight:600; color:var(--ink);
+    padding-bottom:3px; border-bottom:1px solid var(--border); margin-bottom:6px;
+  }
+  .assignment-row{
+    display:flex; align-items:baseline; justify-content:space-between;
+    font-size:12.5px; color:var(--ink-soft); padding:3px 0 3px 10px;
+  }
+  .assignment-row.assignment-row-mine{ color:var(--ink); font-weight:600; }
+  .assignment-row-element{ color:var(--ink-faint); }
+  .assignment-row-minister{ text-align:right; white-space:nowrap; margin-left:12px; }
   .ministers-panel-hint{ font-size:11.5px; color:var(--ink-soft); line-height:1.5; }
   .ministers-add-row{ display:flex; gap:8px; }
   .ministers-add-row input{
@@ -1307,6 +1327,16 @@
           <button onclick="addMinisterFromInput()">Add</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div id="assignmentDetailsOverlay" class="ministers-overlay">
+    <div class="ministers-modal-panel">
+      <div class="services-panel-header">
+        <h3 id="assignmentDetailsTitle">Assignments</h3>
+        <button class="hymnal-close-btn" onclick="closeAssignmentDetails()" title="Close">✕</button>
+      </div>
+      <div id="assignmentDetailsBody" class="ministers-panel-body"></div>
     </div>
   </div>
 
@@ -3821,9 +3851,12 @@ function renderNotificationsPopover(){
     </div>
     <div class="notif-list">
       ${myPendingNotifications.map(n => `
-        <div class="notif-item" onclick="openNotification('${n.date}')">
-          <div class="notif-item-date">${escapeHTML(formatServiceDateLabel(n.date))}</div>
-          ${n.title ? `<div class="notif-item-title">${escapeHTML(n.title)}</div>` : ''}
+        <div class="notif-item">
+          <div class="notif-item-main" onclick="openNotification('${n.date}')">
+            <div class="notif-item-date">${escapeHTML(formatServiceDateLabel(n.date))}</div>
+            ${n.title ? `<div class="notif-item-title">${escapeHTML(n.title)}</div>` : ''}
+          </div>
+          <button class="notif-item-mark-read" title="Mark as read" onclick="event.stopPropagation(); markNotificationReadFromPopover('${n.date}')">✓</button>
         </div>
       `).join('')}
     </div>`
@@ -3852,13 +3885,62 @@ async function markNotificationRead(dateStr){
   myPendingNotifications = myPendingNotifications.filter(n => n.date !== dateStr);
   updateNotificationBadge();
 }
-async function openNotification(dateStr){
+async function markNotificationReadFromPopover(dateStr){
   await markNotificationRead(dateStr);
   renderNotificationsPopover();
+}
+async function openNotification(dateStr){
   closeNotificationsPanel();
   document.getElementById('serviceDate').value = dateStr;
   await onDateChange();
   renderServicesList();
+  openAssignmentDetails(dateStr, state);
+}
+/* ---------------------------------------------------------------------
+   Assignment details modal — shown after jumping to a service from a
+   notification, so the minister immediately sees WHAT they (and anyone
+   else) are assigned to for that service: which movements (whole-movement
+   defaults) and which individual elements, and who's assigned to each.
+   Reuses the ministers-overlay modal styling for visual consistency.
+--------------------------------------------------------------------- */
+function buildAssignmentDetailsHTML(movements, myMinisterName){
+  const groups = (movements || []).map(m => {
+    const rows = [];
+    if(m.defaultMinister){
+      rows.push(`<div class="assignment-row${m.defaultMinister === myMinisterName ? ' assignment-row-mine' : ''}">
+        <span>Whole movement</span>
+        <span class="assignment-row-minister">${escapeHTML(m.defaultMinister)}</span>
+      </div>`);
+    }
+    (m.elements || []).forEach(el => {
+      if(el.minister){
+        rows.push(`<div class="assignment-row assignment-row-element${el.minister === myMinisterName ? ' assignment-row-mine' : ''}">
+          <span>${escapeHTML(el.title || 'Untitled element')}</span>
+          <span class="assignment-row-minister">${escapeHTML(el.minister)}</span>
+        </div>`);
+      }
+    });
+    if(!rows.length) return '';
+    return `<div class="assignment-movement-group">
+      <div class="assignment-movement-name">${escapeHTML(m.label || '')}</div>
+      ${rows.join('')}
+    </div>`;
+  }).filter(Boolean).join('');
+  return groups || '<div class="hymnal-panel-hint">No ministers are assigned for this service yet.</div>';
+}
+function openAssignmentDetails(dateStr, movements){
+  const overlay = document.getElementById('assignmentDetailsOverlay');
+  const title = document.getElementById('assignmentDetailsTitle');
+  const body = document.getElementById('assignmentDetailsBody');
+  if(!overlay || !title || !body) return;
+  const serviceTitle = document.getElementById('serviceTitle')?.value || '';
+  title.textContent = 'Assignments' + (serviceTitle ? ' — ' + serviceTitle : '') + (dateStr ? ' (' + formatServiceDateLabel(dateStr) + ')' : '');
+  body.innerHTML = buildAssignmentDetailsHTML(movements, getCurrentUserMinister());
+  overlay.classList.add('open');
+}
+function closeAssignmentDetails(){
+  const overlay = document.getElementById('assignmentDetailsOverlay');
+  if(overlay) overlay.classList.remove('open');
 }
 async function markAllNotificationsRead(){
   const dates = myPendingNotifications.map(n => n.date);
@@ -3875,6 +3957,7 @@ function renderMinisterChips(){
       <input type="color" class="minister-color-swatch" value="${ministerColors[name] || '#e8e6dd'}" title="Color for ${escapeAttr(name)} (used in the Schedule)" onchange="setMinisterColor('${escName}',this.value)">
       ${escapeHTML(name)}
       <button class="minister-link-btn${linked ? ' linked' : ''}" title="${linked ? 'Login linked: ' + escapeAttr(ministerEmails[name]) + ' (click to edit)' : 'Link a login email (optional)'}" onclick="editMinisterEmail('${escName}')">🔗</button>
+      <button title="Rename ${escapeAttr(name)} everywhere" onclick="renameMinisterEverywhere('${escName}')">✎</button>
       <button title="Remove ${escapeAttr(name)}" onclick="removeMinister('${escName}')">✕</button>
     </span>
   `;
@@ -3900,6 +3983,103 @@ async function removeMinister(name){
   saveMinisterRoster();
   renderMinisterChips();
   render();
+}
+/* ---------------------------------------------------------------------
+   Rename a minister everywhere they appear — same "rename cascades
+   everywhere" pattern as renameSeriesEverywhere for Sermon Series.
+   Updates the roster, their color swatch, their login link, and every
+   movement-default/element-level assignment in every past service
+   (local + cloud), plus keeps assignedMinisters/notifiedMinisters in
+   sync so notification read-status doesn't silently break across a
+   rename. Deliberately does NOT touch the Planner's freeform
+   preacher/lectionaryReader text fields — those aren't guaranteed to
+   hold an exact roster name (abbreviations, "Name?" notes, etc.) so
+   rewriting them automatically risks silently mangling schedule notes.
+--------------------------------------------------------------------- */
+function renameMinisterInSnapshot(snapshot, oldName, trimmed){
+  if(!snapshot || !snapshot.movements) return false;
+  let changed = false;
+  for(const m of snapshot.movements){
+    if(m.defaultMinister === oldName){ m.defaultMinister = trimmed; changed = true; }
+    if(!m.elements) continue;
+    for(const el of m.elements){
+      if(el.minister === oldName){ el.minister = trimmed; changed = true; }
+    }
+  }
+  if(Array.isArray(snapshot.assignedMinisters) && snapshot.assignedMinisters.includes(oldName)){
+    snapshot.assignedMinisters = snapshot.assignedMinisters.map(n => n === oldName ? trimmed : n).sort();
+    changed = true;
+  }
+  if(Array.isArray(snapshot.notifiedMinisters) && snapshot.notifiedMinisters.includes(oldName)){
+    snapshot.notifiedMinisters = snapshot.notifiedMinisters.map(n => n === oldName ? trimmed : n);
+    changed = true;
+  }
+  return changed;
+}
+async function renameMinisterEverywhere(oldName){
+  const newName = await customPrompt('Rename this minister everywhere they appear:', oldName);
+  if(!newName || !newName.trim()) return;
+  const trimmed = newName.trim();
+  if(trimmed === oldName) return;
+  if(ministerRoster.includes(trimmed)){
+    alert(`"${trimmed}" is already in the roster.`);
+    return;
+  }
+  const ok = await customConfirm(`Rename "${oldName}" to "${trimmed}"? This updates the roster, their color and login link, and every movement/element they're assigned to in every past service — including services stored in the cloud, if you're signed in.`);
+  if(!ok) return;
+
+  ministerRoster = ministerRoster.map(n => n === oldName ? trimmed : n);
+  saveMinisterRoster();
+  if(ministerColors[oldName] !== undefined){
+    ministerColors[trimmed] = ministerColors[oldName];
+    delete ministerColors[oldName];
+    saveMinisterColors();
+  }
+  if(ministerEmails[oldName] !== undefined){
+    ministerEmails[trimmed] = ministerEmails[oldName];
+    delete ministerEmails[oldName];
+    saveMinisterEmails();
+  }
+
+  const touchedDates = new Set();
+
+  // 1. The liturgy currently open in the Builder
+  for(const m of state){
+    if(m.defaultMinister === oldName) m.defaultMinister = trimmed;
+    for(const el of m.elements){
+      if(el.minister === oldName) el.minister = trimmed;
+    }
+  }
+
+  // 2. Every liturgy archived locally in this browser
+  const archive = loadLiturgyArchive();
+  for(const dateStr in archive){
+    if(renameMinisterInSnapshot(archive[dateStr], oldName, trimmed)) touchedDates.add(dateStr);
+  }
+
+  // 3. Every liturgy archived in the cloud, if signed in — same
+  //    more-recent-copy-wins merge as renameSeriesEverywhere, so this
+  //    doesn't clobber an edit made on another device since it last synced.
+  if(sbClient && currentUser){
+    const cloudSnapshots = await fetchAllServiceSnapshotsFromSupabase();
+    for(const dateStr in cloudSnapshots){
+      const cloudSnap = cloudSnapshots[dateStr];
+      const localSnap = archive[dateStr];
+      const useCloud = !localSnap || (cloudSnap.savedAt || 0) > (localSnap.savedAt || 0);
+      const target = useCloud ? cloudSnap : localSnap;
+      if(renameMinisterInSnapshot(target, oldName, trimmed)){
+        archive[dateStr] = target;
+        await pushLiturgyToSupabase(dateStr, target);
+        touchedDates.add(dateStr);
+      }
+    }
+  }
+  try{ localStorage.setItem('liturgyArchive', JSON.stringify(archive)); }catch(e){}
+
+  render();
+  renderMinisterChips();
+  refreshServicesPanelIfOpen();
+  alert(`Renamed "${oldName}" to "${trimmed}" — updated ${touchedDates.size} past service(s) plus the roster.`);
 }
 async function handleMinisterChange(id, selectEl){
   const value = selectEl.value;
@@ -4978,6 +5158,10 @@ function ministersOverlayOutsideClick(e){
   if(e.target === document.getElementById('ministersOverlay')) toggleMinistersPanel();
 }
 document.getElementById('ministersOverlay') && document.getElementById('ministersOverlay').addEventListener('mousedown', ministersOverlayOutsideClick);
+function assignmentDetailsOverlayOutsideClick(e){
+  if(e.target === document.getElementById('assignmentDetailsOverlay')) closeAssignmentDetails();
+}
+document.getElementById('assignmentDetailsOverlay') && document.getElementById('assignmentDetailsOverlay').addEventListener('mousedown', assignmentDetailsOverlayOutsideClick);
 function formatServiceDateLabel(dateStr){
   const [y, m, d] = dateStr.split('-').map(Number);
   const date = new Date(y, m - 1, d);
