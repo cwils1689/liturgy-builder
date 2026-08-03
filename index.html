@@ -1456,7 +1456,8 @@
     <label class="hymn-speed-control">Tempo:
       <input type="number" id="hymnPlaybackBpm" min="20" max="300" step="1" style="width:4.5em" onchange="changeHymnPlaybackBpm(this.value)"> BPM
     </label>
-    <button onclick="resetHymnPlaybackBpm()" title="Reset to this hymn's own tempo">↺ Default</button>
+    <button onclick="saveCurrentHymnTempo()" title="Remember this tempo for this hymn next time">💾 Save Tempo</button>
+    <button onclick="resetHymnPlaybackBpm()" title="Reset to this hymn's own tempo from the sheet music">↺ Original</button>
     <button onclick="stopHymnAudio()">⏹ Stop</button>
   </div>
 
@@ -3483,6 +3484,7 @@ function updateCurrentDateDisplay(){
   btn.textContent = dateStr ? '📃 ' + formatServiceDateLabel(dateStr) : '📃 Select a Service';
 }
 function resyncCurrentDate(){
+  if(!confirm('Refresh RCL, BCP, and Schedule data for this date? This will overwrite those specific fields — including any hand-edits you\'ve made to them — but leaves the rest of the liturgy untouched.')) return;
   const dateStr = document.getElementById('serviceDate').value;
   if(!dateStr) return;
   const info = getLiturgicalInfo(dateStr);
@@ -5005,6 +5007,25 @@ function findHymnalEntryByNum(num){
 
 let hymnPlaybackSpeed = 1;
 let hymnBaseTempo = 120;
+function loadHymnTempoOverrides(){
+  try{ return JSON.parse(localStorage.getItem('hymnTempoOverrides') || '{}'); }catch(e){ return {}; }
+}
+function saveHymnTempoOverride(num, bpm){
+  const overrides = loadHymnTempoOverrides();
+  overrides[num] = bpm;
+  try{ localStorage.setItem('hymnTempoOverrides', JSON.stringify(overrides)); }catch(e){}
+}
+function saveCurrentHymnTempo(){
+  if(!hymnPlayback || !hymnPlayback.num) return;
+  const bpmInput = document.getElementById('hymnPlaybackBpm');
+  const bpm = parseFloat(bpmInput.value);
+  if(!bpm || bpm <= 0) return;
+  saveHymnTempoOverride(hymnPlayback.num, bpm);
+  const label = document.getElementById('hymnPlaybackLabel');
+  const prevText = label.textContent;
+  label.textContent = '💾 Saved ' + Math.round(bpm) + ' BPM as this hymn\'s tempo';
+  setTimeout(() => { if(hymnPlayback) label.textContent = prevText; }, 1800);
+}
 function changeHymnPlaybackBpm(value){
   const bpm = parseFloat(value);
   if(!bpm || bpm <= 0){
@@ -5045,9 +5066,11 @@ async function playHymnAudio(num, isSpeedChange){
 
     if(!isSpeedChange){
       hymnBaseTempo = notes[0].tempo || 120;
-      hymnPlaybackSpeed = 1;
+      const savedBpm = loadHymnTempoOverrides()[num];
+      const startBpm = savedBpm || hymnBaseTempo;
+      hymnPlaybackSpeed = startBpm / hymnBaseTempo;
       const bpmInput = document.getElementById('hymnPlaybackBpm');
-      if(bpmInput) bpmInput.value = Math.round(hymnBaseTempo);
+      if(bpmInput) bpmInput.value = Math.round(startBpm);
     }
 
     await Tone.start();
