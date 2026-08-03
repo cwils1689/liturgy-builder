@@ -180,12 +180,6 @@
     z-index:50;
   }
   .settings-menu.open{ display:block; }
-  .settings-menu .esv-settings{
-    justify-content:flex-start;
-    margin-top:0;
-  }
-  .settings-menu .esv-settings{ padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--border); }
-  .settings-menu .esv-settings input{ width:auto; flex:1; }
   header.masthead .eyebrow{
     font-size:11px;
     letter-spacing:0.14em;
@@ -238,6 +232,16 @@
   }
   .panel-settings button:hover{ border-color:var(--ink-soft); color:var(--ink); }
 
+  .translation-settings{
+    display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--ink-faint);
+  }
+  .translation-settings label{ font-weight:600; }
+  .translation-settings select{
+    font-family:'Inter',sans-serif; font-size:11.5px;
+    border:1px solid var(--border); border-radius:4px;
+    padding:5px 8px; background:#fff; color:var(--ink); flex:1;
+  }
+
   .sync-status{
     text-align:center;
     font-size:11.5px;
@@ -252,27 +256,6 @@
   .sync-status.is-offline .dot{ background:#7A2E3B; }
   .sync-status.is-offline{ color:#7A2E3B; }
   .sync-status a{ color:inherit; text-decoration:underline; }
-
-  .esv-settings{
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    font-size:11.5px; color:var(--ink-faint); margin-top:6px; flex-wrap:wrap;
-  }
-  .esv-settings label{ font-weight:600; }
-  .settings-hint{ font-weight:400; color:var(--ink-faint); font-size:10.5px; }
-  .esv-settings input{
-    font-family:'Inter',sans-serif; font-size:11.5px;
-    border:1px solid var(--border); border-radius:4px;
-    padding:5px 8px; width:180px; background:#fff; color:var(--ink);
-  }
-  .esv-settings button{
-    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
-    border:1px solid var(--border); background:#fff; color:var(--ink-soft);
-    border-radius:4px; padding:5px 10px; cursor:pointer;
-  }
-  .esv-settings button:hover{ border-color:var(--ink-soft); }
-  .esv-settings a{ color:var(--ink-faint); text-decoration:underline; }
-  #esvKeyStatus{ font-weight:600; }
-  #esvKeyStatus.saved{ color:#3F6B4A; }
 
   .ministers-panel-body{ padding:14px 16px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; }
   .assignment-movement-group{ margin-bottom:2px; }
@@ -1238,7 +1221,6 @@
     .content-area{ resize:none; }
     footer.note{ display:none; }
     .sync-status{ display:none; }
-    .esv-settings{ display:none; }
     .hamburger-btn{ display:none; }
     .settings-menu{ display:none !important; }
     .modal-overlay{ display:none !important; }
@@ -1281,7 +1263,7 @@
 <div class="app">
 
   <header class="masthead">
-    <button id="settingsToggle" class="hamburger-btn" onclick="toggleSettingsMenu()" title="Settings (ESV key, ministers)">☰</button>
+    <button id="settingsToggle" class="hamburger-btn" onclick="toggleSettingsMenu()" title="Settings (ministers)">☰</button>
     <div class="header-top-right">
       <button id="userStatusBtn" class="user-status-btn" onclick="handleSyncStatusClick()" title="Login to sync">
         <span id="userStatusContent">☁️<span class="user-status-label">Login</span></span>
@@ -1304,12 +1286,15 @@
         <button onclick="toggleServicesPanel()">📃 Services</button>
         <button onclick="toggleMinistersPanel()">👤 Ministers</button>
       </div>
-      <div class="esv-settings">
-        <label for="esvApiKey">ESV API Key <span class="settings-hint">(shared with everyone signed in)</span></label>
-        <input type="password" id="esvApiKey" placeholder="paste your key from api.esv.org">
-        <button onclick="saveEsvKey()">Save</button>
-        <a href="https://api.esv.org/" target="_blank" rel="noopener">Get a free key →</a>
-        <span id="esvKeyStatus"></span>
+      <div class="panel-settings">
+        <button onclick="openBackupMenu(this)">🗄 Backup/Restore ▾</button>
+      </div>
+      <div class="translation-settings">
+        <label for="bibleTranslationSelect">Bible Translation</label>
+        <select id="bibleTranslationSelect" onchange="setBibleTranslation(this.value); render();">
+          <option value="esv">ESV</option>
+          <option value="kjv">KJV (public domain, no key needed)</option>
+        </select>
       </div>
     </div>
   </header>
@@ -1321,9 +1306,12 @@
     <button onclick="toggleHymnalPanel()">🎵 Hymnal</button>
     <button onclick="openLiveMode()">⛪ Presentation Mode</button>
     <input type="file" id="loadInput" accept="application/json">
+    <input type="file" id="restoreBackupInput" accept="application/json" style="display:none">
   </div>
 
   <div id="templatesMenuPopover" class="export-menu-popover"></div>
+
+  <div id="backupMenuPopover" class="export-menu-popover"></div>
 
   <div id="servicesPanel" class="services-panel">
     <div class="services-panel-header">
@@ -1429,7 +1417,7 @@
 
   <div id="backupNudge" class="backup-nudge">
     <span>It's been a couple weeks since your last backup export — everything lives only in this browser.</span>
-    <button onclick="saveToFile()">💾 Save now</button>
+    <button onclick="backupAllData()">💾 Save now</button>
     <button onclick="snoozeBackupNudge()">Remind me later</button>
   </div>
 
@@ -1818,7 +1806,7 @@ function renderElement(el, movement){
         <div class="lectionary-label">${escapeHTML(r.label)}</div>
         <div class="ref-row">
           <input class="reference-input" placeholder="${escapeAttr(r.label)} reference" value="${escapeAttr(r.reference)}" oninput="updateReadingField('${el.id}','${r.key}','reference',this.value)" onblur="autoFetchEsvForReading('${el.id}','${r.key}')">
-          <button class="esv-fetch-btn" onclick="fetchEsvForReading('${el.id}','${r.key}')">📖 Fetch ESV</button>
+          <button class="esv-fetch-btn" onclick="fetchEsvForReading('${el.id}','${r.key}')">${bibleFetchButtonLabel()}</button>
         </div>
         <details class="lectionary-passage-details" ${el.includeText ? 'open' : ''}>
           <summary class="lectionary-passage-summary">Passage text</summary>
@@ -1855,7 +1843,7 @@ function renderElement(el, movement){
         <div class="lectionary-label">${escapeHTML(s.label)}</div>
         <div class="ref-row">
           <input class="reference-input" placeholder="${escapeAttr(s.label)} scripture reference" value="${escapeAttr(s.reference)}" oninput="updateReadingField('${el.id}','${s.key}','reference',this.value)" onblur="autoFetchEsvForReading('${el.id}','${s.key}')">
-          <button class="esv-fetch-btn" onclick="fetchEsvForReading('${el.id}','${s.key}')">📖 Fetch ESV</button>
+          <button class="esv-fetch-btn" onclick="fetchEsvForReading('${el.id}','${s.key}')">${bibleFetchButtonLabel()}</button>
         </div>
         ${richEditorHtml(el.id, 'section:' + s.key, s.content, `${s.label} content…`)}
       </div>
@@ -1866,7 +1854,7 @@ function renderElement(el, movement){
       ${el.type==='scripture' ? `
       <div class="ref-row">
         <input class="reference-input" placeholder="Scripture reference (e.g. Psalm 95:1-7)" value="${escapeAttr(el.reference)}" oninput="updateField('${el.id}','reference',this.value)" onblur="autoFetchEsvForElement('${el.id}')">
-        <button class="esv-fetch-btn" onclick="fetchEsvForElement('${el.id}')">📖 Fetch ESV</button>
+        <button class="esv-fetch-btn" onclick="fetchEsvForElement('${el.id}')">${bibleFetchButtonLabel()}</button>
       </div>` : ''}
       ${richEditorHtml(el.id, 'content', el.content, placeholderFor(el.type))}
     `;
@@ -3462,10 +3450,6 @@ async function pullSharedDataOnSignIn(){
   }
   if(cloud.esvApiKey){
     try{ localStorage.setItem('esvApiKey', cloud.esvApiKey); }catch(e){}
-    const input = document.getElementById('esvApiKey');
-    const status = document.getElementById('esvKeyStatus');
-    if(input) input.value = cloud.esvApiKey;
-    if(status){ status.textContent = 'Saved ✓'; status.className = 'saved'; }
   }
   render();
   refreshServicesPanelIfOpen();
@@ -3621,41 +3605,47 @@ function syncLectionary(dateStr){
 function loadEsvKey(){
   try{ return localStorage.getItem('esvApiKey') || ''; }catch(e){ return ''; }
 }
-async function saveEsvKey(){
-  const val = document.getElementById('esvApiKey').value.trim();
-  try{ localStorage.setItem('esvApiKey', val); }catch(e){}
-  const status = document.getElementById('esvKeyStatus');
-  if(!val){ status.textContent = ''; status.className = ''; return; }
-  if(!currentUser){
-    status.textContent = 'Saved on this device only — sign in (☁️) to share it across devices';
-    status.className = '';
-    return;
-  }
-  status.textContent = 'Saving…';
-  status.className = '';
-  const synced = await pushSharedDataToSupabase('esvApiKey', val);
-  status.textContent = synced ? 'Saved & synced ✓' : 'Saved on this device — cloud sync failed, try again';
-  status.className = synced ? 'saved' : '';
-}
-(function initEsvKey(){
-  const key = loadEsvKey();
-  const input = document.getElementById('esvApiKey');
-  if(key){
-    input.value = key;
-    const status = document.getElementById('esvKeyStatus');
-    status.textContent = 'Saved ✓';
-    status.className = 'saved';
-  }
-})();
 
-async function fetchEsvPassage(reference, silent){
-  const key = loadEsvKey();
-  if(!key){
-    if(!silent) alert('Enter and save your free ESV API key first (see the ☰ menu near the top of the page — get one at api.esv.org).');
-    return null;
-  }
+/* ---------------------------------------------------------------------
+   Bible translation choice. ESV needs the app-wide shared key (see
+   above); KJV is public domain and goes through bible-api.com, which
+   needs no key at all — a good fallback or alternative default.
+--------------------------------------------------------------------- */
+function loadBibleTranslation(){
+  try{ return localStorage.getItem('bibleTranslation') || 'esv'; }catch(e){ return 'esv'; }
+}
+function setBibleTranslation(val){
+  try{ localStorage.setItem('bibleTranslation', val); }catch(e){}
+}
+function bibleFetchReady(){
+  return loadBibleTranslation() === 'kjv' || !!loadEsvKey();
+}
+function bibleFetchButtonLabel(){
+  return loadBibleTranslation() === 'kjv' ? '📖 Fetch KJV' : '📖 Fetch ESV';
+}
+
+async function fetchBiblePassage(reference, silent){
   if(!reference || !reference.trim()){
     if(!silent) alert('Enter a Scripture reference first.');
+    return null;
+  }
+  if(loadBibleTranslation() === 'kjv'){
+    try{
+      const url = `https://bible-api.com/${encodeURIComponent(reference)}?translation=kjv`;
+      const resp = await fetch(url);
+      if(!resp.ok) throw new Error('KJV lookup returned an error (' + resp.status + ')');
+      const data = await resp.json();
+      const text = (data && data.text) ? data.text.trim() : '';
+      if(!text) throw new Error('No passage returned — check the reference.');
+      return text;
+    }catch(err){
+      if(!silent) alert("Couldn't fetch that passage in KJV (bible-api.com). This could be a wrong reference or a network issue. You can always paste the text in by hand instead.\n\n(" + err.message + ')');
+      return null;
+    }
+  }
+  const key = loadEsvKey();
+  if(!key){
+    if(!silent) alert('No ESV API key is set up for this app yet — ask whoever manages the Supabase config to add one, or switch to KJV in the ☰ menu (no key needed).');
     return null;
   }
   const url = `https://api.esv.org/v3/passage/text/?q=${encodeURIComponent(reference)}&include-headings=false&include-footnotes=false&include-verse-numbers=false&include-short-copyright=true&include-passage-references=false`;
@@ -3677,8 +3667,8 @@ async function fetchEsvForElement(id){
   if(!el) return;
   const btn = document.querySelector(`.element-card[data-id="${id}"] .esv-fetch-btn`);
   if(btn){ btn.disabled = true; btn.textContent = 'Fetching…'; }
-  const text = await fetchEsvPassage(el.reference);
-  if(btn){ btn.disabled = false; btn.textContent = '📖 Fetch ESV'; }
+  const text = await fetchBiblePassage(el.reference);
+  if(btn){ btn.disabled = false; btn.textContent = bibleFetchButtonLabel(); }
   if(text){
     el.content = text;
     render();
@@ -3692,7 +3682,7 @@ async function fetchEsvForReading(id, key){
   if(!list) return;
   const r = list.find(r => r.key === key);
   if(!r) return;
-  const text = await fetchEsvPassage(r.reference);
+  const text = await fetchBiblePassage(r.reference);
   if(text){
     r.content = text;
     if(el.readings) el.includeText = true;
@@ -3701,8 +3691,8 @@ async function fetchEsvForReading(id, key){
 }
 
 /* ---------------------------------------------------------------------
-   Automatic ESV fetching. Same underlying calls as the manual "Fetch
-   ESV" buttons (which stay, and always work exactly as before), but
+   Automatic Bible fetching. Same underlying calls as the manual "Fetch
+   ESV/KJV" buttons (which stay, and always work exactly as before), but
    triggered automatically — when a reference field is filled in and
    left (blur), or right after a date sync fills in the Lectionary
    references — instead of waiting for a click. Runs silently (no
@@ -3711,8 +3701,8 @@ async function fetchEsvForReading(id, key){
 --------------------------------------------------------------------- */
 async function autoFetchEsvForElement(id){
   const el = findEl(id);
-  if(!el || el.content || !el.reference || !el.reference.trim() || !loadEsvKey()) return;
-  const text = await fetchEsvPassage(el.reference, true);
+  if(!el || el.content || !el.reference || !el.reference.trim() || !bibleFetchReady()) return;
+  const text = await fetchBiblePassage(el.reference, true);
   if(text){ el.content = text; render(); }
 }
 
@@ -3722,8 +3712,8 @@ async function autoFetchEsvForReading(id, key){
   const list = el.readings || el.sections;
   if(!list) return;
   const r = list.find(r => r.key === key);
-  if(!r || r.content || !r.reference || !r.reference.trim() || !loadEsvKey()) return;
-  const text = await fetchEsvPassage(r.reference, true);
+  if(!r || r.content || !r.reference || !r.reference.trim() || !bibleFetchReady()) return;
+  const text = await fetchBiblePassage(r.reference, true);
   if(text){
     r.content = text;
     if(el.readings) el.includeText = true;
@@ -3732,7 +3722,7 @@ async function autoFetchEsvForReading(id, key){
 }
 
 async function autoFetchAllForElement(el){
-  if(!el || !loadEsvKey()) return;
+  if(!el || !bibleFetchReady()) return;
   if(el.type === 'scripture'){
     await autoFetchEsvForElement(el.id);
   } else if(el.readings || el.sections){
@@ -4220,6 +4210,123 @@ function saveSermonSeriesRoster(){
   try{ localStorage.setItem('sermonSeriesRoster', JSON.stringify(sermonSeriesRoster)); }catch(e){}
   pushSharedDataToSupabase('sermonSeriesRoster', sermonSeriesRoster);
 }
+/* ---------------------------------------------------------------------
+   Full data backup — a superset of the per-liturgy Save. Bundles every
+   piece of app data that lives in this browser (all archived liturgies,
+   the Planner schedule, minister roster/colors/emails, sermon series,
+   liturgy templates, hymn tempo overrides, schedule column settings)
+   into one JSON file. This is also what the 2-week backup nudge below
+   now runs — "Save now" on that banner calls this same function.
+--------------------------------------------------------------------- */
+const BACKUP_KEYS = ['liturgyArchive','liturgySchedule','ministerRoster','ministerColors',
+  'ministerEmails','sermonSeriesRoster','liturgyTemplates','hymnTempoOverrides',
+  'scheduleColumnWidthOverrides','scheduleHiddenColumns'];
+const BACKUP_CLOUD_SHARED_KEYS = ['liturgySchedule','ministerRoster','ministerColors',
+  'ministerEmails','sermonSeriesRoster','liturgyTemplates'];
+
+function backupAllData(){
+  const payload = { exportedAt: new Date().toISOString(), source: 'Pillar Liturgy Builder — full data backup', data: {} };
+  BACKUP_KEYS.forEach(key => {
+    const raw = localStorage.getItem(key);
+    if(raw === null) return;
+    try{ payload.data[key] = JSON.parse(raw); }
+    catch(e){ payload.data[key] = raw; }
+  });
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `liturgy-builder-full-backup-${dateStr}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  markBackupDone();
+}
+
+/* ---------------------------------------------------------------------
+   Restore from a full data backup file. Overwrites everything named
+   above in local storage, then — if signed in — also pushes the
+   restored liturgies and shared roster/schedule data up to Supabase,
+   so the cloud copy matches instead of silently overwriting the
+   restore back on next load (cloud sync otherwise keeps whichever
+   copy is larger). Reloads the page afterward so every part of the
+   app picks up the restored data fresh, rather than trying to patch
+   every already-loaded in-memory variable by hand.
+--------------------------------------------------------------------- */
+function restoreAllDataFromFile(file){
+  if(!file) return;
+  if(!confirm("This will overwrite your current liturgies, ministers, sermon series, templates, and schedule with what's in this backup file. This can't be undone. Continue?")){
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = async function(evt){
+    let payload;
+    try{
+      payload = JSON.parse(evt.target.result);
+    }catch(err){
+      alert("This file doesn't look like a valid backup — it couldn't be read as JSON.");
+      return;
+    }
+    if(!payload || typeof payload.data !== 'object'){
+      alert("This file doesn't look like a Liturgy Builder backup file.");
+      return;
+    }
+    Object.entries(payload.data).forEach(([key, value]) => {
+      try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
+    });
+    if(currentUser){
+      if(payload.data.liturgyArchive && typeof payload.data.liturgyArchive === 'object'){
+        for(const [dateStr, snapshot] of Object.entries(payload.data.liturgyArchive)){
+          await pushLiturgyToSupabase(dateStr, snapshot);
+        }
+      }
+      for(const key of BACKUP_CLOUD_SHARED_KEYS){
+        if(payload.data[key] !== undefined){
+          await pushSharedDataToSupabase(key, payload.data[key]);
+        }
+      }
+    }
+    alert('Restore complete — reloading the app now.');
+    window.location.reload();
+  };
+  reader.readAsText(file);
+}
+document.getElementById('restoreBackupInput').addEventListener('change', function(e){
+  const file = e.target.files[0];
+  restoreAllDataFromFile(file);
+  e.target.value = '';
+});
+
+/* ---------------------------------------------------------------------
+   Backup/Restore submenu, opened from the ☰ settings menu.
+--------------------------------------------------------------------- */
+function openBackupMenu(triggerEl){
+  const pop = document.getElementById('backupMenuPopover');
+  pop.innerHTML = `
+    <div class="export-menu-row" onclick="closeBackupMenu(); backupAllData();">🗄 Backup All Data</div>
+    <div class="export-menu-row" onclick="closeBackupMenu(); document.getElementById('restoreBackupInput').click();">📂 Restore from Backup File</div>
+  `;
+  pop.style.display = 'block';
+  const rect = triggerEl.getBoundingClientRect();
+  const popRect = pop.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 4;
+  if(left + popRect.width > window.innerWidth - 8) left = window.innerWidth - popRect.width - 8;
+  if(top + popRect.height > window.innerHeight - 8) top = rect.top - popRect.height - 4;
+  pop.style.left = Math.max(8, left) + 'px';
+  pop.style.top = Math.max(8, top) + 'px';
+  setTimeout(() => document.addEventListener('mousedown', backupMenuOutsideClick), 0);
+}
+function closeBackupMenu(){
+  const pop = document.getElementById('backupMenuPopover');
+  pop.style.display = 'none';
+  document.removeEventListener('mousedown', backupMenuOutsideClick);
+}
+function backupMenuOutsideClick(e){
+  const pop = document.getElementById('backupMenuPopover');
+  if(!pop.contains(e.target)) closeBackupMenu();
+}
+
 /* ---------------------------------------------------------------------
    Import/Export menu — one small dropdown (Load/Save, Print/PDF, Word)
    in place of separate toolbar buttons, opened from either the top or
@@ -5939,6 +6046,11 @@ renderMinisterChips();
 loadStateFromTemplate(DEFAULT_TEMPLATE);
 render();
 checkForAutosaveRestore();
+(function initBibleTranslationSelect(){
+  const sel = document.getElementById('bibleTranslationSelect');
+  if(sel) sel.value = loadBibleTranslation();
+})();
+
 restoreSupabaseSession().then(checkBackupNudge);
 </script>
 </body>
