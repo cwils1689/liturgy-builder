@@ -1213,7 +1213,7 @@
 
   /* ---- Print / PDF styles ---- */
   @media print{
-    body{ background:#fff; padding-left:0 !important; padding-right:0 !important; }
+    body{ background:#fff; }
     .toolbar{ display:none; }
     .app{ max-width:100%; padding:0 8px; }
     .movement{ box-shadow:none; border:1px solid #ccc; break-inside:avoid; margin-bottom:14px; }
@@ -1234,6 +1234,7 @@
     .element-card-header .element-title{
       border-top:1px solid #999 !important; border-bottom:1px solid #999 !important; padding:6px 0 !important;
     }
+    body.hide-element-titles .element-card-header .element-title{ display:none !important; }
     .content-area{ resize:none; }
     footer.note{ display:none; }
     .sync-status{ display:none; }
@@ -1274,6 +1275,18 @@
     .rt-field{ display:none; }
     .rt-print{ display:block; white-space:pre-line; line-height:1.5; font-size:13.5px; }
   }
+  /* Bulletin word-processor formatting — survives sanitizing via the
+     bp-* class allowlist; identical rules are duplicated into the
+     print window's own stylesheet in printBulletin(). */
+  .bp-movement{ font-weight:700; font-size:1.3em; text-align:center; text-transform:none; border-top:1px solid #1b2a45; padding-top:0.5em; margin:1em 0 0.6em; break-inside:avoid; }
+  .bp-head{ font-weight:700; margin-bottom:0.2em; }
+  .bp-response{ padding-left:4.6em; position:relative; margin:0.15em 0 0.7em; }
+  .bp-response.bp-all{ font-weight:700; }
+  .bp-speaker{ position:absolute; left:0; width:3.6em; font-weight:600; }
+  .bp-indent-1{ margin-left:1.5em; }
+  .bp-indent-2{ margin-left:3em; }
+  .bp-indent-3{ margin-left:4.5em; }
+  .bp-indent-4{ margin-left:6em; }
 </style>
 </head>
 <body>
@@ -1314,15 +1327,18 @@
   </header>
 
   <div class="toolbar">
-    <button class="primary" onclick="openExportMenu(this)">📤 Import/Export ▾</button>
+    <button class="primary" onclick="openExportMenu(this)">📤 Export ▾</button>
+    <button onclick="document.getElementById('loadInput').click()">📂 Load Liturgy File</button>
     <button onclick="openTemplatesMenu(this)">📐 Templates ▾</button>
     <button onclick="toggleSchedulePanel()">📅 Planner</button>
+    <button onclick="toggleBulletinPanel()">📰 Bulletin</button>
     <button onclick="toggleHymnalPanel()">🎵 Hymnal</button>
     <button onclick="openLiveMode()">⛪ Presentation Mode</button>
     <input type="file" id="loadInput" accept="application/json">
   </div>
 
   <div id="templatesMenuPopover" class="export-menu-popover"></div>
+  <div id="bulletinTemplatesPopover" class="export-menu-popover"></div>
 
   <div id="servicesPanel" class="services-panel">
     <div class="services-panel-header">
@@ -1367,6 +1383,64 @@
         <button class="hymnal-close-btn" onclick="closeAssignmentDetails()" title="Close">✕</button>
       </div>
       <div id="assignmentDetailsBody" class="ministers-panel-body"></div>
+    </div>
+  </div>
+
+  <div id="bulletinOverlay" class="schedule-overlay">
+    <div class="schedule-panel" style="max-width:1200px;">
+      <div class="schedule-header">
+        <h3>Bulletin Builder <span id="bulletinDateLabel" style="font-weight:400; font-size:13px; color:var(--ink-soft); margin-left:8px;"></span></h3>
+        <div class="schedule-header-actions">
+          <button onclick="importBulletinFromLiturgy()">⇩ Import from Liturgy</button>
+          <button onclick="openBulletinTemplatesMenu(this)">📐 Layouts ▾</button>
+          <button onclick="openChurchInfoEditor()">⛪ Church Info</button>
+          <button onclick="printBulletin()">🖶 Print / PDF</button>
+          <button class="schedule-close-btn" onclick="toggleBulletinPanel()" title="Close">✕</button>
+        </div>
+      </div>
+      <div class="schedule-hint">Type directly on the page like a word processor — "Import from Liturgy" types this week's order of service straight in. Fold sets how many columns the text flows through; long content just continues into the next column or page on its own. (Test build — stored on this device only, separate from your real liturgy data.)</div>
+      <div style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+        <div id="bulletinPageTabs" style="display:flex; flex-direction:column; gap:4px; padding:10px 16px; border-bottom:1px solid var(--border); flex-shrink:0;"></div>
+        <div style="display:flex; gap:6px; padding:8px 16px; border-bottom:1px solid var(--border); flex-shrink:0; flex-wrap:wrap;">
+          <span style="font-size:11.5px; color:var(--ink-soft); align-self:center;">Insert:</span>
+          <button onclick="bulletinInsertChurchInfo()" style="font-size:11.5px; padding:5px 9px; border:1px solid var(--border); border-radius:5px; background:#fff; cursor:pointer;">⛪ Church Info</button>
+          <button onclick="bulletinInsertPlaceholder('Announcements')" style="font-size:11.5px; padding:5px 9px; border:1px solid var(--border); border-radius:5px; background:#fff; cursor:pointer;">Announcements</button>
+          <button onclick="bulletinInsertPlaceholder('Upcoming Events')" style="font-size:11.5px; padding:5px 9px; border:1px solid var(--border); border-radius:5px; background:#fff; cursor:pointer;">Upcoming Events</button>
+          <button onclick="bulletinInsertPlaceholder(\"Last Week's Offering\")" style="font-size:11.5px; padding:5px 9px; border:1px solid var(--border); border-radius:5px; background:#fff; cursor:pointer;">Last Week's Offering</button>
+        </div>
+        <div id="bulletinCanvasWrap" style="flex:1; overflow:auto; padding:24px; background:#e7e9ee;">
+          <div id="bulletinPageFlow" contenteditable="true" oninput="bulletinPageFlowInput(event)" onkeydown="bulletinPageFlowKeydown(event)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="churchInfoOverlay" class="ministers-overlay">
+    <div class="ministers-modal-panel">
+      <div class="services-panel-header">
+        <h3>Church Info</h3>
+        <button class="hymnal-close-btn" onclick="closeChurchInfoEditor()" title="Close">✕</button>
+      </div>
+      <div class="ministers-panel-body" style="display:flex; flex-direction:column; gap:10px; padding:16px;">
+        <div class="ministers-panel-hint">Rarely-changing info reused on every bulletin — set it once.</div>
+        <label style="font-size:12px; font-weight:600;">Church name
+          <input id="ciName" type="text" style="display:block; width:100%; margin-top:3px; padding:6px; font-size:13px; box-sizing:border-box;"></label>
+        <label style="font-size:12px; font-weight:600;">Address
+          <input id="ciAddress" type="text" style="display:block; width:100%; margin-top:3px; padding:6px; font-size:13px; box-sizing:border-box;"></label>
+        <label style="font-size:12px; font-weight:600;">Phone
+          <input id="ciPhone" type="text" style="display:block; width:100%; margin-top:3px; padding:6px; font-size:13px; box-sizing:border-box;"></label>
+        <label style="font-size:12px; font-weight:600;">Email
+          <input id="ciEmail" type="text" style="display:block; width:100%; margin-top:3px; padding:6px; font-size:13px; box-sizing:border-box;"></label>
+        <label style="font-size:12px; font-weight:600;">Website
+          <input id="ciWebsite" type="text" style="display:block; width:100%; margin-top:3px; padding:6px; font-size:13px; box-sizing:border-box;"></label>
+        <label style="font-size:12px; font-weight:600;">Service times
+          <input id="ciServiceTimes" type="text" style="display:block; width:100%; margin-top:3px; padding:6px; font-size:13px; box-sizing:border-box;"></label>
+        <label style="font-size:12px; font-weight:600;">Giving / how-to-give blurb
+          <textarea id="ciGiving" rows="2" style="display:block; width:100%; margin-top:3px; padding:6px; font-size:13px; box-sizing:border-box;"></textarea></label>
+        <label style="font-size:12px; font-weight:600;">Welcome / mission statement
+          <textarea id="ciMission" rows="3" style="display:block; width:100%; margin-top:3px; padding:6px; font-size:13px; box-sizing:border-box;"></textarea></label>
+        <button class="primary" onclick="saveChurchInfoFromEditor()" style="align-self:flex-start;">Save</button>
+      </div>
     </div>
   </div>
 
@@ -1508,7 +1582,7 @@
   <div id="movements"></div>
 
   <div class="toolbar toolbar-bottom">
-    <button class="primary" onclick="openExportMenu(this)">📤 Import/Export ▾</button>
+    <button class="primary" onclick="openExportMenu(this)">📤 Export ▾</button>
   </div>
 
   <footer class="note">
@@ -2299,7 +2373,13 @@ document.addEventListener('scroll', hideFloatingToolbar, true);
    sanitized HTML is what shows in print — one true representation
    for both editing and output.
 --------------------------------------------------------------------- */
-const RICH_ALLOWED_TAGS = new Set(['B','STRONG','I','EM','U','S','STRIKE','DEL','MARK','OL','UL','LI','BR','DIV','P']);
+const RICH_ALLOWED_TAGS = new Set(['B','STRONG','I','EM','U','S','STRIKE','DEL','MARK','OL','UL','LI','BR','DIV','P','H3','SPAN']);
+// Bulletin-only formatting classes (movement headers, response hanging
+// indents) — a strict allowlist so a real CSS class can survive
+// sanitizing without opening the door to arbitrary class/style
+// injection. Everything else about an element (style, id, event
+// handlers) is still stripped below, same as before.
+const BP_ALLOWED_CLASSES = new Set(['bp-movement','bp-response','bp-all','bp-speaker','bp-head','bp-indent-1','bp-indent-2','bp-indent-3','bp-indent-4']);
 function sanitizeRichHTML(html){
   const container = document.createElement('div');
   container.innerHTML = html || '';
@@ -2315,7 +2395,9 @@ function sanitizeRichNode(node){
       node.removeChild(child);
       return;
     }
+    const cls = child.getAttribute('class');
     while(child.attributes.length > 0) child.removeAttribute(child.attributes[0].name);
+    if(cls && cls.split(/\s+/).every(c => BP_ALLOWED_CLASSES.has(c))) child.setAttribute('class', cls);
     sanitizeRichNode(child);
   });
 }
@@ -2804,7 +2886,7 @@ function buildLiturgyDocxBody(){
         return;
       }
 
-      if(el.type !== 'rubric') body += docxElementTitle(el.title, effectiveMinister);
+      if(el.type !== 'rubric' && loadShowElementTitles()) body += docxElementTitle(el.title, effectiveMinister);
 
       if(el.type === 'rubric'){
         body += docxRichXml(el.content, { baseFlags:{ italic:true } });
@@ -2886,7 +2968,7 @@ function buildLiveModeHTML(){
       }
 
       html += `<div class="live-mode-element">`;
-      if(el.type !== 'rubric'){
+      if(el.type !== 'rubric' && loadShowElementTitles()){
         html += `<div class="live-mode-title">${escapeHTML(el.title || '')}${effectiveMinister ? ` <span class="live-mode-minister">— ${escapeHTML(effectiveMinister)}</span>` : ''}</div>`;
       }
 
@@ -2932,6 +3014,19 @@ function buildLiveModeHTML(){
 
   return html;
 }
+function loadShowElementTitles(){
+  try{ return localStorage.getItem('showElementTitles') !== '0'; }catch(e){ return true; }
+}
+function setShowElementTitles(val){
+  try{ localStorage.setItem('showElementTitles', val ? '1' : '0'); }catch(e){}
+  document.body.classList.toggle('hide-element-titles', !val);
+}
+function toggleShowElementTitles(){
+  setShowElementTitles(!loadShowElementTitles());
+}
+// Apply saved preference on load (affects print via CSS; docx export and
+// Presentation Mode read loadShowElementTitles() directly when building).
+document.addEventListener('DOMContentLoaded', () => setShowElementTitles(loadShowElementTitles()));
 
 const LIVE_MODE_SIZES = ['size-sm', 'size-md', 'size-lg', 'size-xl'];
 const LIVE_MODE_FONTS = ['font-sans', 'font-serif', 'font-mono'];
@@ -3665,7 +3760,7 @@ async function fetchEsvPassage(reference, silent){
     const resp = await fetch(url, { headers: { 'Authorization': 'Token ' + key } });
     if(!resp.ok) throw new Error('ESV API returned an error (' + resp.status + ')');
     const data = await resp.json();
-    const text = (data.passages && data.passages.length) ? data.passages.join('\n\n').trim() : '';
+    const text = (data.passages && data.passages[0]) ? data.passages[0].trim() : '';
     if(!text) throw new Error('No passage returned — check the reference.');
     return text;
   }catch(err){
@@ -4223,17 +4318,22 @@ function saveSermonSeriesRoster(){
   pushSharedDataToSupabase('sermonSeriesRoster', sermonSeriesRoster);
 }
 /* ---------------------------------------------------------------------
-   Import/Export menu — one small dropdown (Load/Save, Print/PDF, Word)
-   in place of separate toolbar buttons, opened from either the top or
-   bottom toolbar.
+   Export menu — one small dropdown (Print/PDF vs. Word) in place of two
+   separate toolbar buttons, opened from either the top or bottom toolbar.
 --------------------------------------------------------------------- */
 function openExportMenu(triggerEl){
   const pop = document.getElementById('exportMenuPopover');
+  const titlesOn = loadShowElementTitles();
   pop.innerHTML = `
-    <div class="export-menu-row" onclick="closeExportMenu(); document.getElementById('loadInput').click();">📂 Load Liturgy File</div>
-    <div class="export-menu-row" onclick="closeExportMenu(); saveToFile();">💾 Save Liturgy File</div>
     <div class="export-menu-row" onclick="closeExportMenu(); window.print();">🖨 Print / Save as PDF</div>
     <div class="export-menu-row" onclick="closeExportMenu(); exportLiturgyDocx();">📝 Export to Word (.docx)</div>
+    <div class="export-menu-row" onclick="closeExportMenu(); saveToFile();">💾 Save Liturgy File</div>
+    <div class="export-menu-row" onclick="event.stopPropagation(); toggleShowElementTitles(); openExportMenu(document.getElementById('exportMenuPopover')._trigger);">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="checkbox" ${titlesOn ? 'checked' : ''} onclick="event.stopPropagation(); toggleShowElementTitles(); openExportMenu(document.getElementById('exportMenuPopover')._trigger);">
+        Show element titles (export/presentation)
+      </label>
+    </div>
   `;
   pop._trigger = triggerEl;
   pop.style.display = 'block';
@@ -5220,10 +5320,6 @@ function updateLeftPanelBodyClass(){
   const anyOpen = document.getElementById('servicesPanel').classList.contains('open');
   document.body.classList.toggle('services-open', anyOpen);
 }
-function closeServicesPanel(){
-  document.getElementById('servicesPanel').classList.remove('open');
-  updateLeftPanelBodyClass();
-}
 function toggleServicesPanel(){
   const panel = document.getElementById('servicesPanel');
   const opening = !panel.classList.contains('open');
@@ -5330,7 +5426,7 @@ async function deleteServiceFromPanel(dateStr){
 async function openServiceFromPanel(dateStr){
   document.getElementById('serviceDate').value = dateStr;
   await onDateChange();
-  closeServicesPanel();
+  renderServicesList();
 }
 async function createNewServiceFromPanel(){
   const dateStr = document.getElementById('servicesPanelDate').value;
@@ -5347,7 +5443,7 @@ async function createNewServiceFromPanel(){
     alert(`A service already exists for ${formatServiceDateLabel(dateStr)} — opening it instead of creating a new one.`);
     document.getElementById('serviceDate').value = dateStr;
     await onDateChange();
-    closeServicesPanel();
+    renderServicesList();
     return;
   }
 
@@ -5356,7 +5452,7 @@ async function createNewServiceFromPanel(){
                         // calling this without awaiting let autosave capture the previous service's
                         // still-in-memory state and save it under the new date instead of a fresh template
   performAutosave();
-  closeServicesPanel();
+  renderServicesList();
 }
 function toggleSchedulePanel(){
   const overlay = document.getElementById('scheduleOverlay');
@@ -5882,6 +5978,502 @@ function formatLastUsed(dateStr){
   const weeks = Math.round(days / 7);
   return 'Last sung ' + weeks + (weeks===1?' week':' weeks') + ' ago';
 }
+
+// ============================================================
+// BULLETIN BUILDER — test-file-only feature.
+// Entirely localStorage-based for now (no Supabase tables yet);
+// reads the in-memory `state` the Builder already has loaded but
+// never writes back to it, so it cannot affect the Liturgy Builder.
+// ============================================================
+
+const BULLETIN_CHURCH_INFO_KEY = 'bulletinChurchInfo';
+const BULLETIN_DATA_PREFIX = 'bulletinData:';
+let currentBulletin = null;
+
+function loadChurchInfo(){
+  try{
+    const raw = localStorage.getItem(BULLETIN_CHURCH_INFO_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {
+    name:'Pillar Reformed Church', address:'', phone:'',
+    email:'info@pillarreformed.com', website:'www.pillarreformed.com',
+    serviceTimes:'', giving:'',
+    mission:'In a world of corrupt and crumbling communities and institutions, we seek to be a Pillar. Built upon the foundation of Jesus Christ, the Cornerstone, we exist to hold up and hold out the truth of God\'s Word, laboring by God\'s grace for reformation, revival, and renewal for generations in Lowndes County.'
+  };
+}
+function saveChurchInfo(info){ localStorage.setItem(BULLETIN_CHURCH_INFO_KEY, JSON.stringify(info)); }
+
+function loadBulletinData(dateStr){
+  try{
+    const raw = localStorage.getItem(BULLETIN_DATA_PREFIX + dateStr);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return { date:dateStr, pages:[ { orientation:'landscape', fold:'half', html:'' } ], fontFamily:'serif', fontSizeIdx:1 };
+}
+function saveBulletinData(data){ localStorage.setItem(BULLETIN_DATA_PREFIX + data.date, JSON.stringify(data)); }
+
+// Same three font choices Presentation Mode offers, same stacks —
+// so "Serif" means the same thing in both places. Sizes are the
+// actual printed point size (also the on-screen editing size), so
+// the page always shows how much room there really is.
+const BP_SCALE = 96; // px per inch, for sizing the on-screen page to its real physical size
+const BP_PAGE_SIZE = { portrait:{w:8.5,h:11}, landscape:{w:11,h:8.5} };
+const BP_MARGIN = 0.5; // inches — page padding, like a normal document margin
+const BP_FONT_STACKS = { sans:"'Inter',sans-serif", serif:"'Spectral',serif", mono:"ui-monospace,'SF Mono',Consolas,Menlo,monospace" };
+const BP_FONT_SIZES = [11, 13, 15, 17];
+let bulletinActivePage = 0;
+
+function bulletinColumnCount(pg){ return pg.fold === 'tri' ? 3 : pg.fold === 'half' ? 2 : 1; }
+function bulletinFontFamily(){ return BP_FONT_STACKS[currentBulletin.fontFamily] || BP_FONT_STACKS.serif; }
+function bulletinFontSize(){ return BP_FONT_SIZES[currentBulletin.fontSizeIdx ?? 1]; }
+function bulletinSetFontFamily(f){
+  currentBulletin.fontFamily = f;
+  saveBulletinData(currentBulletin);
+  renderBulletinPageTabs();
+  renderBulletinPageFlow();
+}
+function bulletinAdjustFontSize(delta){
+  let idx = (currentBulletin.fontSizeIdx ?? 1) + delta;
+  idx = Math.max(0, Math.min(BP_FONT_SIZES.length-1, idx));
+  currentBulletin.fontSizeIdx = idx;
+  saveBulletinData(currentBulletin);
+  renderBulletinPageTabs();
+  renderBulletinPageFlow();
+}
+
+function toggleBulletinPanel(){
+  const overlay = document.getElementById('bulletinOverlay');
+  const isOpen = overlay.classList.toggle('open');
+  if(isOpen) renderBulletinPanel();
+}
+
+function renderBulletinPanel(){
+  const dateStr = document.getElementById('serviceDate').value || new Date().toISOString().slice(0,10);
+  document.getElementById('bulletinDateLabel').textContent = '— ' + dateStr;
+  currentBulletin = loadBulletinData(dateStr);
+  if(!currentBulletin.pages || !currentBulletin.pages.length) currentBulletin.pages = [{ orientation:'landscape', fold:'half', html:'' }];
+  if(!currentBulletin.fontFamily) currentBulletin.fontFamily = 'serif';
+  if(currentBulletin.fontSizeIdx == null) currentBulletin.fontSizeIdx = 1;
+  bulletinActivePage = 0;
+  renderBulletinPageTabs();
+  renderBulletinPageFlow();
+}
+
+// ---- Page tabs + paper/fold/font controls ----
+function renderBulletinPageTabs(){
+  const wrap = document.getElementById('bulletinPageTabs');
+  const btn = (onclick, label, active) =>
+    `<button onclick="${onclick}" style="font-size:11.5px; padding:5px 8px; border:1px solid var(--border); border-radius:5px; background:${active?'var(--ink)':'#fff'}; color:${active?'#fff':'var(--ink)'}; cursor:pointer;">${label}</button>`;
+
+  let row1 = '<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">';
+  currentBulletin.pages.forEach((pg, i) => {
+    const active = i === bulletinActivePage;
+    row1 += `<button onclick="bulletinSwitchPage(${i})" style="font-size:12px; font-weight:${active?700:500}; padding:6px 10px; border:1px solid var(--border); border-radius:5px; background:${active?'var(--ink)':'#fff'}; color:${active?'#fff':'var(--ink)'}; cursor:pointer;">Page ${i+1}</button>`;
+  });
+  row1 += `<button onclick="bulletinAddPage()" style="font-size:12px; padding:6px 10px; border:1px dashed var(--border); border-radius:5px; background:#fff; cursor:pointer;">+ Add Page</button>`;
+  if(currentBulletin.pages.length > 1){
+    row1 += `<button onclick="bulletinRemovePage(${bulletinActivePage})" style="margin-left:6px; font-size:11.5px; padding:5px 8px; border:1px solid var(--border); border-radius:5px; background:#fff; color:#8a3a3a; cursor:pointer;">Remove Page</button>`;
+  }
+  row1 += '</div>';
+
+  const pg = currentBulletin.pages[bulletinActivePage];
+  let row2 = '<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:6px;">';
+  row2 += `<span style="font-size:11.5px; color:var(--ink-soft);">Paper:</span>`;
+  row2 += btn("bulletinSetOrientation('portrait')", 'Portrait', pg.orientation==='portrait');
+  row2 += btn("bulletinSetOrientation('landscape')", 'Landscape', pg.orientation==='landscape');
+  row2 += `<span style="font-size:11.5px; color:var(--ink-soft); margin-left:10px;">Fold (columns):</span>`;
+  row2 += btn("bulletinSetFold('none')", 'Flat', (pg.fold||'none')==='none');
+  row2 += btn("bulletinSetFold('half')", 'Half-fold', pg.fold==='half');
+  row2 += btn("bulletinSetFold('tri')", 'Tri-fold', pg.fold==='tri');
+  row2 += '</div>';
+
+  let row3 = '<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:6px;">';
+  row3 += `<span style="font-size:11.5px; color:var(--ink-soft);">Font (same choices as Presentation Mode):</span>`;
+  row3 += btn("bulletinSetFontFamily('sans')", 'Sans', currentBulletin.fontFamily==='sans');
+  row3 += btn("bulletinSetFontFamily('serif')", 'Serif', (currentBulletin.fontFamily||'serif')==='serif');
+  row3 += btn("bulletinSetFontFamily('mono')", 'Monotype', currentBulletin.fontFamily==='mono');
+  row3 += `<button onclick="bulletinAdjustFontSize(-1)" style="font-size:11.5px; padding:5px 9px; border:1px solid var(--border); border-radius:5px; background:#fff; cursor:pointer;">A−</button>`;
+  row3 += `<button onclick="bulletinAdjustFontSize(1)" style="font-size:11.5px; padding:5px 9px; border:1px solid var(--border); border-radius:5px; background:#fff; cursor:pointer;">A+</button>`;
+  row3 += '</div>';
+
+  wrap.innerHTML = row1 + row2 + row3;
+}
+function bulletinSwitchPage(i){
+  bulletinSyncActivePageHtml();
+  bulletinActivePage = i;
+  renderBulletinPageTabs();
+  renderBulletinPageFlow();
+}
+function bulletinAddPage(){
+  bulletinSyncActivePageHtml();
+  currentBulletin.pages.push({ orientation:'landscape', fold:'half', html:'' });
+  saveBulletinData(currentBulletin);
+  bulletinActivePage = currentBulletin.pages.length - 1;
+  renderBulletinPageTabs();
+  renderBulletinPageFlow();
+}
+function bulletinRemovePage(i){
+  if(!confirm('Remove this page? Its content will be lost.')) return;
+  currentBulletin.pages.splice(i,1);
+  saveBulletinData(currentBulletin);
+  bulletinActivePage = Math.max(0, bulletinActivePage - 1);
+  renderBulletinPageTabs();
+  renderBulletinPageFlow();
+}
+function bulletinSetOrientation(o){
+  currentBulletin.pages[bulletinActivePage].orientation = o;
+  saveBulletinData(currentBulletin);
+  renderBulletinPageTabs();
+  renderBulletinPageFlow();
+}
+function bulletinSetFold(f){
+  currentBulletin.pages[bulletinActivePage].fold = f;
+  saveBulletinData(currentBulletin);
+  renderBulletinPageTabs();
+  renderBulletinPageFlow();
+}
+
+// ---- The page itself: one continuous flowing rich-text region,
+// styled with CSS columns matching the fold. This is the whole
+// "canvas" now — no boxes, no coordinates. What's on screen is the
+// same HTML that prints, just constrained to the same physical size.
+function renderBulletinPageFlow(){
+  const pg = currentBulletin.pages[bulletinActivePage];
+  const size = BP_PAGE_SIZE[pg.orientation] || BP_PAGE_SIZE.landscape;
+  const cols = bulletinColumnCount(pg);
+  const flow = document.getElementById('bulletinPageFlow');
+  flow.style.cssText = `width:${size.w*BP_SCALE}px; min-height:${size.h*BP_SCALE}px; margin:0 auto; background:#fff; box-shadow:0 4px 16px rgba(0,0,0,0.18); padding:${BP_MARGIN*BP_SCALE}px; box-sizing:border-box; outline:none; font-family:${bulletinFontFamily()}; font-size:${bulletinFontSize()}px; line-height:1.5; color:#1b2a45; column-count:${cols}; column-gap:${BP_MARGIN*BP_SCALE}px; column-rule:1px dashed #b7a15a; overflow-wrap:break-word; word-break:break-word; white-space:pre-line;`;
+  flow.innerHTML = pg.html || '';
+}
+// Tab indents the current paragraph like a word processor (custom,
+// not the browser's default execCommand — that produces markup the
+// sanitizer would strip right back out). Cycles through 4 indent
+// levels via classes so the indent survives edits/reloads.
+function bulletinPageFlowKeydown(ev){
+  if(ev.key !== 'Tab') return;
+  ev.preventDefault();
+  const sel = window.getSelection();
+  if(!sel.rangeCount) return;
+  const flow = document.getElementById('bulletinPageFlow');
+  let node = sel.getRangeAt(0).startContainer;
+  if(node.nodeType !== 1) node = node.parentNode;
+  while(node && node.parentNode !== flow && node !== flow) node = node.parentNode;
+  if(!node || node === flow || !node.classList) return;
+  let level = 0;
+  for(let i=1;i<=4;i++) if(node.classList.contains('bp-indent-'+i)) level = i;
+  for(let i=1;i<=4;i++) node.classList.remove('bp-indent-'+i);
+  level = ev.shiftKey ? Math.max(0, level-1) : Math.min(4, level+1);
+  if(level > 0) node.classList.add('bp-indent-'+level);
+  bulletinPageFlowInput(ev);
+}
+function bulletinPageFlowInput(ev){
+  const pg = currentBulletin.pages[bulletinActivePage];
+  pg.html = sanitizeRichHTML(ev.target.innerHTML);
+  saveBulletinData(currentBulletin);
+}
+// Guards against losing an edit made just before switching pages —
+// oninput already saves on every keystroke, but this is a cheap
+// belt-and-suspenders read of whatever's currently on screen.
+function bulletinSyncActivePageHtml(){
+  const flow = document.getElementById('bulletinPageFlow');
+  if(!flow) return;
+  const pg = currentBulletin.pages[bulletinActivePage];
+  if(pg) pg.html = sanitizeRichHTML(flow.innerHTML);
+}
+
+// ---- Insert boilerplate at the cursor, like a word processor's
+// quick-insert — not a draggable object, just text that lands where
+// you're typing and is yours to edit from then on. ----
+function bulletinFocusPageEnd(){
+  const flow = document.getElementById('bulletinPageFlow');
+  flow.focus();
+  const sel = window.getSelection();
+  if(sel.rangeCount && flow.contains(sel.anchorNode)) return; // already have a cursor inside
+  const range = document.createRange();
+  range.selectNodeContents(flow);
+  range.collapse(false);
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+function bulletinInsertSnippet(html){
+  bulletinFocusPageEnd();
+  document.execCommand('insertHTML', false, html);
+  bulletinPageFlowInput({ target: document.getElementById('bulletinPageFlow') });
+}
+function bulletinInsertChurchInfo(){
+  const info = loadChurchInfo();
+  const html = `<p><strong>${escapeHTML(info.name||'')}</strong><br>${escapeHTML(info.address||'')}<br>${escapeHTML(info.phone||'')}<br>${escapeHTML(info.website||'')} · ${escapeHTML(info.email||'')}</p><p style="font-style:italic;">${escapeHTML(info.mission||'')}</p>`;
+  bulletinInsertSnippet(html);
+}
+function bulletinInsertPlaceholder(label){
+  bulletinInsertSnippet(`<p><strong>${escapeHTML(label)}</strong></p><p><br></p>`);
+}
+
+// Per element-type default content pulled from the liturgy. Hymn
+// titles already carry "stanzas 1-2" etc. from the Builder, so they
+// pass through untouched. Content fields are already-sanitized rich
+// HTML (bold/italic etc. survive) — never plain-escaped text.
+function bulletinDefaultLine(el, movement){
+  const effectiveMinister = (el.minister || movement.defaultMinister || '').trim();
+  switch(el.type){
+    case 'hymn':
+      return { include:true, head:'HYMN ' + (el.hymnNumber||'') + ' | ' + (el.hymnTitle||el.title||'') };
+    case 'response':
+      return { include:true, head:el.title||'', pastorHtml:sanitizeRichHTML(el.leaderText||''), allHtml:sanitizeRichHTML(el.peopleText||'') };
+    case 'scripture':
+      return { include:true, head:(el.title||'') + (el.reference?(' ('+el.reference+')'):''), bodyHtml:sanitizeRichHTML(el.content||'') };
+    case 'text':
+      if(!(el.content||'').trim() && !el.title) return { include:false, head:'' };
+      return { include:true, head:el.title||'', bodyHtml:sanitizeRichHTML(el.content||'') };
+    case 'lectionary':{
+      const parts = (el.readings||[]).filter(r=>r.reference).map(r=>r.label+': '+r.reference);
+      return { include:true, head:'Public Reading of Scripture', bodyHtml:escapeHTML(parts.join('   ')) };
+    }
+    case 'sermon':
+      return { include:true, head:'Sermon: ' + (el.sermonTitle||'') + (el.passageReference?(' ('+el.passageReference+')'):'') + (effectiveMinister?(' | Pastor '+effectiveMinister):'') };
+    case 'exhortation':
+      return { include:true, head:(el.subtitle||'Exhortation') + (effectiveMinister?(' | Pastor '+effectiveMinister):'') };
+    case 'pastoral-prayer':
+      return { include:true, head:'Pastoral Prayer' + (el.reference?(' ('+el.reference+')'):'') };
+    case 'header':
+      return { include:true, head:el.title||'' };
+    case 'variant-text':
+    case 'rubric':
+      return { include:false, head:el.title||'' };
+    default:
+      return { include:false, head:el.title||'' };
+  }
+}
+
+// Builds ONE continuous flowing HTML document for the order of
+// service — the whole point being that it's just text now, no
+// separate pieces to place: it already reads top to bottom the way
+// it will print.
+function buildLiturgyFlowHTML(){
+  let html = '';
+  state.forEach(movement => {
+    let sectionHtml = '';
+    (movement.elements||[]).forEach(el => {
+      const d = bulletinDefaultLine(el, movement);
+      if(!d.include) return;
+      if(el.type === 'response'){
+        if(d.head) sectionHtml += `<p class="bp-head">${escapeHTML(d.head)}</p>`;
+        if(d.pastorHtml) sectionHtml += `<p class="bp-response"><span class="bp-speaker">Pastor:</span>${d.pastorHtml}</p>`;
+        if(d.allHtml) sectionHtml += `<p class="bp-response bp-all"><span class="bp-speaker">All:</span>${d.allHtml}</p>`;
+      } else {
+        sectionHtml += `<p>${d.head?`<strong>${escapeHTML(d.head)}</strong>`:''}${d.bodyHtml?(d.head?'<br>':'')+d.bodyHtml:''}</p>`;
+      }
+    });
+    if(sectionHtml){
+      html += `<h3 class="bp-movement">${escapeHTML(movement.label)}</h3>` + sectionHtml;
+    }
+  });
+  return html;
+}
+function importBulletinFromLiturgy(){
+  if(!state || !Array.isArray(state) || !state.length){ alert('No liturgy loaded to import from — open a service in the Builder first.'); return; }
+  const pg = currentBulletin.pages[bulletinActivePage];
+  if((pg.html||'').trim() && !confirm('Replace what\'s currently on this page with the order of service? This page\'s current content will be lost.')) return;
+  pg.html = buildLiturgyFlowHTML();
+  saveBulletinData(currentBulletin);
+  renderBulletinPageFlow();
+}
+
+
+
+// ---- Layouts (bulletin templates): built-in starter + user-saved ----
+const BULLETIN_TEMPLATES_KEY = 'bulletinTemplates';
+function loadBulletinTemplates(){
+  try{ return JSON.parse(localStorage.getItem(BULLETIN_TEMPLATES_KEY) || '{}'); }catch(e){ return {}; }
+}
+function saveBulletinTemplatesData(t){ localStorage.setItem(BULLETIN_TEMPLATES_KEY, JSON.stringify(t)); }
+
+function bulletinBuiltinStarter(){
+  return {
+    pages: [
+      { orientation:'landscape', fold:'none', html:
+        `<h1 style="text-align:center; text-transform:uppercase; letter-spacing:0.08em; font-size:1.1em;">Pillar Reformed Church</h1>
+        <h2 style="text-align:center;">The Lord's Service</h2>
+        <p style="text-align:center; font-style:italic;">[Date / season here]</p>
+        <p style="text-align:center; font-style:italic; margin-top:2em;">[Welcome / mission statement here]</p>` },
+      { orientation:'landscape', fold:'none', html:
+        `<p><strong>Upcoming Events</strong></p><p><br></p>
+        <p><strong>Last Week's Offering</strong></p><p><br></p>
+        <p style="margin-top:2em;">[website] · [email]</p>` },
+      { orientation:'landscape', fold:'half', html:'' },
+    ]
+  };
+}
+
+function renderBulletinTemplatesMenuContent(){
+  const pop = document.getElementById('bulletinTemplatesPopover');
+  const templates = loadBulletinTemplates();
+  const names = Object.keys(templates).sort();
+  pop.innerHTML = `
+    <div class="export-menu-row" onclick="closeBulletinTemplatesMenu(); bulletinApplyBuiltinLayout();">📐 Cover + Back + Half-fold Inside Starter</div>
+    ${names.length ? '<div class="templates-menu-divider"></div>' : ''}
+    ${names.map(n => `
+      <div class="export-menu-row templates-menu-row">
+        <span class="templates-menu-name" onclick="closeBulletinTemplatesMenu(); bulletinApplyLayout('${escapeAttr(n).replace(/'/g,"\\'")}')">📐 ${escapeHTML(n)}</span>
+        <button class="templates-menu-delete" title="Delete layout" onclick="event.stopPropagation(); bulletinDeleteLayout('${escapeAttr(n).replace(/'/g,"\\'")}')">✕</button>
+      </div>
+    `).join('')}
+    <div class="templates-menu-divider"></div>
+    <div class="export-menu-row" onclick="closeBulletinTemplatesMenu(); bulletinSaveAsLayout();">💾 Save current pages as…</div>
+  `;
+}
+function openBulletinTemplatesMenu(triggerEl){
+  const pop = document.getElementById('bulletinTemplatesPopover');
+  renderBulletinTemplatesMenuContent();
+  pop.style.display = 'block';
+  const rect = triggerEl.getBoundingClientRect();
+  const popRect = pop.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 4;
+  if(left + popRect.width > window.innerWidth - 8) left = window.innerWidth - popRect.width - 8;
+  if(top + popRect.height > window.innerHeight - 8) top = rect.top - popRect.height - 4;
+  pop.style.left = Math.max(8, left) + 'px';
+  pop.style.top = Math.max(8, top) + 'px';
+  setTimeout(() => document.addEventListener('mousedown', bulletinTemplatesMenuOutsideClick), 0);
+}
+function closeBulletinTemplatesMenu(){
+  const pop = document.getElementById('bulletinTemplatesPopover');
+  pop.style.display = 'none';
+  document.removeEventListener('mousedown', bulletinTemplatesMenuOutsideClick);
+}
+function bulletinTemplatesMenuOutsideClick(e){
+  const pop = document.getElementById('bulletinTemplatesPopover');
+  if(!pop.contains(e.target)) closeBulletinTemplatesMenu();
+}
+function bulletinApplyPages(pages){
+  currentBulletin.pages = JSON.parse(JSON.stringify(pages));
+  bulletinActivePage = 0;
+  saveBulletinData(currentBulletin);
+  renderBulletinPageTabs();
+  renderBulletinPageFlow();
+}
+function bulletinApplyBuiltinLayout(){
+  if(!confirm('Replace the current pages with the starter layout? Anything on the current pages will be lost.')) return;
+  bulletinApplyPages(bulletinBuiltinStarter().pages);
+}
+function bulletinApplyLayout(name){
+  const templates = loadBulletinTemplates();
+  if(!templates[name]) return;
+  if(!confirm(`Replace the current pages with "${name}"? Anything on the current pages will be lost.`)) return;
+  bulletinApplyPages(templates[name].pages);
+}
+async function bulletinSaveAsLayout(){
+  const name = await customPrompt('Name this layout:', '');
+  if(!name) return;
+  // Saves exactly what's on the pages right now — since a page is
+  // just one flow of text, there's no way to separate "boilerplate"
+  // from "this week's liturgy content" automatically. Best saved from
+  // a cover/back-style page before running Import on the content page.
+  bulletinSyncActivePageHtml();
+  const pages = currentBulletin.pages.map(pg => ({
+    orientation: pg.orientation, fold: pg.fold || 'none', html: pg.html || ''
+  }));
+  const templates = loadBulletinTemplates();
+  templates[name] = { pages };
+  saveBulletinTemplatesData(templates);
+}
+function bulletinDeleteLayout(name){
+  if(!confirm(`Delete the layout "${name}"?`)) return;
+  const templates = loadBulletinTemplates();
+  delete templates[name];
+  saveBulletinTemplatesData(templates);
+  renderBulletinTemplatesMenuContent();
+}
+
+
+function openChurchInfoEditor(){
+  const info = loadChurchInfo();
+  document.getElementById('ciName').value = info.name||'';
+  document.getElementById('ciAddress').value = info.address||'';
+  document.getElementById('ciPhone').value = info.phone||'';
+  document.getElementById('ciEmail').value = info.email||'';
+  document.getElementById('ciWebsite').value = info.website||'';
+  document.getElementById('ciServiceTimes').value = info.serviceTimes||'';
+  document.getElementById('ciGiving').value = info.giving||'';
+  document.getElementById('ciMission').value = info.mission||'';
+  document.getElementById('churchInfoOverlay').classList.add('open');
+}
+function closeChurchInfoEditor(){ document.getElementById('churchInfoOverlay').classList.remove('open'); }
+function saveChurchInfoFromEditor(){
+  saveChurchInfo({
+    name:document.getElementById('ciName').value,
+    address:document.getElementById('ciAddress').value,
+    phone:document.getElementById('ciPhone').value,
+    email:document.getElementById('ciEmail').value,
+    website:document.getElementById('ciWebsite').value,
+    serviceTimes:document.getElementById('ciServiceTimes').value,
+    giving:document.getElementById('ciGiving').value,
+    mission:document.getElementById('ciMission').value,
+  });
+  closeChurchInfoEditor();
+}
+
+// Print: renders every page at its real physical size — the same
+// inches used while editing, so what's on screen is what prints —
+// walking pages in order. Each page gets its own named @page rule,
+// so pages can mix portrait and landscape in one print job on
+// browsers that support CSS named pages (current Chrome does).
+// Print: each page becomes one continuous multi-column flow of the
+// same HTML shown on screen — no coordinates, no separate per-item
+// placement. If a page's content is longer than one physical sheet
+// holds, the browser's own print pagination carries the overflow
+// onto additional sheets automatically (real column/page flow, the
+// same mechanism a word processor relies on) — that's the direct fix
+// for content that used to just run off the bottom of the page.
+function printBulletin(){
+  bulletinSyncActivePageHtml();
+  const b = loadBulletinData(currentBulletin.date);
+  currentBulletin = b;
+  if(!b.pages || !b.pages.length || !b.pages.every(pg => !(pg.html||'').trim())){
+    // fallthrough — still print even if some pages are empty, only block if ALL are empty
+  }
+  if(b.pages.every(pg => !(pg.html||'').trim())){
+    alert('Nothing typed on any page yet — Import from Liturgy or type something first.');
+    return;
+  }
+
+  let pageCss = '', bodyHtml = '';
+  b.pages.forEach((pg, pIdx) => {
+    const size = BP_PAGE_SIZE[pg.orientation] || BP_PAGE_SIZE.landscape;
+    const pageName = 'bppage' + pIdx;
+    const cols = bulletinColumnCount(pg);
+    pageCss += `@page ${pageName}{ size:${size.w}in ${size.h}in; margin:${BP_MARGIN}in; }\n`;
+    bodyHtml += `<div class="bp-flow-page" style="page:${pageName}; column-count:${cols}; column-gap:${BP_MARGIN}in;">${pg.html||''}</div>`;
+  });
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Bulletin</title>
+  <style>
+    *{ box-sizing:border-box; }
+    ${pageCss}
+    body{ font-family:${bulletinFontFamily()}; font-size:${bulletinFontSize()}px; line-height:1.5; color:#1b2a45; margin:0; white-space:pre-line; }
+    .bp-flow-page{ break-after:page; overflow-wrap:break-word; word-break:break-word; }
+    .bp-flow-page:last-child{ break-after:auto; }
+    .bp-flow-page p, .bp-flow-page div, .bp-flow-page h1, .bp-flow-page h2, .bp-flow-page h3{ overflow-wrap:break-word; word-break:break-word; margin:0 0 0.6em; }
+    .bp-flow-page h3{ break-inside:avoid; }
+    .bp-movement{ font-weight:700; font-size:1.3em; text-align:center; border-top:1px solid #1b2a45; padding-top:0.5em; margin:1em 0 0.6em !important; break-inside:avoid; }
+    .bp-head{ font-weight:700; margin-bottom:0.2em !important; }
+    .bp-response{ padding-left:4.6em; position:relative; margin:0.15em 0 0.7em !important; }
+    .bp-response.bp-all{ font-weight:700; }
+    .bp-speaker{ position:absolute; left:0; width:3.6em; font-weight:600; }
+    .bp-indent-1{ margin-left:1.5em; }
+    .bp-indent-2{ margin-left:3em; }
+    .bp-indent-3{ margin-left:4.5em; }
+    .bp-indent-4{ margin-left:6em; }
+  </style></head><body>${bodyHtml}</body></html>`;
+
+  const w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>w.print(), 300);
+}
+
 
 // Init
 ministerRoster = loadMinisterRoster();
