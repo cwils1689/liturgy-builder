@@ -5493,7 +5493,27 @@ function updatePanelLayout(){
 }
 let hymnLyrics = null;
 let hymnLyricsLoading = false;
+let trinityLyrics = null;
+let trinityLyricsLoading = false;
 async function loadHymnLyricsIfNeeded(){
+  if(currentHymnalSource === 'th1990'){
+    if(trinityLyrics || trinityLyricsLoading) return;
+    trinityLyricsLoading = true;
+    const statusEl = document.getElementById('hymnalLyricsStatus');
+    if(statusEl) statusEl.textContent = 'Loading lyrics…';
+    try{
+      const resp = await fetch('trinity-hymnal-lyrics.json');
+      if(!resp.ok) throw new Error('HTTP ' + resp.status);
+      trinityLyrics = await resp.json();
+      if(statusEl) statusEl.textContent = '';
+      renderHymnalResults();
+    }catch(err){
+      if(statusEl) statusEl.textContent = "Couldn't load lyrics — check trinity-hymnal-lyrics.json is uploaded to the repo.";
+      trinityLyrics = {};
+    }
+    trinityLyricsLoading = false;
+    return;
+  }
   if(hymnLyrics || hymnLyricsLoading) return;
   hymnLyricsLoading = true;
   const statusEl = document.getElementById('hymnalLyricsStatus');
