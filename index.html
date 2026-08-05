@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liturgy Builder</title>
-<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<title>LiturgyForge</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiNBOTgxMkYiLz48dGV4dCB4PSIzMiIgeT0iNDMiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLCAnVGltZXMgTmV3IFJvbWFuJywgc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZvbnQtc2l6ZT0iMjkiIGZpbGw9IiMxQjJBNDUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkxGPC90ZXh0Pjwvc3ZnPgo=">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
@@ -338,6 +338,7 @@
     display:flex;
     gap:8px;
     justify-content:center;
+    align-items:center;
     flex-wrap:wrap;
     margin-bottom:32px;
   }
@@ -4844,7 +4845,7 @@ const BACKUP_CLOUD_SHARED_KEYS = ['liturgySchedule','ministerRoster','ministerCo
   'ministerEmails','sermonSeriesRoster','liturgyTemplates','customLiturgicalResources','churchName'];
 
 function backupAllData(){
-  const payload = { exportedAt: new Date().toISOString(), source: 'Pillar Liturgy Builder — full data backup', data: {} };
+  const payload = { exportedAt: new Date().toISOString(), source: 'LiturgyForge — full data backup', data: {} };
   BACKUP_KEYS.forEach(key => {
     const raw = localStorage.getItem(key);
     if(raw === null) return;
@@ -4856,7 +4857,7 @@ function backupAllData(){
   const a = document.createElement('a');
   const dateStr = new Date().toISOString().slice(0,10);
   a.href = url;
-  a.download = `liturgy-builder-full-backup-${dateStr}.json`;
+  a.download = `liturgyforge-full-backup-${dateStr}.json`;
   a.click();
   URL.revokeObjectURL(url);
   markBackupDone();
@@ -4887,7 +4888,7 @@ function restoreAllDataFromFile(file){
       return;
     }
     if(!payload || typeof payload.data !== 'object'){
-      alert("This file doesn't look like a Liturgy Builder backup file.");
+      alert("This file doesn't look like a LiturgyForge backup file.");
       return;
     }
     Object.entries(payload.data).forEach(([key, value]) => {
