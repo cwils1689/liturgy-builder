@@ -62,6 +62,6 @@ If you're part of a church considering using this for your own liturgy planning,
 
 ## License
 
-Copyright © 2026 Pillar Reformed Church. All rights reserved.
+Copyright © 2026 Clint Wilson. All rights reserved.
 
-This software and its contents are proprietary. No part of this repository may be copied, modified, distributed, or used without express written permission from Pillar Reformed Church.
+This software and its contents are proprietary. No part of this repository may be copied, modified, distributed, or used without express written permission from Clint Wilson.
