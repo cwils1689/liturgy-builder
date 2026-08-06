@@ -1,6 +1,6 @@
 # LiturgyForge
 
-A drag-and-drop liturgy planner for Reformed churches, built for [Pillar Reformed Church](https://github.com/cwils1689)'s Covenant Renewal Worship and designed to be usable by other congregations too.
+A drag-and-drop liturgy planner for liturgical churches, built for [Pillar Reformed Church](https://github.com/cwils1689)'s Covenant Renewal Worship and designed to be usable by other congregations too.
 
 **Live:** https://cwils1689.github.io/liturgyforge/
 **Status:** Phase 1 complete — usable for Pillar's own weekly planning, open for outside churches to test and evaluate.
@@ -9,7 +9,7 @@ A drag-and-drop liturgy planner for Reformed churches, built for [Pillar Reforme
 
 ## What it does
 
-- **Builder** — drag-and-drop liturgy elements (hymns, scripture, prayers, sermon, lectionary readings, exhortations, custom text) into a service order, with rich-text editing in place
+- **The Forge** — drag-and-drop liturgy elements (hymns, scripture, prayers, sermon, lectionary readings, exhortations, custom text) into a service order, with rich-text editing in place
 - **Planner** — a spreadsheet-style schedule for planning services across weeks/months, with columns for ministers, sermon series, hymn selections, and more
 - **Hymnals** — three built-in hymnal datasets you can search and insert directly into a service:
   - Treasury of Psalms & Hymns — 1,136 songs (default)
@@ -36,8 +36,6 @@ A drag-and-drop liturgy planner for Reformed churches, built for [Pillar Reforme
 
 **Phase 2 (planned, not started):** Multichurch backend — each congregation gets its own isolated account and data via Supabase, rather than the current single-church-plus-guest-mode model. New churches will be provisioned manually at first rather than through open self-serve signup, to validate the data model before building a public-facing flow.
 
-Also deferred to a later phase: Cantus Christi lyrics/indexing, and lyrics for the ~190 Trinity Hymnal 1990 entries not covered by the current public-domain source data.
-
 ## Architecture notes
 
 The app is single-tenant today (Pillar Reformed Church), with a small number of isolated constants holding Pillar-specific data:
@@ -58,7 +56,7 @@ This is a static site served via GitHub Pages from the repo root (`index.html`).
 
 ## Interested in testing?
 
-If you're part of a church considering using this for your own liturgy planning, reach out — testing feedback from real use is exactly what's needed to shape the next phase.
+If you're part of a church considering using this for your own liturgy planning, reach out — testing feedback from real use is exactly what's needed to shape the next phase. clint@pillarreformed.com 
 
 ## License
 
