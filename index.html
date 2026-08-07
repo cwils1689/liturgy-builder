@@ -3177,6 +3177,494 @@ const ANGLICAN_TEMPLATE = [
   }
 ];
 
+const PILLAR_REFORMED_CHURCH_TEMPLATE = [
+  {
+    "key": "welcome",
+    "icon": "",
+    "color": "var(--welcome)",
+    "label": "Welcome & Announcements",
+    "elements": [
+      {
+        "type": "text",
+        "title": "Welcome",
+        "locked": true,
+        "content": "To all who are weary and seek rest;\nto all who mourn and long for comfort;\nto all who struggle and desire victory;\nto all who sin and need a Savior;\nto all who are lonely and want fellowship;\nto all who hunger and thirst for righteousness;\nand to whoever will come —\nthis church opens wide her doors and offers her welcome in the name of the Lord Jesus Christ.",
+        "reference": ""
+      },
+      {
+        "type": "text",
+        "title": "Announcements",
+        "content": "<ul><li>Welcome guests</li><li>Liturgy/Hymnals/Offering Envelopes on Welcome Table | Digital Connect Card</li><li>Space for fussy little ones and nursing moms</li><li><br></li></ul>",
+        "reference": "",
+        "richEditor": true
+      },
+      {
+        "type": "header",
+        "title": "Moment of Silence to Prepare for Worship",
+        "content": "",
+        "reference": ""
+      }
+    ],
+    "defaultMinister": ""
+  },
+  {
+    "key": "call",
+    "icon": "",
+    "color": "var(--call)",
+    "label": "God Calls Us",
+    "elements": [
+      {
+        "type": "text",
+        "title": "Call to Worship",
+        "content": "<mark>Let us rise and worship the Triune God!</mark>",
+        "reference": ""
+      },
+      {
+        "type": "response",
+        "title": "Greeting",
+        "hasAlt": false,
+        "locked": true,
+        "altMode": "add",
+        "altLabel": "Eastertide",
+        "altActive": false,
+        "reference": "",
+        "leaderText": "<mark>Grace, mercy, and peace from God the Father, the Son, and the Holy Spirit.\nThe Lord be with you!</mark>",
+        "peopleText": "And also with you!",
+        "allowSeasonal": true,
+        "altLeaderText": "Alleluia! Christ is Risen!",
+        "altPeopleText": "Christ is risen, indeed! Alleluia!"
+      },
+      {
+        "type": "scripture",
+        "title": "Scripture Reading",
+        "content": "<br>",
+        "reference": "",
+        "scheduleKey": "scripture"
+      },
+      {
+        "type": "variant-text",
+        "title": "Collect",
+        "variants": [
+          {
+            "id": "bcp0",
+            "label": "Contemporary",
+            "content": "<br>"
+          },
+          {
+            "id": "bcpt0",
+            "label": "Traditional",
+            "content": "Grant to us, Lord, we beseech thee, the spirit to think and do always such things as are right, that we, who cannot exist without thee, may by thee be enabled to live according to thy will; through Jesus Christ our Lord, who liveth and reigneth with thee and the Holy Spirit, one God, for ever and ever. Amen."
+          }
+        ],
+        "bcpLinked": true,
+        "reference": "",
+        "scheduleKey": "collect",
+        "activeVariantId": "bcp0"
+      },
+      {
+        "type": "hymn",
+        "title": "Hymn",
+        "hymnTitle": "",
+        "hymnNumber": "",
+        "scheduleKey": "hymn1"
+      }
+    ],
+    "defaultMinister": ""
+  },
+  {
+    "key": "confession",
+    "icon": "",
+    "color": "var(--confession)",
+    "label": "God Cleanses Us as We Confess Our Sin",
+    "elements": [
+      {
+        "type": "exhortation",
+        "title": "Exhortation",
+        "content": "",
+        "subtitle": "",
+        "reference": ""
+      },
+      {
+        "type": "hymn",
+        "title": "Hymn",
+        "hymnTitle": "",
+        "hymnNumber": "",
+        "scheduleKey": "hymn2"
+      },
+      {
+        "type": "response",
+        "title": "Call to Confession",
+        "locked": true,
+        "reference": "",
+        "leaderText": "<mark>Come, let us worship and bow down!</mark>",
+        "peopleText": "And kneel before the Lord our Maker. (Ps. 95:6)"
+      },
+      {
+        "type": "rubric",
+        "title": "Kneeling Instruction",
+        "content": "Let all who are able kneel.",
+        "reference": ""
+      },
+      {
+        "type": "scripture",
+        "title": "Scripture Reading",
+        "content": "<br>",
+        "reference": "",
+        "scheduleKey": "prayerVerse"
+      },
+      {
+        "type": "text",
+        "title": "Prayer of Confession",
+        "content": "<br>",
+        "reference": ""
+      },
+      {
+        "type": "text",
+        "title": "Call to Assurance",
+        "content": "<mark>Rise and hear the good news of forgiveness in Christ!</mark>",
+        "reference": ""
+      },
+      {
+        "type": "scripture",
+        "title": "Scripture Reading",
+        "content": "<br>",
+        "reference": "",
+        "scheduleKey": "assuranceVerse"
+      },
+      {
+        "type": "text",
+        "title": "Pastoral Application",
+        "content": "",
+        "reference": ""
+      },
+      {
+        "type": "response",
+        "title": "Declaration of Pardon",
+        "locked": true,
+        "reference": "",
+        "leaderText": "<mark>On the basis of this promise of God, and as his minister,\nI declare unto you that your sins are forgiven through Jesus Christ our Lord!</mark>",
+        "peopleText": "Thanks be to God!"
+      }
+    ],
+    "defaultMinister": ""
+  },
+  {
+    "key": "consecration",
+    "icon": "",
+    "color": "var(--consecration)",
+    "label": "God Consecrates Us by His Powerful Word",
+    "elements": [
+      {
+        "type": "response",
+        "title": "Sursum Corda",
+        "locked": true,
+        "reference": "",
+        "leaderText": "<mark>Lift up your hearts!</mark>",
+        "peopleText": "We lift them up to the Lord!"
+      },
+      {
+        "type": "response",
+        "title": "The Creed",
+        "locked": true,
+        "altMode": "replace",
+        "altLabel": "Advent & Christmastide",
+        "footnote": "*catholic means universal, and does not always refer to the Roman Catholic Church.",
+        "altActive": false,
+        "reference": "",
+        "leaderText": "<mark>Having confessed our sin, let us now confess our faith in the words of the Apostles' Creed.\nChristian, what do you believe?</mark>",
+        "peopleText": "I believe in God the Father Almighty; Maker of heaven and earth,\nand in Jesus Christ, his only begotten Son, our Lord,\nWho was conceived by the Holy Spirit, and born of the virgin Mary.\nHe suffered under Pontius Pilate, was crucified, died, and was buried.\nHe descended to the dead.\nOn the third day He rose again from the dead;\nHe ascended into Heaven, and sits at the right hand of God the Father Almighty;\nfrom there He will come to judge the living and the dead.\nI believe in the Holy Spirit, the holy catholic* Church, the communion of saints,\nthe forgiveness of sins, the resurrection of the body, and the life everlasting.\nAmen.",
+        "altFootnote": "*catholic means universal, and does not always refer to the Roman Catholic Church.",
+        "hasFootnote": true,
+        "allowSeasonal": true,
+        "altLeaderText": "Having confessed our sin, let us now confess our faith in the words of the Nicene Creed.\nChristian, what do you believe?",
+        "altPeopleText": "I believe in one God, the Father Almighty, Maker of heaven and earth\nand of all things visible and invisible;\nand in one Lord Jesus Christ, the only-begotten Son of God,\nbegotten of the Father before all worlds,\nGod of God, Light of Light, very God of very God, begotten, not made,\nbeing of one substance with the Father; by whom all things were made;\nwho, for us men, and for our salvation, came down from Heaven,\nand was incarnate by the Holy Spirit of the virgin, Mary, and was made man;\nand was crucified also for us under Pontius Pilate; He suffered and was buried;\nand the third day he rose again, according to the Scriptures;\nand ascended into Heaven, and sits on the right hand of the Father;\nand He shall come again, with glory, to judge both the living and the dead;\nwhose kingdom shall have no end.\nAnd I believe in the Holy Spirit, the Lord, and Giver of Life,\nwho proceeds from the Father and the Son;\nwho with the Father and the Son together is worshipped and glorified;\nwho spoke by the prophets.\nAnd I believe in one, holy, catholic and apostolic church;\nI acknowledge one baptism for the remission of sins;\nand I look for the resurrection of the dead, and the life of the world to come. Amen"
+      },
+      {
+        "type": "hymn",
+        "title": "Hymn",
+        "hymnTitle": "",
+        "hymnNumber": "",
+        "scheduleKey": "hymn3"
+      },
+      {
+        "type": "lectionary",
+        "title": "Lectionary",
+        "track": "track1",
+        "minister": "",
+        "readings": [
+          {
+            "key": "ot",
+            "label": "Old Testament",
+            "content": "Jacob lived in the land of his father’s sojournings, in the land of Canaan.\n\n  These are the generations of Jacob.\n\n  Joseph, being seventeen years old, was pasturing the flock with his brothers. He was a boy with the sons of Bilhah and Zilpah, his father’s wives. And Joseph brought a bad report of them to their father. Now Israel loved Joseph more than any other of his sons, because he was the son of his old age. And he made him a robe of many colors. But when his brothers saw that their father loved him more than all his brothers, they hated him and could not speak peacefully to him. (ESV)\n\n  Now his brothers went to pasture their father’s flock near Shechem. And Israel said to Joseph, “Are not your brothers pasturing the flock at Shechem? Come, I will send you to them.” And he said to him, “Here I am.” So he said to him, “Go now, see if it is well with your brothers and with the flock, and bring me word.” So he sent him from the Valley of Hebron, and he came to Shechem. And a man found him wandering in the fields. And the man asked him, “What are you seeking?” “I am seeking my brothers,” he said. “Tell me, please, where they are pasturing the flock.” And the man said, “They have gone away, for I heard them say, ‘Let us go to Dothan.’” So Joseph went after his brothers and found them at Dothan.\n\n  They saw him from afar, and before he came near to them they conspired against him to kill him. They said to one another, “Here comes this dreamer. Come now, let us kill him and throw him into one of the pits. Then we will say that a fierce animal has devoured him, and we will see what will become of his dreams.” But when Reuben heard it, he rescued him out of their hands, saying, “Let us not take his life.” And Reuben said to them, “Shed no blood; throw him into this pit here in the wilderness, but do not lay a hand on him”—that he might rescue him out of their hand to restore him to his father. So when Joseph came to his brothers, they stripped him of his robe, the robe of many colors that he wore. And they took him and threw him into a pit. The pit was empty; there was no water in it.\n\n  Then they sat down to eat. And looking up they saw a caravan of Ishmaelites coming from Gilead, with their camels bearing gum, balm, and myrrh, on their way to carry it down to Egypt. Then Judah said to his brothers, “What profit is it if we kill our brother and conceal his blood? Come, let us sell him to the Ishmaelites, and let not our hand be upon him, for he is our brother, our own flesh.” And his brothers listened to him. Then Midianite traders passed by. And they drew Joseph up and lifted him out of the pit, and sold him to the Ishmaelites for twenty shekels of silver. They took Joseph to Egypt. (ESV)",
+            "reference": "Genesis 37:1-4, 12-28"
+          },
+          {
+            "key": "psalm",
+            "label": "Psalm",
+            "content": "Oh give thanks to the LORD; call upon his name;\n        make known his deeds among the peoples!\n    Sing to him, sing praises to him;\n        tell of all his wondrous works!\n    Glory in his holy name;\n        let the hearts of those who seek the LORD rejoice!\n    Seek the LORD and his strength;\n        seek his presence continually!\n    Remember the wondrous works that he has done,\n        his miracles, and the judgments he uttered,\n    O offspring of Abraham, his servant,\n        children of Jacob, his chosen ones! (ESV)\n\n    When he summoned a famine on the land\n        and broke all supply of bread,\n    he had sent a man ahead of them,\n        Joseph, who was sold as a slave.\n    His feet were hurt with fetters;\n        his neck was put in a collar of iron;\n    until what he had said came to pass,\n        the word of the LORD tested him.\n    The king sent and released him;\n        the ruler of the peoples set him free;\n    he made him lord of his house\n        and ruler of all his possessions,\n    to bind his princes at his pleasure\n        and to teach his elders wisdom. (ESV)\n\n    that they might keep his statutes\n        and observe his laws.\n    Praise the LORD! (ESV)",
+            "reference": "Psalm 105:1-6, 16-22, 45b"
+          },
+          {
+            "key": "nt",
+            "label": "New Testament",
+            "content": "For Moses writes about the righteousness that is based on the law, that the person who does the commandments shall live by them. But the righteousness based on faith says, “Do not say in your heart, ‘Who will ascend into heaven?’” (that is, to bring Christ down) “or ‘Who will descend into the abyss?’” (that is, to bring Christ up from the dead). But what does it say? “The word is near you, in your mouth and in your heart” (that is, the word of faith that we proclaim); because, if you confess with your mouth that Jesus is Lord and believe in your heart that God raised him from the dead, you will be saved. For with the heart one believes and is justified, and with the mouth one confesses and is saved. For the Scripture says, “Everyone who believes in him will not be put to shame.” For there is no distinction between Jew and Greek; for the same Lord is Lord of all, bestowing his riches on all who call on him. For “everyone who calls on the name of the Lord will be saved.”\n\n  How then will they call on him in whom they have not believed? And how are they to believe in him of whom they have never heard? And how are they to hear without someone preaching? And how are they to preach unless they are sent? As it is written, “How beautiful are the feet of those who preach the good news!” (ESV)",
+            "reference": "Romans 10:5-15"
+          },
+          {
+            "key": "gospel",
+            "label": "Gospel",
+            "content": "Immediately he made the disciples get into the boat and go before him to the other side, while he dismissed the crowds. And after he had dismissed the crowds, he went up on the mountain by himself to pray. When evening came, he was there alone, but the boat by this time was a long way from the land, beaten by the waves, for the wind was against them. And in the fourth watch of the night he came to them, walking on the sea. But when the disciples saw him walking on the sea, they were terrified, and said, “It is a ghost!” and they cried out in fear. But immediately Jesus spoke to them, saying, “Take heart; it is I. Do not be afraid.”\n\n  And Peter answered him, “Lord, if it is you, command me to come to you on the water.” He said, “Come.” So Peter got out of the boat and walked on the water and came to Jesus. But when he saw the wind, he was afraid, and beginning to sink he cried out, “Lord, save me.” Jesus immediately reached out his hand and took hold of him, saying to him, “O you of little faith, why did you doubt?” And when they got into the boat, the wind ceased. And those in the boat worshiped him, saying, “Truly you are the Son of God.” (ESV)",
+            "reference": "Matthew 14:22-33"
+          }
+        ],
+        "hasTracks": true,
+        "reference": "",
+        "trackData": {
+          "ot": {
+            "track1": "Genesis 37:1-4, 12-28",
+            "track2": "1 Kings 19:9-18"
+          },
+          "psalm": {
+            "track1": "Psalm 105:1-6, 16-22, 45b",
+            "track2": "Psalm 85:8-13"
+          }
+        },
+        "includeText": false,
+        "scheduleKey": "lectionaryReader"
+      },
+      {
+        "type": "response",
+        "title": "Response to the Reading",
+        "locked": true,
+        "minister": "",
+        "reference": "",
+        "leaderText": "This is the word of the Lord.",
+        "peopleText": "Thanks be to God!"
+      },
+      {
+        "type": "pastoral-prayer",
+        "title": "Pastoral Prayer",
+        "sections": [
+          {
+            "key": "opening",
+            "label": "Opening",
+            "content": "<br>",
+            "reference": ""
+          },
+          {
+            "key": "thanksgiving",
+            "label": "Thanksgiving",
+            "content": "<br>",
+            "reference": ""
+          },
+          {
+            "key": "petitions",
+            "label": "Petitions",
+            "content": "<br>",
+            "reference": ""
+          }
+        ],
+        "reference": "",
+        "richEditor": true,
+        "scheduleKey": "pastoralPrayer"
+      },
+      {
+        "type": "response",
+        "title": "The Lord's Prayer",
+        "locked": true,
+        "reference": "",
+        "leaderText": "...And now, as you taught us, we pray together:",
+        "peopleText": "Our Father which art in heaven, hallowed be Thy name.\nThy kingdom come, Thy will be done, on earth as it is in heaven.\nGive us this day our daily bread and forgive us our debts as we forgive our debtors.\nLead us not into temptation but deliver us from evil.\nFor Thine is the kingdom, and the power, and the glory forever.\nAmen!"
+      },
+      {
+        "type": "hymn",
+        "title": "Hymn",
+        "hymnTitle": "",
+        "hymnNumber": "",
+        "scheduleKey": "hymn4"
+      },
+      {
+        "type": "sermon",
+        "title": "Sermon",
+        "series": "",
+        "minister": "",
+        "reference": "",
+        "manuscript": "",
+        "scheduleKey": "sermon",
+        "sermonTitle": "",
+        "hasManuscript": false,
+        "passageReference": ""
+      },
+      {
+        "type": "text",
+        "title": "Offering Exhortation",
+        "content": "<br>",
+        "reference": "",
+        "scheduleKey": "offering"
+      },
+      {
+        "type": "response",
+        "title": "Offertory Sentence",
+        "locked": true,
+        "reference": "",
+        "leaderText": "<mark>All things come from you, O Lord.</mark>",
+        "peopleText": "And from your own have we given you. (1 Chr. 29:14)"
+      },
+      {
+        "type": "text",
+        "title": "Offertory Prayer",
+        "locked": true,
+        "content": "Oh God, receive these gifts given in and through your Son. Make these tithes and offerings profitable for your kingdom. May they be used to support your church, to care for the poor and needy, and to take the gospel to the ends of the earth. Bless it, O God. In Jesus' name we pray. Amen.",
+        "reference": ""
+      },
+      {
+        "type": "hymn",
+        "title": "Hymn",
+        "hymnTitle": "",
+        "hymnNumber": "",
+        "scheduleKey": "hymn5"
+      }
+    ],
+    "defaultMinister": ""
+  },
+  {
+    "key": "communion",
+    "icon": "",
+    "color": "var(--communion)",
+    "label": "God Communes with Us",
+    "elements": [
+      {
+        "type": "rubric",
+        "title": "Communion Instructions",
+        "content": "This sacrament is for all baptized believers in Jesus Christ, who are not under disciplinary action of another local church. If you are not a believer or have not been baptized, we're glad you're here, and you are welcome to observe, but please allow the elements to pass today and talk to the pastor about how you may partake in the future.\n\nTwo distributions, the bread first and then the wine. Wait and we'll partake together.",
+        "reference": ""
+      },
+      {
+        "type": "scripture",
+        "title": "The Bread",
+        "content": "For I received from the Lord what I also delivered to you, that the Lord Jesus on the night when he was betrayed took bread, and when he had given thanks, he broke it, and said, “This is my body, which is for you. Do this in remembrance of me.” (ESV)",
+        "reference": "1 Corinthians 11:23-24"
+      },
+      {
+        "type": "variant-text",
+        "title": "Blessing of the Bread",
+        "variants": [
+          {
+            "id": "bread-standard",
+            "label": "Standard",
+            "content": "Father, we thank you for this bread and the body of your Son. As truly as this bread arose from the earth, endured the furnace of affliction, and rose glorified for us to enjoy today, we remember and proclaim the same of our Savior. God, turn our hearts to be satisfied in our crucified and glorified Lord. In this bread, give us Christ. Amen."
+          }
+        ],
+        "activeVariantId": "bread-standard"
+      },
+      {
+        "type": "hymn",
+        "title": "Hymn",
+        "hymnTitle": "",
+        "hymnNumber": "",
+        "scheduleKey": "hymn6"
+      },
+      {
+        "type": "text",
+        "title": "Reception of the Bread",
+        "content": "<mark>The bread is communion in the body of Christ. Take and eat.</mark>",
+        "reference": ""
+      },
+      {
+        "type": "scripture",
+        "title": "The Wine",
+        "content": "In the same way also he took the cup, after supper, saying, “This cup is the new covenant in my blood. Do this, as often as you drink it, in remembrance of me.” (ESV)",
+        "reference": "1 Corinthians 11:25"
+      },
+      {
+        "type": "variant-text",
+        "title": "Blessing of the Wine",
+        "variants": [
+          {
+            "id": "wine-standard",
+            "label": "Standard",
+            "content": "O God, you give wine to gladden the heart of man. Grant us gladness of heart as we remember the blood of your Son that made full atonement for our sin. We give thanks and ask your blessing. In this cup, give us Christ."
+          }
+        ],
+        "activeVariantId": "wine-standard"
+      },
+      {
+        "type": "hymn",
+        "title": "Hymn",
+        "hymnTitle": "",
+        "hymnNumber": "",
+        "scheduleKey": "hymn7"
+      },
+      {
+        "type": "text",
+        "title": "Reception of the Wine",
+        "content": "<mark>The cup of blessing is communion in the blood of Christ. Let us drink together.</mark>",
+        "reference": ""
+      },
+      {
+        "type": "response",
+        "title": "Proclamation of Remembrance",
+        "locked": true,
+        "reference": "",
+        "leaderText": "For as often as you eat this bread and drink the cup, you proclaim the Lord's death until he comes. (1 Cor. 11:26)",
+        "peopleText": "We remember his death,\nWe proclaim his resurrection,\nWe await his coming in glory."
+      },
+      {
+        "type": "response",
+        "title": "Eucharistic Blessing",
+        "locked": true,
+        "reference": "",
+        "leaderText": "Now may the body and blood of our Lord Jesus Christ <div>strengthen and preserve you all steadfast in the most holy faith until life everlasting!</div>",
+        "peopleText": "Amen!"
+      },
+      {
+        "type": "hymn",
+        "title": "Hymn — Doxology",
+        "locked": true,
+        "hymnTitle": "Doxology",
+        "hymnNumber": "1076"
+      }
+    ],
+    "defaultMinister": ""
+  },
+  {
+    "key": "commission",
+    "icon": "",
+    "color": "var(--commission)",
+    "label": "God Commissions Us with His Blessing",
+    "elements": [
+      {
+        "type": "text",
+        "title": "Charge",
+        "content": "",
+        "reference": ""
+      },
+      {
+        "type": "scripture",
+        "title": "Benediction",
+        "content": "<br>",
+        "reference": "",
+        "scheduleKey": "benediction"
+      },
+      {
+        "type": "response",
+        "title": "Response",
+        "reference": "",
+        "leaderText": "Amen!",
+        "peopleText": "Amen!",
+        "allowSkipLeader": true
+      },
+      {
+        "type": "text",
+        "title": "Dismissal",
+        "content": "Go in peace.",
+        "reference": ""
+      }
+    ],
+    "defaultMinister": ""
+  }
+];
+
 const LUTHERAN_TEMPLATE = [
   {
     "key": "welcome",
@@ -3574,6 +4062,21 @@ function seedGenericTemplatesOnce(){
     seedOne('templateSeeded_reformed', 'Reformed', REFORMED_TEMPLATE);
     forceUpdateOnce('templateSeeded_anglican_20260806', 'Anglican (Rite II)', ANGLICAN_TEMPLATE);
     forceUpdateOnce('templateSeeded_lutheran_20260806', 'Lutheran (Divine Service)', LUTHERAN_TEMPLATE);
+    // "Pillar Reformed Church" — a fixed example snapshot of Pillar's own
+    // CRW liturgy structure, added 2026-08-07 so other churches
+    // evaluating the app can see/try a real, slightly-tweaked-from-
+    // standard CRW order. Deliberately separate from the "Covenant
+    // Renewal Worship" template (Pillar's own live/editable template,
+    // seeded by seedPillarTemplateOnce): that one is what Pillar's own
+    // account actually uses week to week, while this one is a stable
+    // reference copy for the generic template gallery — edits to either
+    // one never touch the other. Safe to share the display name "Pillar
+    // Reformed Church" with the pre-2026-08-04 legacy template key: the
+    // migration in seedPillarTemplateOnce() only renames/deletes that
+    // key when 'Covenant Renewal Worship' is still missing, which is
+    // never true by the time this runs (seedPillarTemplateOnce always
+    // runs first and guarantees it exists).
+    seedOne('templateSeeded_pillarReformedChurch_20260807', 'Pillar Reformed Church', PILLAR_REFORMED_CHURCH_TEMPLATE);
     if(changed) saveLiturgyTemplatesToStorage();
   }catch(e){}
 }
