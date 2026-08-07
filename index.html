@@ -5709,6 +5709,18 @@ async function pullSharedDataOnSignIn(){
     scheduleColumnsHasLocalSave = true;
     try{ localStorage.setItem('scheduleColumnsConfig', JSON.stringify(scheduleColumns)); }catch(e){}
     if(document.getElementById('scheduleOverlay')?.classList.contains('open')) renderScheduleTable();
+  }else if(!scheduleColumnsHasLocalSave && isPillarChurchName(cloud.churchName)){
+    // Pillar's account but no scheduleColumnsConfig row has ever been
+    // saved to the cloud (true for any browser predating this config
+    // being persisted at all). Adopt Pillar's real layout rather than
+    // leaving this session on the generic seed, and persist it now so
+    // every future load/sign-in — on this browser or any other — has a
+    // real saved record instead of relying on this fallback again.
+    scheduleColumns = PILLAR_DEFAULT_SCHEDULE_COLUMNS.map(c => ({ ...c }));
+    scheduleColumnsHasLocalSave = true;
+    try{ localStorage.setItem('scheduleColumnsConfig', JSON.stringify(scheduleColumns)); }catch(e){}
+    pushSharedDataToSupabase('scheduleColumnsConfig', scheduleColumns);
+    if(document.getElementById('scheduleOverlay')?.classList.contains('open')) renderScheduleTable();
   }
   if(cloud.ministerRoster && cloud.ministerRoster.length >= ministerRoster.length){
     ministerRoster = cloud.ministerRoster;
@@ -7888,6 +7900,21 @@ const GENERIC_DEFAULT_SCHEDULE_COLUMNS = [
    the cloud outright rather than compare lengths against a seed that
    was never really "theirs". See pullSharedDataOnSignIn. */
 let scheduleColumnsHasLocalSave = false;
+/* isPillarChurchName — stopgap identity check used only to pick the
+   right fallback column set (Pillar's real layout vs. the lean generic
+   seed) when this browser has no saved scheduleColumnsConfig at all.
+   Reads localStorage directly (not loadChurchName()) so it's safe to
+   call before that function's definition is reached and before any
+   async Supabase session restore completes. Goes away once Phase 2
+   moves Pillar's data into a per-church seed row instead of a
+   name-string check. */
+function isPillarChurchName(raw){
+  if(!raw) return false;
+  try{
+    const name = (raw.startsWith('"') && raw.endsWith('"')) ? JSON.parse(raw) : raw;
+    return name === 'Pillar Reformed Church';
+  }catch(e){ return false; }
+}
 function loadScheduleColumns(){
   try{
     const raw = localStorage.getItem('scheduleColumnsConfig');
@@ -7899,6 +7926,17 @@ function loadScheduleColumns(){
       }
     }
   }catch(e){}
+  // No saved config on this browser yet. A brand-new guest should get
+  // the lean generic seed — but if this is Pillar's own browser (known
+  // by its already-saved churchName), fall back to Pillar's real
+  // 21-column layout instead, not the generic one. Without this check,
+  // Pillar's account looks identical to a fresh guest the moment this
+  // browser has no local scheduleColumnsConfig saved (e.g. right after
+  // this default-column split shipped, since Pillar had never actually
+  // triggered an edit that would have saved one).
+  if(isPillarChurchName(localStorage.getItem('churchName'))){
+    return PILLAR_DEFAULT_SCHEDULE_COLUMNS.map(c => ({ ...c }));
+  }
   return GENERIC_DEFAULT_SCHEDULE_COLUMNS.map(c => ({ ...c }));
 }
 function getScheduleColumnKind(key){
