@@ -7979,6 +7979,36 @@ function handleScheduleHeaderPaste(event){
   document.execCommand('insertText', false, text);
 }
 let scheduleColumns = loadScheduleColumns();
+/* forcePillarScheduleColumnsRestoreOnce — one-time correction, dated so
+   it only ever runs once per browser. The generic/Pillar column split
+   left a window where Pillar's browser could have had the WRONG
+   (generic-based) column set written into localStorage and/or Supabase
+   as if it were real saved data — e.g. via any rename/add/reorder/CSV
+   import action calling saveScheduleColumns() while scheduleColumns was
+   sitting on the generic fallback. Once that happens, the normal "has a
+   real save" path (both the local check in loadScheduleColumns and the
+   cloud check in pullSharedDataOnSignIn) treats that bad data as
+   legitimate forever, since there's no way to tell a real 9-column
+   custom setup from an accidental one from the data shape alone. This
+   runs once, and only overwrites if the current set is actually missing
+   Pillar-only columns (lectionaryReader / hymn6 / hymn7) — i.e. it looks
+   like the generic seed, not a real intentional edit. */
+(function forcePillarScheduleColumnsRestoreOnce(){
+  const FLAG = 'pillarScheduleColumnsRestored_20260807';
+  try{
+    if(localStorage.getItem(FLAG)) return;
+    if(!isPillarChurchName(localStorage.getItem('churchName'))) return;
+    const hasPillarOnlyCols = scheduleColumns.some(c =>
+      c.key === 'lectionaryReader' || c.key === 'hymn6' || c.key === 'hymn7');
+    if(!hasPillarOnlyCols){
+      scheduleColumns = PILLAR_DEFAULT_SCHEDULE_COLUMNS.map(c => ({ ...c }));
+      scheduleColumnsHasLocalSave = true;
+      localStorage.setItem('scheduleColumnsConfig', JSON.stringify(scheduleColumns));
+      pushSharedDataToSupabase('scheduleColumnsConfig', scheduleColumns);
+    }
+    localStorage.setItem(FLAG, '1');
+  }catch(e){}
+})();
 function getScheduleGroups(){
   const seen = [];
   scheduleColumns.forEach(c => { if(!seen.includes(c.group)) seen.push(c.group); });
