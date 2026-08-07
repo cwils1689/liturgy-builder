@@ -1217,6 +1217,16 @@
     cursor:pointer; font-size:12px; padding:2px 4px; border-radius:50%; flex-shrink:0;
   }
   .templates-menu-delete:hover{ color:#8a3a3a; }
+  .templates-menu-star{
+    border:none; background:transparent; color:var(--ink-faint);
+    cursor:pointer; font-size:14px; padding:2px 4px; border-radius:50%; flex-shrink:0;
+  }
+  .templates-menu-star:hover{ color:var(--gold); }
+  .templates-menu-star-active{ color:var(--gold); }
+  .templates-menu-hint{
+    font-family:'Inter',sans-serif; font-size:11px; color:var(--ink-faint);
+    padding:2px 10px 6px;
+  }
   .export-menu-divider{ height:1px; background:var(--border); margin:4px 2px; }
   .resource-menu-row{ justify-content:space-between; padding-right:6px; }
   .resource-menu-row a{ flex:1; color:var(--ink); text-decoration:none; overflow:hidden; text-overflow:ellipsis; }
@@ -3571,6 +3581,13 @@ function seedGenericTemplatesOnce(){
 let state = null;
 let idCounter = 1;
 function newId(){ return 'el' + (idCounter++); }
+// True until the Builder has actually been given real content on this
+// page load — a restored autosave, a specific date opened, or a
+// template applied. See pullSharedDataOnSignIn() for why this matters:
+// it's what lets a late-arriving cloud sync safely swap the boot-time
+// guess for the real effective default without ever clobbering
+// something the user already did.
+let builderIsPristine = true;
 
 // Retired element types get migrated on load so old saved data (local archive,
 // cloud, or a downloaded liturgy file) keeps working without the user having
@@ -4562,7 +4579,8 @@ function escapeAttr(str){
 
 function resetTemplate(){
   if(!confirm('Reset to the default template? Unsaved changes will be lost.')) return;
-  loadStateFromTemplate(DEFAULT_TEMPLATE);
+  builderIsPristine = false;
+  loadStateFromTemplate(getEffectiveDefaultTemplate());
   document.getElementById('serviceTitle').value = '';
   document.getElementById('serviceDate').value = '';
   render();
@@ -4590,6 +4608,36 @@ function loadLiturgyTemplates(){
 function saveLiturgyTemplatesToStorage(){
   try{ localStorage.setItem('liturgyTemplates', JSON.stringify(liturgyTemplates)); }catch(e){}
   pushSharedDataToSupabase('liturgyTemplates', liturgyTemplates);
+}
+/* ---------------------------------------------------------------------
+   Per-account "default template" preference — which named template
+   (if any) a signed-in church wants to load automatically instead of
+   the built-in DEFAULT_TEMPLATE (Baptist Default), for: first load of
+   a fresh browser, "Reset to Default Template", opening a new date
+   with no saved service yet, and deleting the currently-open service.
+   Without this, a church whose own liturgy looks nothing like Baptist
+   Default (e.g. Pillar's Covenant Renewal Worship) gets dropped into
+   an unfamiliar skeleton on a brand-new device the first time they
+   sign in there — the actual bug report that prompted this feature.
+   Synced the same additive way as everything else here: local always,
+   Supabase 'shared_data' (key 'defaultTemplateName') when signed in.
+   Empty string means "use the built-in DEFAULT_TEMPLATE" — pushed to
+   the cloud like any other value, so explicitly clearing it on one
+   device also clears it on others instead of getting silently ignored.
+--------------------------------------------------------------------- */
+let defaultTemplateName = '';
+function loadDefaultTemplateName(){
+  try{ return localStorage.getItem('defaultTemplateName') || ''; }catch(e){ return ''; }
+}
+function setDefaultTemplateName(name){
+  defaultTemplateName = name || '';
+  try{ localStorage.setItem('defaultTemplateName', defaultTemplateName); }catch(e){}
+  pushSharedDataToSupabase('defaultTemplateName', defaultTemplateName);
+  renderTemplatesMenuContent();
+}
+function getEffectiveDefaultTemplate(){
+  if(defaultTemplateName && liturgyTemplates[defaultTemplateName]) return liturgyTemplates[defaultTemplateName];
+  return DEFAULT_TEMPLATE;
 }
 /* ---------------------------------------------------------------------
    Seed Pillar Reformed Church's own liturgy as a named template exactly
@@ -4644,6 +4692,7 @@ async function applyTemplate(name){
   if(!data) return;
   const ok = await customConfirm(`Load the "${name}" template? This replaces every movement/element currently in the Builder — save this liturgy first if you want to keep it.`);
   if(!ok) return;
+  builderIsPristine = false;
   loadStateFromTemplate(data);
   render();
 }
@@ -4703,14 +4752,21 @@ function importTemplateFromFile(){
 function renderTemplatesMenuContent(){
   const pop = document.getElementById('templatesMenuPopover');
   const names = Object.keys(liturgyTemplates).sort();
+  const esc = n => escapeAttr(n).replace(/'/g,"\\'");
+  const isDefault = n => defaultTemplateName === n;
   pop.innerHTML = `
-    <div class="export-menu-row" onclick="closeTemplatesMenu(); resetTemplate();">↺ Reset to Default Template</div>
+    <div class="templates-menu-hint">★ = loads automatically for new services</div>
+    <div class="export-menu-row templates-menu-row">
+      <span class="templates-menu-name" onclick="closeTemplatesMenu(); resetTemplate();">📄 Default Template</span>
+      <button class="templates-menu-star${!defaultTemplateName ? ' templates-menu-star-active' : ''}" title="${!defaultTemplateName ? 'This is your default' : 'Set as your default'}" onclick="event.stopPropagation(); setDefaultTemplateName('')">${!defaultTemplateName ? '★' : '☆'}</button>
+    </div>
     ${names.length ? '<div class="templates-menu-divider"></div>' : ''}
     ${names.map(n => `
       <div class="export-menu-row templates-menu-row">
-        <span class="templates-menu-name" onclick="closeTemplatesMenu(); applyTemplate('${escapeAttr(n).replace(/'/g,"\\'")}')">📐 ${escapeHTML(n)}</span>
-        <button class="templates-menu-delete" title="Export template as .json" onclick="event.stopPropagation(); exportTemplateToFile('${escapeAttr(n).replace(/'/g,"\\'")}')" style="margin-right:2px;">⬇</button>
-        <button class="templates-menu-delete" title="Delete template" onclick="event.stopPropagation(); deleteTemplateFromMenu('${escapeAttr(n).replace(/'/g,"\\'")}')">✕</button>
+        <span class="templates-menu-name" onclick="closeTemplatesMenu(); applyTemplate('${esc(n)}')">📐 ${escapeHTML(n)}</span>
+        <button class="templates-menu-star${isDefault(n) ? ' templates-menu-star-active' : ''}" title="${isDefault(n) ? 'This is your default' : 'Set as your default'}" onclick="event.stopPropagation(); setDefaultTemplateName('${esc(n)}')">${isDefault(n) ? '★' : '☆'}</button>
+        <button class="templates-menu-delete" title="Export template as .json" onclick="event.stopPropagation(); exportTemplateToFile('${esc(n)}')" style="margin-right:2px;">⬇</button>
+        <button class="templates-menu-delete" title="Delete template" onclick="event.stopPropagation(); deleteTemplateFromMenu('${esc(n)}')">✕</button>
       </div>
     `).join('')}
     <div class="templates-menu-divider"></div>
@@ -5415,6 +5471,7 @@ function saveCurrentLiturgyToArchive(dateStr){
 async function onDateChange(){
   const dateStr = document.getElementById('serviceDate').value;
   if(!dateStr) return;
+  builderIsPristine = false;
 
   if(currentLoadedDate && currentLoadedDate !== dateStr){
     saveCurrentLiturgyToArchive(currentLoadedDate);
@@ -5451,7 +5508,7 @@ async function onDateChange(){
     return;
   }
 
-  loadStateFromTemplate(DEFAULT_TEMPLATE);
+  loadStateFromTemplate(getEffectiveDefaultTemplate());
   currentLoadedDate = dateStr;
 
   const info = getLiturgicalInfo(dateStr);
@@ -5685,6 +5742,23 @@ async function pullSharedDataOnSignIn(){
   }
   if(cloud.esvApiKey){
     try{ localStorage.setItem('esvApiKey', cloud.esvApiKey); }catch(e){}
+  }
+  if(Object.prototype.hasOwnProperty.call(cloud, 'defaultTemplateName')){
+    defaultTemplateName = cloud.defaultTemplateName || '';
+    try{ localStorage.setItem('defaultTemplateName', defaultTemplateName); }catch(e){}
+  }
+  if(builderIsPristine){
+    // Nothing's actually been loaded into the Builder yet on this
+    // browser — no autosave restored, no date opened, no template
+    // applied — so it's still showing whatever loadStateFromTemplate()
+    // ran at boot before we knew this account's preference (or even
+    // whether liturgyTemplates had synced down yet). Now that both are
+    // known, swap in the real effective default instead of leaving a
+    // signed-in user staring at the wrong church's skeleton. Anything
+    // the user has actually done in the meantime (loaded a date,
+    // restored an autosave, applied a template) clears the pristine
+    // flag and this is skipped so real work never gets clobbered.
+    loadStateFromTemplate(getEffectiveDefaultTemplate());
   }
   render();
   refreshServicesPanelIfOpen();
@@ -8345,7 +8419,7 @@ async function deleteServiceFromPanel(dateStr){
     document.getElementById('serviceDate').value = '';
     document.getElementById('serviceTitle').value = '';
     document.getElementById('churchTitle').innerText = "The Lord's Service";
-    loadStateFromTemplate(DEFAULT_TEMPLATE);
+    loadStateFromTemplate(getEffectiveDefaultTemplate());
     render();
     updateCurrentDateDisplay();
   }
@@ -8893,6 +8967,7 @@ async function checkForAutosaveRestore(){
   document.getElementById('serviceTitle').value = snap.serviceTitle || '';
   document.getElementById('serviceDate').value = snap.serviceDate || '';
   currentLoadedDate = snap.serviceDate || '';
+  builderIsPristine = false;
   state = snap.movements.map(m => ({
     ...m,
     elements: m.elements.map(el => ({ ...el, id: newId(), type: migrateElementType(el.type) }))
@@ -8967,11 +9042,12 @@ ministerEmails = loadMinisterEmails();
 scheduleData = loadSchedule();
 sermonSeriesRoster = loadSermonSeriesRoster();
 liturgyTemplates = loadLiturgyTemplates();
+defaultTemplateName = loadDefaultTemplateName();
 seedPillarTemplateOnce();
 seedGenericTemplatesOnce();
 renderMinisterChips();
 document.getElementById('churchEyebrow').innerText = loadChurchName();
-loadStateFromTemplate(DEFAULT_TEMPLATE);
+loadStateFromTemplate(getEffectiveDefaultTemplate());
 render();
 checkForAutosaveRestore();
 (function initBibleTranslationSelect(){
