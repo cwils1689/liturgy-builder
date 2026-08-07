@@ -1,6 +1,6 @@
 # LiturgyForge
 
-A drag-and-drop liturgy planner for liturgical churches, built for [Pillar Reformed Church](https://github.com/cwils1689)'s Covenant Renewal Worship and designed to be usable by other congregations too.
+A drag-and-drop liturgy planner for liturgical churches, built for [Pillar Reformed Church](https://www.pillarreformed.com)'s Covenant Renewal Worship and designed to be usable by other congregations too.
 
 **Live:** https://cwils1689.github.io/liturgyforge/
 **Status:** Phase 1 complete — usable for Pillar's own weekly planning, open for outside churches to test and evaluate.
