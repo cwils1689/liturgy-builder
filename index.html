@@ -7912,7 +7912,7 @@ function isPillarChurchName(raw){
   if(!raw) return false;
   try{
     const name = (raw.startsWith('"') && raw.endsWith('"')) ? JSON.parse(raw) : raw;
-    return name === 'Pillar Reformed Church';
+    return typeof name === 'string' && name.trim().toLowerCase() === 'pillar reformed church';
   }catch(e){ return false; }
 }
 function loadScheduleColumns(){
